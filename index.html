@@ -176,7 +176,6 @@
 </head>
 <body>
 
-<!-- ══ LOAD SCREEN ══ -->
 <div id="LS">
   <div style="text-align:center">
     <div class="ls-logo">Stream<b>X</b></div>
@@ -188,7 +187,6 @@
       <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV — Star Sports</button>
     </div>
 
-    <!-- Custom URL pane -->
     <div id="customTab">
       <input class="ls-in" id="urlIn" placeholder="Paste HLS (.m3u8), DASH (.mpd), or MP4 URL…"/>
       <input class="ls-in" id="titIn" placeholder="Title (optional)" style="padding:10px 16px;font-size:.85rem"/>
@@ -207,7 +205,6 @@
       </div>
     </div>
 
-    <!-- Live TV pane -->
     <div id="liveTvTab">
       <div id="chLoading" class="ch-loading"><div class="mini-spin"></div>Loading channels…</div>
       <div id="chErr" class="ch-err" style="display:none">
@@ -222,7 +219,6 @@
   </div>
 </div>
 
-<!-- ══ PLAYER ══ -->
 <div id="player" class="show-ui">
   <video id="video" preload="metadata" playsinline></video>
   <div id="clickZone"></div>
@@ -238,7 +234,6 @@
   </div>
   <div id="toast"></div>
 
-  <!-- SHARE PANEL -->
   <div id="sharePanel">
     <button class="sp-close" onclick="closeSharePanel()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -261,7 +256,6 @@
     <div id="spEndedNotice" class="sp-ended-notice" style="display:none">⛔ The host has ended this session.</div>
   </div>
 
-  <!-- TOP BAR -->
   <div id="topBar">
     <div class="top-L">
       <button id="backBtn" onclick="goBack()">
@@ -292,7 +286,6 @@
     </div>
   </div>
 
-  <!-- BOTTOM -->
   <div id="bottomArea">
     <div id="progWrap">
       <div id="progTrack">
@@ -351,6 +344,31 @@
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════
+// IFRAME DOMAIN PROTECTION (1anchormovies.live allowed only)
+// ══════════════════════════════════════════════════════════
+(function() {
+  if (window.self !== window.top) {
+    try {
+      const parentUrl = document.referrer;
+      if (parentUrl) {
+        const hostname = new URL(parentUrl).hostname;
+        // Allows 1anchormovies.live and any subdomains (e.g. play.1anchormovies.live)
+        if (hostname !== '1anchormovies.live' && !hostname.endsWith('.1anchormovies.live')) {
+          throw new Error();
+        }
+      } else {
+        // Drop runtime context if parent site hides its referrer token completely
+        throw new Error();
+      }
+    } catch (e) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#ff4444;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px;font-weight:600;">🚫 Embedding Denied.<br>This player is not authorized to stream on this domain.</div>';
+      window.top.location.href = "https://1anchormovies.live";
+      return;
+    }
+  }
+})();
+
 // ══════════════════════════════════════════════════════════
 // ANTI-INSPECT
 // ══════════════════════════════════════════════════════════
@@ -1081,36 +1099,6 @@ document.addEventListener('keydown',e=>{
   }
   showUI();if(!vid.paused)schedHide();
 });
-
-// ══════════════════════════════════════════════════════════
-// CLOUDFLARE WORKER CODE (for reference — deploy separately)
-// ══════════════════════════════════════════════════════════
-/*
-  Deploy this as a Cloudflare Worker at e.g. https://jtv-proxy.yourname.workers.dev/
-
-  addEventListener('fetch', event => {
-    event.respondWith(handle(event.request));
-  });
-
-  async function handle(request) {
-    const upstream = 'https://binge-giotv.pages.dev/data/id.json';
-    const res = await fetch(upstream, {
-      cf: { cacheTtl: 300, cacheEverything: true }
-    });
-    const json = await res.json();
-    return new Response(JSON.stringify(json), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=180',
-      }
-    });
-  }
-
-  The player fetches directly from binge-giotv.pages.dev (which already
-  has permissive CORS headers), so the Worker is optional but useful for
-  adding a layer of indirection, caching, and key rotation.
-*/
 </script>
 </body>
 </html>
