@@ -172,6 +172,24 @@
     #errMsg{font-size:.82rem;color:rgba(255,255,255,.5);max-width:400px;line-height:1.5}
     #errRetry{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;padding:8px 18px;border-radius:8px;font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:4px;transition:background .15s}
     #errRetry:hover{background:rgba(255,255,255,.18)}
+
+    /* ══ SMALL DEVICE ADAPTIVE VIEWPORT RULES ══ */
+    @media (max-width: 640px) {
+      #topBar { height: 55px; padding: 0 10px; }
+      #vidTitle { max-width: 140px; font-size: 0.85rem; }
+      #drmBadge, #sessionBadge, #delayLbl { display: none !important; }
+      #bottomArea { padding-bottom: 4px; }
+      #progWrap { margin: 0 10px; padding: 8px 0 4px; }
+      #btmRow { padding: 0 8px 2px; }
+      .ibtn { width: 36px; height: 36px; }
+      .skip-btn { font-size: 0.72rem; padding: 4px; }
+      .skip-btn svg { width: 15px; height: 19px; }
+      #playBtn svg { width: 24px; height: 24px; }
+      #timeLbl { font-size: 0.72rem; padding: 0 2px; }
+      .vol-row { display: none !important; }
+      #speedLbl { font-size: 0.7rem; padding: 4px 6px; }
+      #shareBtn { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -345,87 +363,22 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-// IFRAME DOMAIN PROTECTION (Safe Error Handling & Whitelist)
-// ══════════════════════════════════════════════════════════
-(function() {
-  if (window.self !== window.top) {
-    let authorized = false;
-    try {
-      const parentUrl = document.referrer;
-      if (parentUrl) {
-        const urlObj = new URL(parentUrl);
-        const hostname = urlObj.hostname;
-        const port = urlObj.port;
-        const pathname = urlObj.pathname;
-
-        // 1. Match local development domain patterns dynamically
-        const isLocalhost = (hostname === 'localhost' || hostname === '127.0.0.1') && port === '5173';
-        
-        // 2. Match production destination URLs
-        const isProdDomain = hostname === '1anchormovies.live' || hostname.endsWith('.1anchormovies.live');
-
-        if (isLocalhost || isProdDomain) {
-          authorized = true;
-        }
-      }
-    } catch (e) {
-      // Cross-origin browser blocks default to unauthorized safely
-      authorized = false;
-    }
-
-    // If verification fails, safely clear the DOM natively without throwing top-level console crashes
-    if (!authorized) {
-      document.documentElement.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#000; color:#ff4444; font-family:Inter,sans-serif; text-align:center; padding:20px; box-sizing:border-box;">
-          <span style="font-size:3rem; margin-bottom:10px;">🚫</span>
-          <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:8px; color:#fff;">Embedding Denied</h2>
-          <p style="font-size:0.9rem; color:rgba(255,255,255,0.5); max-width:400px; line-height:1.5;">
-            This player utility is protected and unauthorized to stream layout modules on this destination domain path.
-          </p>
-        </div>
-      `;
-    }
-  }
-})();
-
-// ══════════════════════════════════════════════════════════
-// ANTI-INSPECT (Suspended Safely for Local Dev & Authorized Frames)
+// ANTI-INSPECT
 // ══════════════════════════════════════════════════════════
 (function(){
-  // 1. Detect if running locally or inside your Vite environment layout nodes
-  const isLocal = window.location.hostname === 'localhost' || 
-                  window.location.hostname === '127.0.0.1' || 
-                  window.location.port === '5173';
-
-  // 2. Detect if embedded in a frameset window environment natively
-  const isFramed = window.self !== window.top;
-
-  // Turn off protections completely during local testing or when inside an authorized iframe layout container
-  if (isLocal || isFramed) {
-    console.log("🛠️ Dev/Frame Mode: Anti-Inspect layout checks suspended.");
-    return;
-  }
-
-  // Production protections only activate for standalone window tracking tabs
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', function(e){
-    const k = e.key.toUpperCase();
-    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C','U','K'].includes(k)) || (e.ctrlKey && k==='U') || (e.metaKey && e.altKey && ['I','J','C'].includes(k))) {
-      e.preventDefault(); e.stopPropagation(); return false;
+  document.addEventListener('contextmenu',e=>e.preventDefault());
+  document.addEventListener('keydown',function(e){
+    const k=e.key.toUpperCase();
+    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','U','K'].includes(k))||(e.ctrlKey&&k==='U')||(e.metaKey&&e.altKey&&['I','J','C'].includes(k))){
+      e.preventDefault();e.stopPropagation();return false;
     }
-  }, true);
-  
-  let _open = false;
-  setInterval(() => {
-    if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
-      if (!_open) {
-        _open = true; 
-        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#fff;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px">🚫 Developer tools not allowed.<br>Close DevTools to continue.</div>';
-      }
-    } else {
-      _open = false;
-    }
-  }, 700);
+  },true);
+  let _open=false;
+  setInterval(()=>{
+    if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){
+      if(!_open){_open=true;document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#fff;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px">🚫 Developer tools not allowed.<br>Close DevTools to continue.</div>';}
+    }else{_open=false;}
+  },700);
 })();
 
 // ══════════════════════════════════════════════════════════
@@ -919,6 +872,7 @@ async function loadShaka(url,title,drm){
   }
 }
 
+// build quality list helper
 function buildShakaQual(){
   if(!shakaInst)return;
   const tracks=shakaInst.getVariantTracks().sort((a,b)=>b.height-a.height);
