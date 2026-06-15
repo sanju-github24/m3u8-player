@@ -870,7 +870,7 @@ function playSelectedLive(){
 // ══════════════════════════════════════════════════════════
 // SESSION SYSTEM
 // ══════════════════════════════════════════════════════════
-let SID=null,SROLE=null,SSTART=null,SURL=null,STITLE=null,SDRM=null;
+let SID=null, SROLE=null, SSTART=null, SURL=null, STITLE=null, SDRM=null, SCHID=null;
 let _hbT=null,_pollT=null,_ageT=null,_guestPingT=null;
 const STTL=8000;
 function genId(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4)}
@@ -880,20 +880,49 @@ function getVC(){let c=1;try{const p=`sx_v_${SID}_`;for(let i=0;i<localStorage.l
 const _gk={};
 function guestPing(){if(!SID||SROLE!=='guest')return;if(!_gk.k)_gk.k=`sx_v_${SID}_${genId()}`;try{localStorage.setItem(_gk.k,JSON.stringify({ts:Date.now()}))}catch{}}
 
-function startHostSession(url,title,drm){
-  SID=genId();SROLE='host';SSTART=Date.now();SURL=url;STITLE=title||'';SDRM=drm||null;
-  try{localStorage.setItem(sKey(SID),hostState())}catch{}
+function startHostSession(url, title, drm) {
+  SID = genId(); SROLE = 'host'; SSTART = Date.now();
+  SURL = url; STITLE = title || ''; SDRM = drm || null;
+
+  // Find matching channel ID from loaded data so the share URL stays permanent
+  let channelId = null;
+  if (channelsData && channelsData.length > 0) {
+    const match = channelsData.find(ch => {
+      const chBase = ch.url.split('?')[0];
+      const urlBase = url.split('?')[0];
+      return chBase === urlBase || ch.name === title;
+    });
+    if (match) channelId = match.id;
+  }
+
+  SCHID = channelId; // store for hash building
+
+  try { localStorage.setItem(sKey(SID), hostState()) } catch {}
   clearInterval(_hbT);
-  _hbT=setInterval(()=>{try{localStorage.setItem(sKey(SID),hostState())}catch{}updateSharePanel();},4000);
-  history.replaceState(null,'',buildHash(SID,url,title,drm));
-  showSessUI('host');updateSharePanel();startAge();
+  _hbT = setInterval(() => {
+    try { localStorage.setItem(sKey(SID), hostState()) } catch {}
+    updateSharePanel();
+  }, 4000);
+
+  history.replaceState(null, '', buildHash(SID, url, title, drm, channelId));
+  showSessUI('host'); updateSharePanel(); startAge();
 }
-function buildHash(id,url,title,drm){
-  const p=new URLSearchParams({sid:id,src:obf(url),t:obf(title||'')});
-  if(drm&&drm.keyId) p.set('k1',obf(drm.keyId));
-  if(drm&&drm.key)   p.set('k2',obf(drm.key));
-  if(drm&&drm.cookie)p.set('k3',obf(drm.cookie));
-  return`${location.pathname}?${p}`;
+function buildHash(id, url, title, drm, channelId) {
+  const p = new URLSearchParams({ sid: id });
+  
+  if (channelId) {
+    // Permanent: store only the channel ID — keys fetched fresh at join time
+    p.set('chid', obf(channelId));
+    p.set('t', obf(title || ''));
+  } else {
+    // Fallback for custom URLs with no channel match
+    p.set('src', obf(url));
+    p.set('t', obf(title || ''));
+    if (drm && drm.keyId) p.set('k1', obf(drm.keyId));
+    if (drm && drm.key)   p.set('k2', obf(drm.key));
+    if (drm && drm.cookie) p.set('k3', obf(drm.cookie));
+  }
+  return `${location.pathname}?${p}`;
 }
 function endHostSession(){
   if(SROLE!=='host'||!SID)return;
@@ -933,9 +962,9 @@ function onSessEnd(){
 function showSessUI(r){sessionBadge.style.display='flex';sessionBadge.className=r;shareBtn.style.display='flex';if(r==='host'){sessionBadgeTxt.textContent='Sharing';shareBtnTxt.textContent='Session'}else{sessionBadgeTxt.textContent='Joined';shareBtnTxt.textContent='Joined'}}
 function hideSessUI(){sessionBadge.style.display='none';shareBtn.style.display='none';sharePanel.classList.remove('open')}
 function startAge(){clearInterval(_ageT);_ageT=setInterval(()=>{if(!SSTART)return;const s=Math.floor((Date.now()-SSTART)/1000);spSessionAge.textContent=s<60?s+'s':Math.floor(s/60)+'m '+s%60+'s'},1000)}
-function updateSharePanel(){
-  if(!SID)return;
-  shareUrlInput.value=location.origin+buildHash(SID,SURL,STITLE,SDRM);
+function updateSharePanel() {
+  if (!SID) return;
+  shareUrlInput.value = location.origin + buildHash(SID, SURL, STITLE, SDRM, SCHID);
   if(SROLE==='host'){spViewers.textContent=getVC();spStatus.textContent=isLiveStream?'🔴 Live':'▶ Playing';spGuestNotice.style.display='none';spEndedNotice.style.display='none';spDesc.style.display='block'}
   else{spGuestNotice.style.display='block';spDesc.style.display='none'}
 }
@@ -1248,31 +1277,94 @@ function goBack(){
 // ══════════════════════════════════════════════════════════
 // URL PARAMS
 // ══════════════════════════════════════════════════════════
-(function checkParams(){
-  const q=new URLSearchParams(location.search);
-  const bundleRaw=q.get('bundle');
-  if(bundleRaw){handleBundleParam(bundleRaw);return;}
-  const sid=q.get('sid'),srcRaw=q.get('src'),tRaw=q.get('t');
-  const k1=q.get('k1'),k2=q.get('k2'),k3=q.get('k3');
-  if(!srcRaw)return;
-  const src=dob(srcRaw),title=dob(tRaw||'');
-  const drm=(k1&&k2)?{keyId:dob(k1),key:dob(k2),cookie:k3?dob(k3):null}:null;
-  const _lg=q.get('lg')?dob(q.get('lg')):'';
-  if(_lg){
-    const _i=document.createElement('img');
-    _i.src=_lg;_i.alt='';
-    _i.style.cssText='width:26px;height:26px;border-radius:6px;object-fit:cover;flex-shrink:0;';
-    _i.onerror=()=>_i.remove();
-    const _tl=document.querySelector('.top-L');
-    if(_tl)_tl.insertBefore(_i,_tl.querySelector('#vidTitle'));
+(async function checkParams() {
+  const q = new URLSearchParams(location.search);
+  const bundleRaw = q.get('bundle');
+  if (bundleRaw) { handleBundleParam(bundleRaw); return; }
+
+  const sid   = q.get('sid');
+  const chid  = q.get('chid');   // NEW: permanent channel ID path
+  const srcRaw = q.get('src');
+  const tRaw  = q.get('t');
+  const k1 = q.get('k1'), k2 = q.get('k2'), k3 = q.get('k3');
+
+  if (!chid && !srcRaw) return;
+
+  if (chid) {
+    // Permanent share: resolve channel ID → fresh keys
+    const channelId = dob(chid);
+    const title     = dob(tRaw || '');
+    showToast('⏳ Fetching stream…', 3000);
+
+    try {
+      const [r1, r2] = await Promise.allSettled([
+        fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
+        fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
+      ]);
+
+      const chMap = {};
+      if (r1.status === 'fulfilled' && r1.value) {
+        const raw = Array.isArray(r1.value) ? r1.value : (r1.value.channels || []);
+        raw.forEach(ch => {
+          if (ch.id) chMap[ch.id] = { name: ch.name, url: ch.url, keyId: ch.keyId || '', key: ch.key || '', cookie: ch.cookie || '' };
+        });
+      }
+      if (r2.status === 'fulfilled' && r2.value) {
+        const raw = Array.isArray(r2.value) ? r2.value : (r2.value.channels || []);
+        raw.forEach(ch => {
+          let url = ch.channel_url || '';
+          if (url.includes('?')) url = url.split('?')[0];
+          if (ch.channel_id) chMap[ch.channel_id] = { name: ch.channel_name, url, keyId: ch.keyId || '', key: ch.key || '', cookie: ch.cookie || '' };
+        });
+      }
+
+      const ch = chMap[channelId];
+      if (!ch || !ch.url) throw new Error('Channel not found in feed');
+
+      const drm = (ch.keyId && ch.key)
+        ? { keyId: ch.keyId, key: ch.key, cookie: ch.cookie || null }
+        : null;
+
+      if (sid) {
+        // Guest joining a live session
+        try {
+          const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}');
+          if (st.ended) {
+            loadVideo(ch.url, ch.name, true, drm);
+            showToast('⚠ Session ended — playing directly', 3000);
+            return;
+          }
+        } catch {}
+        loadVideo(ch.url, ch.name, true, drm);
+        setTimeout(() => joinAsGuest(sid, ch.url, ch.name, drm), 600);
+        showToast('👀 Joining shared session…', 2500);
+      } else {
+        loadVideo(ch.url, ch.name, false, drm);
+      }
+
+    } catch(e) {
+      console.error('chid resolve failed', e);
+      errMsg.textContent = 'Could not load channel. Feed may have changed. ' + (e.message || '');
+      err.style.display = 'flex';
+    }
+    return;
   }
-  if(src&&sid){
-    try{const st=JSON.parse(localStorage.getItem(sKey(sid))||'{}');if(st.ended){loadVideo(src,title,true,drm);showToast('⚠ Session ended — playing directly',3000);return}}catch{}
-    loadVideo(src,title,true,drm);
-    setTimeout(()=>joinAsGuest(sid,src,title,drm),600);
-    showToast('👀 Joining shared session…',2500);
-  }else if(src){
-    loadVideo(src,title,false,drm);
+
+  // Legacy path: src + optional DRM keys baked in
+  const src   = dob(srcRaw);
+  const title = dob(tRaw || '');
+  const drm   = (k1 && k2) ? { keyId: dob(k1), key: dob(k2), cookie: k3 ? dob(k3) : null } : null;
+
+  if (src && sid) {
+    try {
+      const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}');
+      if (st.ended) { loadVideo(src, title, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; }
+    } catch {}
+    loadVideo(src, title, true, drm);
+    setTimeout(() => joinAsGuest(sid, src, title, drm), 600);
+    showToast('👀 Joining shared session…', 2500);
+  } else if (src) {
+    loadVideo(src, title, false, drm);
   }
 })();
 
