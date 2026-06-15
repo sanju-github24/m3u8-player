@@ -190,6 +190,184 @@
       #speedLbl { font-size: 0.7rem; padding: 4px 6px; }
       #shareBtn { display: none !important; }
     }
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh}
+ 
+    /* ── SIDEBAR TOGGLE BUTTON ── */
+    #bundleToggle{
+      position:fixed;right:0;top:50%;transform:translateY(-50%);
+      background:linear-gradient(135deg,#1fb8ff,#0a7abf);
+      color:#fff;border:none;border-radius:10px 0 0 10px;
+      padding:14px 8px;font-size:.72rem;font-weight:700;
+      writing-mode:vertical-rl;text-orientation:mixed;
+      cursor:pointer;z-index:9999;letter-spacing:.08em;
+      font-family:'Inter',sans-serif;transition:all .2s;
+      box-shadow:-4px 0 20px rgba(31,184,255,.3);
+    }
+    #bundleToggle:hover{background:linear-gradient(135deg,#33c5ff,#1591d4);padding-right:10px}
+    #bundleToggle.open{right:380px}
+ 
+    /* ── SIDEBAR PANEL ── */
+    #bundleSidebar{
+      position:fixed;right:-390px;top:0;bottom:0;width:380px;
+      background:#0d0d15;border-left:1px solid rgba(255,255,255,.08);
+      z-index:9998;transition:right .3s cubic-bezier(.4,0,.2,1);
+      display:flex;flex-direction:column;overflow:hidden;
+    }
+    #bundleSidebar.open{right:0}
+ 
+    /* Header */
+    .sb-header{
+      padding:20px 20px 16px;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      background:rgba(31,184,255,.05);
+      flex-shrink:0;
+    }
+    .sb-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .sb-title{font-size:1rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+    .sb-title-icon{
+      width:28px;height:28px;border-radius:8px;
+      background:rgba(31,184,255,.15);border:1px solid rgba(31,184,255,.3);
+      display:flex;align-items:center;justify-content:center;font-size:.9rem;
+    }
+    .sb-sub{font-size:.73rem;color:rgba(255,255,255,.35);margin-top:2px}
+    .sb-close{
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+      color:rgba(255,255,255,.5);border-radius:6px;padding:5px 8px;
+      cursor:pointer;font-size:.72rem;font-family:'Inter',sans-serif;transition:all .15s;
+    }
+    .sb-close:hover{background:rgba(255,255,255,.12);color:#fff}
+ 
+    /* Scrollable body */
+    .sb-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
+    .sb-body::-webkit-scrollbar{width:4px}
+    .sb-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px}
+ 
+    /* Section labels */
+    .sb-label{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.28);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+ 
+    /* Bundle name input */
+    .sb-input{
+      width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+      color:#fff;border-radius:8px;padding:10px 12px;font-size:.85rem;
+      font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;
+    }
+    .sb-input:focus{border-color:rgba(31,184,255,.4)}
+    .sb-input::placeholder{color:rgba(255,255,255,.25)}
+ 
+    /* Channel list in sidebar */
+    .ch-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto}
+    .ch-list::-webkit-scrollbar{width:3px}
+    .ch-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+    .ch-row{
+      display:flex;align-items:center;gap:10px;padding:8px 10px;
+      border-radius:8px;border:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s;
+    }
+    .ch-row:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12)}
+    .ch-row.selected{background:rgba(31,184,255,.08);border-color:rgba(31,184,255,.25)}
+    .ch-row-img{width:32px;height:32px;border-radius:6px;object-fit:cover;background:#1a1a1a;flex-shrink:0}
+    .ch-row-name{flex:1;font-size:.82rem;color:rgba(255,255,255,.8)}
+    .ch-row.selected .ch-row-name{color:#fff}
+    .ch-row-check{
+      width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);
+      display:flex;align-items:center;justify-content:center;font-size:.65rem;
+      flex-shrink:0;transition:all .15s;color:transparent;
+    }
+    .ch-row.selected .ch-row-check{background:#1fb8ff;border-color:#1fb8ff;color:#000}
+ 
+    /* Select all row */
+    .sel-all-row{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:2px;
+    }
+    .sel-all-lbl{font-size:.78rem;color:rgba(255,255,255,.5)}
+    .sel-all-btn{
+      background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);
+      border-radius:5px;padding:3px 10px;font-size:.72rem;cursor:pointer;
+      font-family:'Inter',sans-serif;transition:all .15s;
+    }
+    .sel-all-btn:hover{background:rgba(255,255,255,.08);color:#fff}
+ 
+    /* Count badge */
+    .sel-count{
+      display:inline-flex;align-items:center;gap:5px;
+      background:rgba(31,184,255,.12);border:1px solid rgba(31,184,255,.25);
+      border-radius:20px;padding:3px 10px;font-size:.72rem;color:#1fb8ff;font-weight:600;
+    }
+    .sel-count-dot{width:5px;height:5px;border-radius:50%;background:#1fb8ff}
+ 
+    /* Generate button */
+    .sb-gen-btn{
+      width:100%;background:linear-gradient(135deg,#1fb8ff,#0a7abf);
+      border:none;border-radius:10px;padding:13px;font-size:.88rem;font-weight:700;
+      color:#fff;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
+    }
+    .sb-gen-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(31,184,255,.25)}
+    .sb-gen-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+ 
+    /* Generated URL box */
+    #bundleResult{display:none;flex-direction:column;gap:10px}
+    .bundle-url-box{
+      background:rgba(255,255,255,.04);border:1px solid rgba(31,184,255,.2);
+      border-radius:8px;padding:10px 12px;
+    }
+    .bundle-url-text{
+      font-size:.72rem;color:rgba(255,255,255,.6);word-break:break-all;line-height:1.6;
+      font-family:monospace;max-height:80px;overflow-y:auto;
+    }
+    .bundle-url-text::-webkit-scrollbar{width:3px}
+    .bundle-url-text::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+    .bundle-actions{display:flex;gap:8px}
+    .bundle-copy-btn{
+      flex:1;background:rgba(31,184,255,.12);border:1px solid rgba(31,184,255,.3);
+      color:#1fb8ff;border-radius:8px;padding:9px;font-size:.8rem;font-weight:700;
+      cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;
+    }
+    .bundle-copy-btn:hover{background:rgba(31,184,255,.2)}
+    .bundle-copy-btn.copied{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.3);color:#4ade80}
+    .bundle-open-btn{
+      flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+      color:#fff;border-radius:8px;padding:9px;font-size:.8rem;font-weight:700;
+      cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;
+    }
+    .bundle-open-btn:hover{background:rgba(255,255,255,.12)}
+ 
+    /* Embed code box */
+    .embed-box{
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+      border-radius:8px;padding:12px;
+    }
+    .embed-code{
+      font-family:monospace;font-size:.7rem;color:rgba(255,255,255,.55);
+      line-height:1.7;white-space:pre-wrap;word-break:break-all;
+      max-height:120px;overflow-y:auto;
+    }
+    .embed-code::-webkit-scrollbar{width:3px}
+    .embed-code::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+    .embed-copy-btn{
+      margin-top:8px;width:100%;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);
+      border-radius:6px;padding:7px;font-size:.75rem;font-weight:600;
+      cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;
+    }
+    .embed-copy-btn:hover{background:rgba(255,255,255,.09);color:#fff}
+ 
+    /* Loading / error states */
+    .sb-loading{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.35);font-size:.8rem;padding:8px 0}
+    .sb-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.1);border-top-color:#1fb8ff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .sb-err{font-size:.78rem;color:rgba(255,100,100,.7);padding:6px 0}
+ 
+    /* Footer */
+    .sb-footer{padding:12px 20px;border-top:1px solid rgba(255,255,255,.07);flex-shrink:0}
+    .sb-footer-note{font-size:.7rem;color:rgba(255,255,255,.2);line-height:1.6;text-align:center}
+    .sb-footer-note b{color:rgba(31,184,255,.5)}
+ 
+    /* Divider */
+    .sb-divider{height:1px;background:rgba(255,255,255,.06)}
   </style>
 </head>
 <body>
@@ -233,6 +411,89 @@
       <button class="ls-play" id="playLiveBtn" style="display:none;opacity:.4;cursor:not-allowed" onclick="playSelectedLive()">
         ▶  Select a channel first
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOGGLE BUTTON ══ -->
+<button id="bundleToggle" onclick="toggleSidebar()">📦 BUNDLE</button>
+ 
+<!-- ══ SIDEBAR ══ -->
+<div id="bundleSidebar">
+ 
+  <div class="sb-header">
+    <div class="sb-header-row">
+      <div class="sb-title">
+        <div class="sb-title-icon">📦</div>
+        Channel Bundle
+      </div>
+      <button class="sb-close" onclick="toggleSidebar()">✕ Close</button>
+    </div>
+    <div class="sb-sub">Generate a single share URL for multiple channels</div>
+  </div>
+ 
+  <div class="sb-body">
+ 
+    <!-- Bundle name -->
+    <div>
+      <div class="sb-label">Bundle name</div>
+      <input class="sb-input" id="bundleName" placeholder="e.g. Star Sports Pack" maxlength="60"/>
+    </div>
+ 
+    <!-- Base URL of your StreamX player -->
+    <div>
+      <div class="sb-label">StreamX player URL</div>
+      <input class="sb-input" id="playerBaseUrl" placeholder="https://your-site.com/streamx.html" value=""/>
+    </div>
+ 
+    <!-- Channel selector -->
+    <div>
+      <div class="sb-label" style="margin-bottom:8px">Select channels</div>
+      <div id="sbChLoading" class="sb-loading"><div class="sb-spin"></div>Loading channels…</div>
+      <div id="sbChErr" class="sb-err" style="display:none">⚠ Could not load channels. <span style="color:#1fb8ff;cursor:pointer" onclick="sbFetchChannels()">Retry</span></div>
+      <div id="sbChWrap" style="display:none">
+        <div class="sel-all-row">
+          <span class="sb-label" style="margin:0">
+            <span class="sel-count"><span class="sel-count-dot"></span><span id="selCountTxt">0 selected</span></span>
+          </span>
+          <button class="sel-all-btn" id="selAllBtn" onclick="toggleSelectAll()">Select all</button>
+        </div>
+        <div class="ch-list" id="sbChList"></div>
+      </div>
+    </div>
+ 
+    <div class="sb-divider"></div>
+ 
+    <!-- Generate button -->
+    <button class="sb-gen-btn" id="genBtn" onclick="generateBundle()" disabled>
+      🔗 Generate Bundle URL
+    </button>
+ 
+    <!-- Result area -->
+    <div id="bundleResult">
+      <div class="sb-label">Bundle URL (paste on your site)</div>
+      <div class="bundle-url-box">
+        <div class="bundle-url-text" id="bundleUrlText"></div>
+      </div>
+      <div class="bundle-actions">
+        <button class="bundle-copy-btn" id="bundleCopyBtn" onclick="copyBundleUrl()">📋 Copy URL</button>
+        <button class="bundle-open-btn" onclick="openBundleUrl()">↗ Open</button>
+      </div>
+ 
+      <div class="sb-divider"></div>
+ 
+      <div class="sb-label">React embed snippet</div>
+      <div class="embed-box">
+        <div class="embed-code" id="embedSnippet"></div>
+        <button class="embed-copy-btn" onclick="copyEmbed()">Copy React snippet</button>
+      </div>
+    </div>
+ 
+  </div><!-- /sb-body -->
+ 
+  <div class="sb-footer">
+    <div class="sb-footer-note">
+      Paste the generated URL into the <b>StreamXPlayer</b> React component's <b>src</b> prop on your site.
     </div>
   </div>
 </div>
@@ -362,6 +623,8 @@
 </div>
 
 <script>
+
+  
 // ══════════════════════════════════════════════════════════
 // ANTI-INSPECT (Suspended Safely for Mobile & Local Dev Servers)
 // ══════════════════════════════════════════════════════════
@@ -981,6 +1244,8 @@ function goBack(){
 // ══════════════════════════════════════════════════════════
 (function checkParams(){
   const q=new URLSearchParams(location.search);
+  const bundleRaw=q.get('bundle');
+  if(bundleRaw){handleBundleParam(bundleRaw);return;}
   const sid=q.get('sid'),srcRaw=q.get('src'),tRaw=q.get('t');
   const k1=q.get('k1'),k2=q.get('k2'),k3=q.get('k3');
   if(!srcRaw)return;
@@ -1111,6 +1376,187 @@ document.addEventListener('keydown',e=>{
   }
   showUI();if(!vid.paused)schedHide();
 });
+
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR TOGGLE
+// ══════════════════════════════════════════════════════
+function toggleSidebar(){
+  const sb=document.getElementById('bundleSidebar');
+  const btn=document.getElementById('bundleToggle');
+  const isOpen=sb.classList.contains('open');
+  sb.classList.toggle('open',!isOpen);
+  btn.classList.toggle('open',!isOpen);
+  if(!isOpen && !sbLoaded) sbFetchChannels();
+}
+
+function handleBundleParam(encoded) {
+  try {
+    const data = JSON.parse(dob(decodeURIComponent(encoded)));
+    if (data.channels && data.channels.length > 0) {
+      const first = data.channels[0];
+      loadVideo(first.url, first.name, false, { keyId: first.keyId, key: first.key, cookie: first.cookie });
+    }
+  } catch(e) { console.error('Bundle decode failed', e); }
+}
+ 
+// ══════════════════════════════════════════════════════
+// CHANNEL DATA
+// ══════════════════════════════════════════════════════
+const OLD_JSON='https://binge-giotv.pages.dev/data/id.json';
+const NEW_JSON='https://jtv-proxy.sanjusanjay0444.workers.dev/';
+ 
+let sbChannels=[], sbSelected=new Set(), sbLoaded=false;
+ 
+async function sbFetchChannels(){
+  const loading=document.getElementById('sbChLoading');
+  const errEl=document.getElementById('sbChErr');
+  const wrap=document.getElementById('sbChWrap');
+  loading.style.display='flex'; errEl.style.display='none'; wrap.style.display='none';
+  try{
+    const [r1,r2]=await Promise.allSettled([
+      fetch(OLD_JSON+'?_='+Date.now()).then(r=>r.ok?r.json():null),
+      fetch(NEW_JSON+'?_='+Date.now()).then(r=>r.ok?r.json():null)
+    ]);
+    let channels=[];
+    if(r1.status==='fulfilled'&&r1.value){
+      const raw=Array.isArray(r1.value)?r1.value:(r1.value.channels||[]);
+      raw.forEach(ch=>channels.push({id:ch.id||'',name:ch.name||'Channel',url:ch.url||'',keyId:ch.keyId||'',key:ch.key||'',cookie:ch.cookie||'',logo:ch.logo||''}));
+    }
+    if(r2.status==='fulfilled'&&r2.value){
+      const raw=Array.isArray(r2.value)?r2.value:(r2.value.channels||[]);
+      raw.forEach(ch=>{
+        let url=ch.channel_url||'';
+        if(url.includes('?'))url=url.split('?')[0];
+        channels.push({id:ch.channel_id||'',name:ch.channel_name||'Channel',url,keyId:ch.keyId||'',key:ch.key||'',cookie:ch.cookie||'',logo:ch.channel_logo||''});
+      });
+    }
+    if(!channels.length) throw new Error('No channels');
+    sbChannels=channels;
+    sbLoaded=true;
+    loading.style.display='none';
+    wrap.style.display='block';
+    renderSbChannels();
+  }catch(e){
+    loading.style.display='none';
+    errEl.style.display='block';
+    console.error(e);
+  }
+}
+ 
+function renderSbChannels(){
+  const list=document.getElementById('sbChList');
+  list.innerHTML='';
+  sbChannels.forEach((ch,i)=>{
+    const row=document.createElement('div');
+    row.className='ch-row';
+    row.dataset.idx=i;
+    row.innerHTML=`
+      <img class="ch-row-img" src="${ch.logo}" alt="${ch.name}"
+        onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 fill=%22%231a1a1a%22/><text x=%2216%22 y=%2220%22 text-anchor=%22middle%22 fill=%22%23444%22 font-size=%2212%22>📺</text></svg>'">
+      <span class="ch-row-name">${ch.name}</span>
+      <div class="ch-row-check">✓</div>
+    `;
+    row.onclick=()=>toggleCh(i,row);
+    list.appendChild(row);
+  });
+  updateSelCount();
+}
+ 
+function toggleCh(i,row){
+  if(sbSelected.has(i)){sbSelected.delete(i);row.classList.remove('selected')}
+  else{sbSelected.add(i);row.classList.add('selected')}
+  updateSelCount();
+}
+ 
+function toggleSelectAll(){
+  const allSelected=sbSelected.size===sbChannels.length;
+  sbSelected.clear();
+  document.querySelectorAll('.ch-row').forEach((row,i)=>{
+    if(!allSelected){sbSelected.add(i);row.classList.add('selected')}
+    else row.classList.remove('selected');
+  });
+  updateSelCount();
+}
+ 
+function updateSelCount(){
+  const n=sbSelected.size;
+  document.getElementById('selCountTxt').textContent=n+' selected';
+  document.getElementById('selAllBtn').textContent=n===sbChannels.length?'Deselect all':'Select all';
+  document.getElementById('genBtn').disabled=n===0;
+}
+ 
+// ══════════════════════════════════════════════════════
+// BUNDLE GENERATION
+// ══════════════════════════════════════════════════════
+let _lastBundleUrl='';
+ 
+function generateBundle(){
+  if(sbSelected.size===0) return;
+ 
+  const base=document.getElementById('playerBaseUrl').value.trim() || window.location.origin+window.location.pathname;
+  const name=document.getElementById('bundleName').value.trim() || 'Channel Bundle';
+ 
+  // Build bundle payload: array of selected channel indices with their data
+  const bundle=[];
+  sbSelected.forEach(i=>{
+    const ch=sbChannels[i];
+    bundle.push({
+      name:ch.name,
+      url:ch.url,
+      keyId:ch.keyId||'',
+      key:ch.key||'',
+      cookie:ch.cookie||''
+    });
+  });
+ 
+  // Encode as base64 JSON in the bundle param
+  const payload=JSON.stringify({title:name,channels:bundle});
+  const encoded=obf(payload);
+ 
+  // Generate URL that StreamX can decode via the bundle param
+  const finalUrl=`${base}?bundle=${encodeURIComponent(encoded)}`;
+  _lastBundleUrl=finalUrl;
+ 
+  document.getElementById('bundleUrlText').textContent=finalUrl;
+ 
+  // React embed snippet
+  const snippet=`import StreamXPlayer from './StreamXPlayer';\n\n// Generated bundle — ${name}\n// Channels: ${bundle.map(c=>c.name).join(', ')}\n\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
+  document.getElementById('embedSnippet').textContent=snippet;
+  document.getElementById('bundleResult').style.display='flex';
+}
+ 
+function copyBundleUrl(){
+  navigator.clipboard.writeText(_lastBundleUrl).then(()=>{
+    const btn=document.getElementById('bundleCopyBtn');
+    btn.textContent='✅ Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copy URL';btn.classList.remove('copied')},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=_lastBundleUrl; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    document.getElementById('bundleCopyBtn').textContent='✅ Copied!';
+    setTimeout(()=>document.getElementById('bundleCopyBtn').textContent='📋 Copy URL',2000);
+  });
+}
+ 
+function openBundleUrl(){window.open(_lastBundleUrl,'_blank')}
+ 
+function copyEmbed(){
+  const code=document.getElementById('embedSnippet').textContent;
+  navigator.clipboard.writeText(code).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=code; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  });
+  const btn=event.target;
+  btn.textContent='✅ Copied!';
+  setTimeout(()=>btn.textContent='Copy React snippet',2000);
+}
+ 
+// Auto-set base URL
+document.getElementById('playerBaseUrl').value=window.location.origin+window.location.pathname;
+
 </script>
 </body>
 </html>
