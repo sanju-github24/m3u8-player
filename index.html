@@ -345,20 +345,29 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-// IFRAME DOMAIN PROTECTION (1anchormovies.live allowed only)
+// IFRAME DOMAIN PROTECTION (1anchormovies.live & localhost allowed)
 // ══════════════════════════════════════════════════════════
 (function() {
   if (window.self !== window.top) {
     try {
       const parentUrl = document.referrer;
       if (parentUrl) {
-        const hostname = new URL(parentUrl).hostname;
-        // Allows 1anchormovies.live and any subdomains (e.g. play.1anchormovies.live)
-        if (hostname !== '1anchormovies.live' && !hostname.endsWith('.1anchormovies.live')) {
+        const urlObj = new URL(parentUrl);
+        const hostname = urlObj.hostname;
+        const port = urlObj.port;
+
+        // Condition 1: Check if the parent is local development (localhost:5173)
+        const isLocalhost = (hostname === 'localhost' || hostname === '127.0.0.1') && port === '5173';
+        
+        // Condition 2: Check if the parent is the production domain
+        const isProdDomain = hostname === '1anchormovies.live' || hostname.endsWith('.1anchormovies.live');
+
+        // If it matches neither, trigger a security breakout block
+        if (!isLocalhost && !isProdDomain) {
           throw new Error();
         }
       } else {
-        // Drop runtime context if parent site hides its referrer token completely
+        // Drop context if the parent site hides its referrer token completely
         throw new Error();
       }
     } catch (e) {
