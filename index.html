@@ -363,22 +363,47 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-// ANTI-INSPECT
+// ANTI-INSPECT (Suspended Safely for Mobile & Local Dev Servers)
 // ══════════════════════════════════════════════════════════
 (function(){
-  document.addEventListener('contextmenu',e=>e.preventDefault());
-  document.addEventListener('keydown',function(e){
-    const k=e.key.toUpperCase();
-    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','U','K'].includes(k))||(e.ctrlKey&&k==='U')||(e.metaKey&&e.altKey&&['I','J','C'].includes(k))){
-      e.preventDefault();e.stopPropagation();return false;
+  // 1. Detect if running on a local testing server
+  const isLocal = window.location.hostname === 'localhost' || 
+                  window.location.hostname === '127.0.0.1' || 
+                  window.location.port === '8080' || 
+                  window.location.port === '5173';
+
+  // 2. Detect if embedded inside an iframe frame context
+  const isFramed = window.self !== window.top;
+
+  // 3. Detect if user is on a mobile layout screen width
+  const isMobileScreen = window.innerWidth <= 768;
+
+  // Shut off anti-inspect entirely if testing locally, framed, or on a mobile screen
+  if (isLocal || isFramed || isMobileScreen) {
+    console.log("🛠️ Protection suspended: Mobile/Dev/Frame view safe-haven unlocked.");
+    return;
+  }
+
+  // Production protections for standard desktop window tabs
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', function(e){
+    const k = e.key.toUpperCase();
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C','U','K'].includes(k)) || (e.ctrlKey && k==='U') || (e.metaKey && e.altKey && ['I','J','C'].includes(k))) {
+      e.preventDefault(); e.stopPropagation(); return false;
     }
-  },true);
-  let _open=false;
-  setInterval(()=>{
-    if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){
-      if(!_open){_open=true;document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#fff;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px">🚫 Developer tools not allowed.<br>Close DevTools to continue.</div>';}
-    }else{_open=false;}
-  },700);
+  }, true);
+  
+  let _open = false;
+  setInterval(() => {
+    if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
+      if (!_open) {
+        _open = true; 
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#fff;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px">🚫 Developer tools not allowed.<br>Close DevTools to continue.</div>';
+      }
+    } else {
+      _open = false;
+    }
+  }, 700);
 })();
 
 // ══════════════════════════════════════════════════════════
