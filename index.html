@@ -1405,14 +1405,31 @@ function toggleSidebar(){
   if(!isOpen && !sbLoaded) sbFetchChannels();
 }
 
-function handleBundleParam(encoded) {
+async function handleBundlePlay(id, name, fallbackUrl) {
+  // For legacy bundles: try to find channel by URL match in fresh data, else use fallback
   try {
-    const data = JSON.parse(dob(decodeURIComponent(encoded)));
-    if (data.channels && data.channels.length > 0) {
-      const first = data.channels[0];
-      loadVideo(first.url, first.name, false, { keyId: first.keyId, key: first.key, cookie: first.cookie });
+    const [r1, r2] = await Promise.allSettled([
+      fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
+      fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
+    ]);
+    let found = null;
+    if (r1.status === 'fulfilled' && r1.value) {
+      const raw = Array.isArray(r1.value) ? r1.value : (r1.value.channels || []);
+      found = raw.find(ch => ch.name === name);
+      if (found) { loadVideo(found.url, found.name, false, { keyId: found.keyId || '', key: found.key || '', cookie: found.cookie || null }); return; }
     }
-  } catch(e) { console.error('Bundle decode failed', e); }
+    if (r2.status === 'fulfilled' && r2.value) {
+      const raw = Array.isArray(r2.value) ? r2.value : (r2.value.channels || []);
+      found = raw.find(ch => ch.channel_name === name);
+      if (found) {
+        let url = found.channel_url || '';
+        if (url.includes('?')) url = url.split('?')[0];
+        loadVideo(url, found.channel_name, false, { keyId: found.keyId || '', key: found.key || '', cookie: found.cookie || null }); return;
+      }
+    }
+  } catch(e) {}
+  // Absolute fallback — use whatever was in the old bundle (will 403 if keys rotated)
+  loadVideo(fallbackUrl, name, false, null);
 }
  
 // ══════════════════════════════════════════════════════
@@ -1508,37 +1525,29 @@ let _lastBundleUrl='';
  
 function generateBundle(){
   if(sbSelected.size===0) return;
- 
-  const base=document.getElementById('playerBaseUrl').value.trim() || window.location.origin+window.location.pathname;
-  const name=document.getElementById('bundleName').value.trim() || 'Channel Bundle';
- 
-  // Build bundle payload: array of selected channel indices with their data
-  const bundle=[];
-  sbSelected.forEach(i=>{
-    const ch=sbChannels[i];
-    bundle.push({
-      name:ch.name,
-      url:ch.url,
-      keyId:ch.keyId||'',
-      key:ch.key||'',
-      cookie:ch.cookie||''
-    });
+
+  const base = document.getElementById('playerBaseUrl').value.trim() 
+               || window.location.origin + window.location.pathname;
+  const name = document.getElementById('bundleName').value.trim() || 'Channel Bundle';
+
+  // CHANGED: store only channel IDs, not URLs/keys
+  const channelIds = [];
+  sbSelected.forEach(i => {
+    const ch = sbChannels[i];
+    channelIds.push(ch.id);           // just the ID
   });
- 
-  // Encode as base64 JSON in the bundle param
-  const payload=JSON.stringify({title:name,channels:bundle});
-  const encoded=obf(payload);
- 
-  // Generate URL that StreamX can decode via the bundle param
-  const finalUrl=`${base}?bundle=${encodeURIComponent(encoded)}`;
-  _lastBundleUrl=finalUrl;
- 
-  document.getElementById('bundleUrlText').textContent=finalUrl;
- 
-  // React embed snippet
-  const snippet=`import StreamXPlayer from './StreamXPlayer';\n\n// Generated bundle — ${name}\n// Channels: ${bundle.map(c=>c.name).join(', ')}\n\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
-  document.getElementById('embedSnippet').textContent=snippet;
-  document.getElementById('bundleResult').style.display='flex';
+
+  const payload = JSON.stringify({ title: name, ids: channelIds });
+  const encoded = obf(payload);
+
+  const finalUrl = `${base}?bundle=${encodeURIComponent(encoded)}`;
+  _lastBundleUrl = finalUrl;
+
+  document.getElementById('bundleUrlText').textContent = finalUrl;
+
+  const snippet = `import StreamXPlayer from './StreamXPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
+  document.getElementById('embedSnippet').textContent = snippet;
+  document.getElementById('bundleResult').style.display = 'flex';
 }
  
 function copyBundleUrl(){
