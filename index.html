@@ -379,9 +379,20 @@
 })();
 
 // ══════════════════════════════════════════════════════════
-// ANTI-INSPECT
+// ANTI-INSPECT (Bypassed automatically on localhost for development)
 // ══════════════════════════════════════════════════════════
 (function(){
+  // Check if running in a local environment
+  const isLocal = window.location.hostname === 'localhost' || 
+                  window.location.hostname === '127.0.0.1' || 
+                  window.location.port === '5173';
+
+  // If local, completely skip anti-inspect logic so dev server works
+  if (isLocal) {
+    console.log("🛠️ Dev mode detected: Anti-Inspect protections suspended.");
+    return;
+  }
+
   document.addEventListener('contextmenu',e=>e.preventDefault());
   document.addEventListener('keydown',function(e){
     const k=e.key.toUpperCase();
@@ -389,6 +400,7 @@
       e.preventDefault();e.stopPropagation();return false;
     }
   },true);
+  
   let _open=false;
   setInterval(()=>{
     if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){
