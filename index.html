@@ -345,10 +345,11 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-// IFRAME DOMAIN PROTECTION (1anchormovies.live & local allowed)
+// IFRAME DOMAIN PROTECTION (Safe Error Handling & Whitelist)
 // ══════════════════════════════════════════════════════════
 (function() {
   if (window.self !== window.top) {
+    let authorized = false;
     try {
       const parentUrl = document.referrer;
       if (parentUrl) {
@@ -357,24 +358,32 @@
         const port = urlObj.port;
         const pathname = urlObj.pathname;
 
-        // Verify clean match for local development domain layout
-        const isLocalhostLive = (hostname === 'localhost' || hostname === '127.0.0.1') && 
-                                port === '5173' && 
-                                (pathname === '/live-cricket-tv' || pathname === '/live-cricket-tv/');
+        // 1. Match local development domain patterns dynamically
+        const isLocalhost = (hostname === 'localhost' || hostname === '127.0.0.1') && port === '5173';
         
-        // Verify corporate destination production URL structures
+        // 2. Match production destination URLs
         const isProdDomain = hostname === '1anchormovies.live' || hostname.endsWith('.1anchormovies.live');
 
-        if (!isLocalhostLive && !isProdDomain) {
-          throw new Error();
+        if (isLocalhost || isProdDomain) {
+          authorized = true;
         }
-      } else {
-        throw new Error();
       }
     } catch (e) {
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#ff4444;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px;font-weight:600;">🚫 Embedding Denied.<br>This player is not authorized to stream on this domain.</div>';
-      window.top.location.href = "https://1anchormovies.live";
-      return;
+      // Cross-origin browser blocks default to unauthorized safely
+      authorized = false;
+    }
+
+    // If verification fails, safely clear the DOM natively without throwing top-level console crashes
+    if (!authorized) {
+      document.documentElement.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background:#000; color:#ff4444; font-family:Inter,sans-serif; text-align:center; padding:20px; box-sizing:border-box;">
+          <span style="font-size:3rem; margin-bottom:10px;">🚫</span>
+          <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:8px; color:#fff;">Embedding Denied</h2>
+          <p style="font-size:0.9rem; color:rgba(255,255,255,0.5); max-width:400px; line-height:1.5;">
+            This player utility is protected and unauthorized to stream layout modules on this destination domain path.
+          </p>
+        </div>
+      `;
     }
   }
 })();
