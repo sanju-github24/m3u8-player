@@ -637,7 +637,13 @@
 
   // 2. Detect if embedded inside an iframe frame context
   const isFramed = window.self !== window.top;
-
+ 
+  // Hide bundle toggle and back button when embedded in an iframe
+  if (isFramed) {
+    const s = document.createElement('style');
+    s.textContent = '#bundleToggle{display:none!important}#backBtn{display:none!important}';
+    document.head.appendChild(s);
+  }
   // 3. Detect if user is on a mobile layout screen width
   const isMobileScreen = window.innerWidth <= 768;
 
@@ -1251,6 +1257,15 @@ function goBack(){
   if(!srcRaw)return;
   const src=dob(srcRaw),title=dob(tRaw||'');
   const drm=(k1&&k2)?{keyId:dob(k1),key:dob(k2),cookie:k3?dob(k3):null}:null;
+  const _lg=q.get('lg')?dob(q.get('lg')):'';
+  if(_lg){
+    const _i=document.createElement('img');
+    _i.src=_lg;_i.alt='';
+    _i.style.cssText='width:26px;height:26px;border-radius:6px;object-fit:cover;flex-shrink:0;';
+    _i.onerror=()=>_i.remove();
+    const _tl=document.querySelector('.top-L');
+    if(_tl)_tl.insertBefore(_i,_tl.querySelector('#vidTitle'));
+  }
   if(src&&sid){
     try{const st=JSON.parse(localStorage.getItem(sKey(sid))||'{}');if(st.ended){loadVideo(src,title,true,drm);showToast('⚠ Session ended — playing directly',3000);return}}catch{}
     loadVideo(src,title,true,drm);
