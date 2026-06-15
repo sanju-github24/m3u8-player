@@ -345,7 +345,7 @@
 
 <script>
 // ══════════════════════════════════════════════════════════
-// IFRAME DOMAIN PROTECTION (1anchormovies.live & localhost allowed)
+// IFRAME DOMAIN PROTECTION (1anchormovies.live & local allowed)
 // ══════════════════════════════════════════════════════════
 (function() {
   if (window.self !== window.top) {
@@ -355,19 +355,20 @@
         const urlObj = new URL(parentUrl);
         const hostname = urlObj.hostname;
         const port = urlObj.port;
+        const pathname = urlObj.pathname;
 
-        // Condition 1: Check if the parent is local development (localhost:5173)
-        const isLocalhost = (hostname === 'localhost' || hostname === '127.0.0.1') && port === '5173';
+        // Verify clean match for local development domain layout
+        const isLocalhostLive = (hostname === 'localhost' || hostname === '127.0.0.1') && 
+                                port === '5173' && 
+                                (pathname === '/live-cricket-tv' || pathname === '/live-cricket-tv/');
         
-        // Condition 2: Check if the parent is the production domain
+        // Verify corporate destination production URL structures
         const isProdDomain = hostname === '1anchormovies.live' || hostname.endsWith('.1anchormovies.live');
 
-        // If it matches neither, trigger a security breakout block
-        if (!isLocalhost && !isProdDomain) {
+        if (!isLocalhostLive && !isProdDomain) {
           throw new Error();
         }
       } else {
-        // Drop context if the parent site hides its referrer token completely
         throw new Error();
       }
     } catch (e) {
@@ -379,15 +380,13 @@
 })();
 
 // ══════════════════════════════════════════════════════════
-// ANTI-INSPECT (Bypassed automatically on localhost for development)
+// ANTI-INSPECT (Bypassed automatically on local framework nodes)
 // ══════════════════════════════════════════════════════════
 (function(){
-  // Check if running in a local environment
   const isLocal = window.location.hostname === 'localhost' || 
                   window.location.hostname === '127.0.0.1' || 
                   window.location.port === '5173';
 
-  // If local, completely skip anti-inspect logic so dev server works
   if (isLocal) {
     console.log("🛠️ Dev mode detected: Anti-Inspect protections suspended.");
     return;
@@ -400,7 +399,6 @@
       e.preventDefault();e.stopPropagation();return false;
     }
   },true);
-  
   let _open=false;
   setInterval(()=>{
     if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){
@@ -482,10 +480,7 @@ urlIn.addEventListener('input',()=>{
 
 // ══════════════════════════════════════════════════════════
 // CHANNEL LOADER
-// Supports both Star Sports JSON and custom worker JSON schemas
 // ══════════════════════════════════════════════════════════
-
-// Source URLs
 const OLD_JSON_URL = 'https://binge-giotv.pages.dev/data/id.json';
 const NEW_JSON_URL = 'https://jtv-proxy.sanjusanjay0444.workers.dev/';
 
@@ -499,7 +494,6 @@ async function fetchChannels(){
   $('playLiveBtn').style.display='none';
 
   try{
-    // Fetch from both endpoints concurrently
     const [resOld, resNew] = await Promise.allSettled([
       fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
       fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
@@ -508,7 +502,6 @@ async function fetchChannels(){
     let normalizedChannels = [];
     let updatedTimestamp = '';
 
-    // Part 1: Process Star Sports Playlist Structure
     if (resOld.status === 'fulfilled' && resOld.value) {
       const jsonOld = resOld.value;
       updatedTimestamp = jsonOld.updatedAt || updatedTimestamp;
@@ -527,13 +520,11 @@ async function fetchChannels(){
       });
     }
 
-    // Part 2: Process New Custom Proxy Structure (Handles embedded queries)
     if (resNew.status === 'fulfilled' && resNew.value) {
       const jsonNew = resNew.value;
       const rawNew = Array.isArray(jsonNew) ? jsonNew : (jsonNew.channels || []);
       
       rawNew.forEach(ch => {
-        // Strip trailing query parameters from url if any to provide a clean base stream manifest path
         let baseMpdUrl = ch.channel_url || '';
         if (baseMpdUrl.includes('?')) {
           baseMpdUrl = baseMpdUrl.split('?')[0];
@@ -1102,7 +1093,7 @@ player.addEventListener('mousemove',()=>{showUI();if(!vid.paused)schedHide()});
 player.addEventListener('mouseleave',()=>{if(!vid.paused)schedHide()});
 document.addEventListener('click',e=>{
   if(!sharePanel.contains(e.target)&&!sessionBadge.contains(e.target)&&!shareBtn.contains(e.target))sharePanel.classList.remove('open');
-  qualMenu.classList.remove('open');speedMenu.classList.remove('open');audioMenu.classList.remove('open');
+  qualMenu.classList.remove('open');speedMenu.classList.open = false; speedMenu.classList.remove('open');audioMenu.classList.remove('open');
 });
 document.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
