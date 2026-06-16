@@ -173,29 +173,25 @@
     #errRetry{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;padding:8px 18px;border-radius:8px;font-size:.8rem;cursor:pointer;font-family:'Inter',sans-serif;margin-top:4px;transition:background .15s}
     #errRetry:hover{background:rgba(255,255,255,.18)}
 
-    /* ══ SMALL DEVICE ADAPTIVE VIEWPORT RULES ══ */
-    @media (max-width: 640px) {
-      #topBar { height: 55px; padding: 0 10px; }
-      #vidTitle { max-width: 140px; font-size: 0.85rem; }
-      #drmBadge, #sessionBadge, #delayLbl { display: none !important; }
-      #bottomArea { padding-bottom: 4px; }
-      #progWrap { margin: 0 10px; padding: 8px 0 4px; }
-      #btmRow { padding: 0 8px 2px; }
-      .ibtn { width: 36px; height: 36px; }
-      .skip-btn { font-size: 0.72rem; padding: 4px; }
-      .skip-btn svg { width: 15px; height: 19px; }
-      #playBtn svg { width: 24px; height: 24px; }
-      #timeLbl { font-size: 0.72rem; padding: 0 2px; }
-      .vol-row { display: none !important; }
-      #speedLbl { font-size: 0.7rem; padding: 4px 6px; }
-      #shareBtn { display: none !important; }
+    /* ══ SMALL DEVICE ══ */
+    @media(max-width:640px){
+      #topBar{height:55px;padding:0 10px}
+      #vidTitle{max-width:140px;font-size:.85rem}
+      #drmBadge,#sessionBadge,#delayLbl{display:none!important}
+      #bottomArea{padding-bottom:4px}
+      #progWrap{margin:0 10px;padding:8px 0 4px}
+      #btmRow{padding:0 8px 2px}
+      .ibtn{width:36px;height:36px}
+      .skip-btn{font-size:.72rem;padding:4px}
+      .skip-btn svg{width:15px;height:19px}
+      #playBtn svg{width:24px;height:24px}
+      #timeLbl{font-size:.72rem;padding:0 2px}
+      .vol-row{display:none!important}
+      #speedLbl{font-size:.7rem;padding:4px 6px}
+      #shareBtn{display:none!important}
     }
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#fff;min-height:100vh}
- 
-    /* ── SIDEBAR TOGGLE BUTTON ── */
+
+    /* ══ SIDEBAR ══ */
     #bundleToggle{
       position:fixed;right:0;top:50%;transform:translateY(-50%);
       background:linear-gradient(135deg,#1fb8ff,#0a7abf);
@@ -208,8 +204,7 @@
     }
     #bundleToggle:hover{background:linear-gradient(135deg,#33c5ff,#1591d4);padding-right:10px}
     #bundleToggle.open{right:380px}
- 
-    /* ── SIDEBAR PANEL ── */
+
     #bundleSidebar{
       position:fixed;right:-390px;top:0;bottom:0;width:380px;
       background:#0d0d15;border-left:1px solid rgba(255,255,255,.08);
@@ -217,157 +212,67 @@
       display:flex;flex-direction:column;overflow:hidden;
     }
     #bundleSidebar.open{right:0}
- 
-    /* Header */
-    .sb-header{
-      padding:20px 20px 16px;
-      border-bottom:1px solid rgba(255,255,255,.07);
-      background:rgba(31,184,255,.05);
-      flex-shrink:0;
-    }
+    .sb-header{padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(31,184,255,.05);flex-shrink:0}
     .sb-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
     .sb-title{font-size:1rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
-    .sb-title-icon{
-      width:28px;height:28px;border-radius:8px;
-      background:rgba(31,184,255,.15);border:1px solid rgba(31,184,255,.3);
-      display:flex;align-items:center;justify-content:center;font-size:.9rem;
-    }
+    .sb-title-icon{width:28px;height:28px;border-radius:8px;background:rgba(31,184,255,.15);border:1px solid rgba(31,184,255,.3);display:flex;align-items:center;justify-content:center;font-size:.9rem}
     .sb-sub{font-size:.73rem;color:rgba(255,255,255,.35);margin-top:2px}
-    .sb-close{
-      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
-      color:rgba(255,255,255,.5);border-radius:6px;padding:5px 8px;
-      cursor:pointer;font-size:.72rem;font-family:'Inter',sans-serif;transition:all .15s;
-    }
+    .sb-close{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);border-radius:6px;padding:5px 8px;cursor:pointer;font-size:.72rem;font-family:'Inter',sans-serif;transition:all .15s}
     .sb-close:hover{background:rgba(255,255,255,.12);color:#fff}
- 
-    /* Scrollable body */
     .sb-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
     .sb-body::-webkit-scrollbar{width:4px}
     .sb-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px}
- 
-    /* Section labels */
     .sb-label{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.28);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
- 
-    /* Bundle name input */
-    .sb-input{
-      width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
-      color:#fff;border-radius:8px;padding:10px 12px;font-size:.85rem;
-      font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;
-    }
+    .sb-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;border-radius:8px;padding:10px 12px;font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
     .sb-input:focus{border-color:rgba(31,184,255,.4)}
     .sb-input::placeholder{color:rgba(255,255,255,.25)}
- 
-    /* Channel list in sidebar */
     .ch-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto}
     .ch-list::-webkit-scrollbar{width:3px}
     .ch-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-    .ch-row{
-      display:flex;align-items:center;gap:10px;padding:8px 10px;
-      border-radius:8px;border:1px solid rgba(255,255,255,.07);
-      background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s;
-    }
+    .ch-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s}
     .ch-row:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12)}
     .ch-row.selected{background:rgba(31,184,255,.08);border-color:rgba(31,184,255,.25)}
     .ch-row-img{width:32px;height:32px;border-radius:6px;object-fit:cover;background:#1a1a1a;flex-shrink:0}
     .ch-row-name{flex:1;font-size:.82rem;color:rgba(255,255,255,.8)}
     .ch-row.selected .ch-row-name{color:#fff}
-    .ch-row-check{
-      width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);
-      display:flex;align-items:center;justify-content:center;font-size:.65rem;
-      flex-shrink:0;transition:all .15s;color:transparent;
-    }
+    .ch-row-check{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;transition:all .15s;color:transparent}
     .ch-row.selected .ch-row-check{background:#1fb8ff;border-color:#1fb8ff;color:#000}
- 
-    /* Select all row */
-    .sel-all-row{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:2px;
-    }
+    .sel-all-row{display:flex;align-items:center;justify-content:space-between;padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:2px}
     .sel-all-lbl{font-size:.78rem;color:rgba(255,255,255,.5)}
-    .sel-all-btn{
-      background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);
-      border-radius:5px;padding:3px 10px;font-size:.72rem;cursor:pointer;
-      font-family:'Inter',sans-serif;transition:all .15s;
-    }
+    .sel-all-btn{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);border-radius:5px;padding:3px 10px;font-size:.72rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
     .sel-all-btn:hover{background:rgba(255,255,255,.08);color:#fff}
- 
-    /* Count badge */
-    .sel-count{
-      display:inline-flex;align-items:center;gap:5px;
-      background:rgba(31,184,255,.12);border:1px solid rgba(31,184,255,.25);
-      border-radius:20px;padding:3px 10px;font-size:.72rem;color:#1fb8ff;font-weight:600;
-    }
+    .sel-count{display:inline-flex;align-items:center;gap:5px;background:rgba(31,184,255,.12);border:1px solid rgba(31,184,255,.25);border-radius:20px;padding:3px 10px;font-size:.72rem;color:#1fb8ff;font-weight:600}
     .sel-count-dot{width:5px;height:5px;border-radius:50%;background:#1fb8ff}
- 
-    /* Generate button */
-    .sb-gen-btn{
-      width:100%;background:linear-gradient(135deg,#1fb8ff,#0a7abf);
-      border:none;border-radius:10px;padding:13px;font-size:.88rem;font-weight:700;
-      color:#fff;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
-    }
+    .sb-gen-btn{width:100%;background:linear-gradient(135deg,#1fb8ff,#0a7abf);border:none;border-radius:10px;padding:13px;font-size:.88rem;font-weight:700;color:#fff;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
     .sb-gen-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 20px rgba(31,184,255,.25)}
     .sb-gen-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
- 
-    /* Generated URL box */
     #bundleResult{display:none;flex-direction:column;gap:10px}
-    .bundle-url-box{
-      background:rgba(255,255,255,.04);border:1px solid rgba(31,184,255,.2);
-      border-radius:8px;padding:10px 12px;
-    }
-    .bundle-url-text{
-      font-size:.72rem;color:rgba(255,255,255,.6);word-break:break-all;line-height:1.6;
-      font-family:monospace;max-height:80px;overflow-y:auto;
-    }
+    .bundle-url-box{background:rgba(255,255,255,.04);border:1px solid rgba(31,184,255,.2);border-radius:8px;padding:10px 12px}
+    .bundle-url-text{font-size:.72rem;color:rgba(255,255,255,.6);word-break:break-all;line-height:1.6;font-family:monospace;max-height:80px;overflow-y:auto}
     .bundle-url-text::-webkit-scrollbar{width:3px}
     .bundle-url-text::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
     .bundle-actions{display:flex;gap:8px}
-    .bundle-copy-btn{
-      flex:1;background:rgba(31,184,255,.12);border:1px solid rgba(31,184,255,.3);
-      color:#1fb8ff;border-radius:8px;padding:9px;font-size:.8rem;font-weight:700;
-      cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;
-    }
+    .bundle-copy-btn{flex:1;background:rgba(31,184,255,.12);border:1px solid rgba(31,184,255,.3);color:#1fb8ff;border-radius:8px;padding:9px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
     .bundle-copy-btn:hover{background:rgba(31,184,255,.2)}
     .bundle-copy-btn.copied{background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.3);color:#4ade80}
-    .bundle-open-btn{
-      flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
-      color:#fff;border-radius:8px;padding:9px;font-size:.8rem;font-weight:700;
-      cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;
-    }
+    .bundle-open-btn{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:9px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
     .bundle-open-btn:hover{background:rgba(255,255,255,.12)}
- 
-    /* Embed code box */
-    .embed-box{
-      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
-      border-radius:8px;padding:12px;
-    }
-    .embed-code{
-      font-family:monospace;font-size:.7rem;color:rgba(255,255,255,.55);
-      line-height:1.7;white-space:pre-wrap;word-break:break-all;
-      max-height:120px;overflow-y:auto;
-    }
+    .embed-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px}
+    .embed-code{font-family:monospace;font-size:.7rem;color:rgba(255,255,255,.55);line-height:1.7;white-space:pre-wrap;word-break:break-all;max-height:120px;overflow-y:auto}
     .embed-code::-webkit-scrollbar{width:3px}
     .embed-code::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-    .embed-copy-btn{
-      margin-top:8px;width:100%;background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);
-      border-radius:6px;padding:7px;font-size:.75rem;font-weight:600;
-      cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;
-    }
+    .embed-copy-btn{margin-top:8px;width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);border-radius:6px;padding:7px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
     .embed-copy-btn:hover{background:rgba(255,255,255,.09);color:#fff}
- 
-    /* Loading / error states */
     .sb-loading{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.35);font-size:.8rem;padding:8px 0}
     .sb-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.1);border-top-color:#1fb8ff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-    @keyframes spin{to{transform:rotate(360deg)}}
     .sb-err{font-size:.78rem;color:rgba(255,100,100,.7);padding:6px 0}
- 
-    /* Footer */
     .sb-footer{padding:12px 20px;border-top:1px solid rgba(255,255,255,.07);flex-shrink:0}
     .sb-footer-note{font-size:.7rem;color:rgba(255,255,255,.2);line-height:1.6;text-align:center}
     .sb-footer-note b{color:rgba(31,184,255,.5)}
- 
-    /* Divider */
     .sb-divider{height:1px;background:rgba(255,255,255,.06)}
+
+    /* permanent badge */
+    .perm-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);border-radius:12px;padding:3px 8px;font-size:.65rem;font-weight:700;color:#4ade80;margin-top:6px}
   </style>
 </head>
 <body>
@@ -380,7 +285,7 @@
   <div class="ls-box">
     <div class="ls-tabs">
       <button class="ls-tab on" id="tabCustom" onclick="switchTab('custom')">🔗 Custom URL</button>
-      <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV — Star Sports</button>
+      <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV</button>
     </div>
 
     <div id="customTab">
@@ -390,7 +295,7 @@
         <div class="drm-hdr">🔑 ClearKey DRM — required for encrypted DASH streams</div>
         <input class="ls-in" id="keyIdIn" placeholder="Key ID (32 hex chars, no dashes)" style="padding:10px 16px;font-size:.82rem;font-family:monospace"/>
         <input class="ls-in" id="keyIn"   placeholder="Key (32 hex chars)"               style="padding:10px 16px;font-size:.82rem;font-family:monospace"/>
-        <input class="ls-in" id="cookieIn" placeholder="Auth cookie value (optional — e.g. __hdnea__=st=...)" style="padding:10px 16px;font-size:.8rem"/>
+        <input class="ls-in" id="cookieIn" placeholder="Auth cookie value (optional)" style="padding:10px 16px;font-size:.8rem"/>
       </div>
       <button class="ls-play" id="playNow">▶  Play</button>
       <div class="ls-div">— Quick demos —</div>
@@ -415,12 +320,11 @@
   </div>
 </div>
 
-<!-- ══ TOGGLE BUTTON ══ -->
+<!-- BUNDLE TOGGLE -->
 <button id="bundleToggle" onclick="toggleSidebar()">📦 BUNDLE</button>
- 
-<!-- ══ SIDEBAR ══ -->
+
+<!-- SIDEBAR -->
 <div id="bundleSidebar">
- 
   <div class="sb-header">
     <div class="sb-header-row">
       <div class="sb-title">
@@ -429,24 +333,20 @@
       </div>
       <button class="sb-close" onclick="toggleSidebar()">✕ Close</button>
     </div>
-    <div class="sb-sub">Generate a single share URL for multiple channels</div>
+    <div class="sb-sub">Generate a permanent share URL for multiple channels</div>
   </div>
- 
+
   <div class="sb-body">
- 
-    <!-- Bundle name -->
     <div>
       <div class="sb-label">Bundle name</div>
       <input class="sb-input" id="bundleName" placeholder="e.g. Star Sports Pack" maxlength="60"/>
     </div>
- 
-    <!-- Base URL of your StreamX player -->
+
     <div>
       <div class="sb-label">StreamX player URL</div>
       <input class="sb-input" id="playerBaseUrl" placeholder="https://your-site.com/streamx.html" value=""/>
     </div>
- 
-    <!-- Channel selector -->
+
     <div>
       <div class="sb-label" style="margin-bottom:8px">Select channels</div>
       <div id="sbChLoading" class="sb-loading"><div class="sb-spin"></div>Loading channels…</div>
@@ -461,43 +361,42 @@
         <div class="ch-list" id="sbChList"></div>
       </div>
     </div>
- 
+
     <div class="sb-divider"></div>
- 
-    <!-- Generate button -->
+
     <button class="sb-gen-btn" id="genBtn" onclick="generateBundle()" disabled>
-      🔗 Generate Bundle URL
+      🔗 Generate Permanent Bundle URL
     </button>
- 
-    <!-- Result area -->
+
     <div id="bundleResult">
-      <div class="sb-label">Bundle URL (paste on your site)</div>
-      <div class="bundle-url-box">
+      <div class="sb-label">Bundle URL</div>
+      <div class="perm-badge">♾ Permanent — keys fetched fresh on every open</div>
+      <div class="bundle-url-box" style="margin-top:6px">
         <div class="bundle-url-text" id="bundleUrlText"></div>
       </div>
       <div class="bundle-actions">
         <button class="bundle-copy-btn" id="bundleCopyBtn" onclick="copyBundleUrl()">📋 Copy URL</button>
         <button class="bundle-open-btn" onclick="openBundleUrl()">↗ Open</button>
       </div>
- 
+
       <div class="sb-divider"></div>
- 
+
       <div class="sb-label">React embed snippet</div>
       <div class="embed-box">
         <div class="embed-code" id="embedSnippet"></div>
         <button class="embed-copy-btn" onclick="copyEmbed()">Copy React snippet</button>
       </div>
     </div>
- 
-  </div><!-- /sb-body -->
- 
+  </div>
+
   <div class="sb-footer">
     <div class="sb-footer-note">
-      Paste the generated URL into the <b>StreamXPlayer</b> React component's <b>src</b> prop on your site.
+      URLs store only channel IDs. <b>Keys are always fetched fresh</b> — links never expire.
     </div>
   </div>
 </div>
 
+<!-- PLAYER -->
 <div id="player" class="show-ui">
   <video id="video" preload="metadata" playsinline></video>
   <div id="clickZone"></div>
@@ -623,65 +522,89 @@
 </div>
 
 <script>
-
-  
 // ══════════════════════════════════════════════════════════
-// ANTI-INSPECT (Suspended Safely for Mobile & Local Dev Servers)
+// ANTI-INSPECT
 // ══════════════════════════════════════════════════════════
 (function(){
-  // 1. Detect if running on a local testing server
-  const isLocal = window.location.hostname === 'localhost' || 
-                  window.location.hostname === '127.0.0.1' || 
-                  window.location.port === '8080' || 
-                  window.location.port === '5173';
-
-  // 2. Detect if embedded inside an iframe frame context
+  const isLocal = ['localhost','127.0.0.1'].includes(location.hostname) || ['8080','5173'].includes(location.port);
   const isFramed = window.self !== window.top;
- 
-  // Hide bundle toggle and back button when embedded in an iframe
-  if (isFramed) {
-    const s = document.createElement('style');
-    s.textContent = '#bundleToggle{display:none!important}#backBtn{display:none!important}';
+  const isMobile = window.innerWidth <= 768;
+  if(isFramed){
+    const s=document.createElement('style');
+    s.textContent='#bundleToggle{display:none!important}#backBtn{display:none!important}';
     document.head.appendChild(s);
   }
-  // 3. Detect if user is on a mobile layout screen width
-  const isMobileScreen = window.innerWidth <= 768;
-
-  // Shut off anti-inspect entirely if testing locally, framed, or on a mobile screen
-  if (isLocal || isFramed || isMobileScreen) {
-    console.log("🛠️ Protection suspended: Mobile/Dev/Frame view safe-haven unlocked.");
-    return;
-  }
-
-  // Production protections for standard desktop window tabs
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', function(e){
-    const k = e.key.toUpperCase();
-    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C','U','K'].includes(k)) || (e.ctrlKey && k==='U') || (e.metaKey && e.altKey && ['I','J','C'].includes(k))) {
-      e.preventDefault(); e.stopPropagation(); return false;
+  if(isLocal||isFramed||isMobile){return;}
+  document.addEventListener('contextmenu',e=>e.preventDefault());
+  document.addEventListener('keydown',function(e){
+    const k=e.key.toUpperCase();
+    if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','U','K'].includes(k))||(e.ctrlKey&&k==='U')||(e.metaKey&&e.altKey&&['I','J','C'].includes(k))){
+      e.preventDefault();e.stopPropagation();return false;
     }
-  }, true);
-  
-  let _open = false;
-  setInterval(() => {
-    if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) {
-      if (!_open) {
-        _open = true; 
-        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#fff;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px">🚫 Developer tools not allowed.<br>Close DevTools to continue.</div>';
-      }
-    } else {
-      _open = false;
-    }
-  }, 700);
+  },true);
+  let _open=false;
+  setInterval(()=>{
+    if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){
+      if(!_open){_open=true;document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#fff;font-family:Inter,sans-serif;font-size:1.1rem;text-align:center;padding:20px">🚫 Developer tools not allowed.<br>Close DevTools to continue.</div>';}
+    }else{_open=false;}
+  },700);
 })();
 
 // ══════════════════════════════════════════════════════════
-// XOR OBFUSCATION (for share URL params)
+// XOR OBFUSCATION
 // ══════════════════════════════════════════════════════════
 const _S='sx2025xjio';
 function _xor(str,k){let r='';for(let i=0;i<str.length;i++)r+=String.fromCharCode(str.charCodeAt(i)^k.charCodeAt(i%k.length));return r;}
 function obf(s){if(!s)return'';try{return btoa(_xor(unescape(encodeURIComponent(s)),_S)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')}catch{return btoa(s)}}
 function dob(s){if(!s)return'';try{let t=s.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return decodeURIComponent(escape(_xor(atob(t),_S)))}catch{try{return atob(s)}catch{return s}}}
+
+// ══════════════════════════════════════════════════════════
+// DATA FEEDS
+// ══════════════════════════════════════════════════════════
+const OLD_JSON_URL = 'https://binge-giotv.pages.dev/data/id.json';
+const NEW_JSON_URL = 'https://jtv-proxy.sanjusanjay0444.workers.dev/';
+
+// Shared channel map populated once feeds are fetched
+let _chMap = null;
+let _chMapPromise = null;
+
+async function getChMap() {
+  if (_chMap) return _chMap;
+  if (_chMapPromise) return _chMapPromise;
+  _chMapPromise = (async () => {
+    const map = {};
+    const [r1, r2] = await Promise.allSettled([
+      fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
+      fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
+    ]);
+    if (r1.status === 'fulfilled' && r1.value) {
+      const raw = Array.isArray(r1.value) ? r1.value : (r1.value.channels || []);
+      raw.forEach(ch => {
+        if (ch.id) map[ch.id] = {
+          id: ch.id, name: ch.name || 'Channel',
+          url: ch.url || '', keyId: ch.keyId || '',
+          key: ch.key || '', cookie: ch.cookie || '',
+          logo: ch.logo || ''
+        };
+      });
+    }
+    if (r2.status === 'fulfilled' && r2.value) {
+      const raw = Array.isArray(r2.value) ? r2.value : (r2.value.channels || []);
+      raw.forEach(ch => {
+        let url = ch.channel_url || '';
+        if (url.includes('?')) url = url.split('?')[0];
+        if (ch.channel_id) map[ch.channel_id] = {
+          id: ch.channel_id, name: ch.channel_name || 'Channel',
+          url, keyId: ch.keyId || '', key: ch.key || '',
+          cookie: ch.cookie || '', logo: ch.channel_logo || ''
+        };
+      });
+    }
+    _chMap = map;
+    return map;
+  })();
+  return _chMapPromise;
+}
 
 // ══════════════════════════════════════════════════════════
 // DOM REFS
@@ -710,20 +633,19 @@ const spGuestNotice=$('spGuestNotice'),spEndedNotice=$('spEndedNotice'),spDesc=$
 const shareBtn=$('shareBtn'),shareBtnTxt=$('shareBtnTxt');
 
 const P={
-  play:'M8 5v14l11-7z',
-  pause:'M6 19h4V5H6v14zm8-14v14h4V5h-4z',
+  play:'M8 5v14l11-7z',pause:'M6 19h4V5H6v14zm8-14v14h4V5h-4z',
   von:'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z',
   voff:'M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z',
   fson:'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z',
   fsoff:'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z',
 };
 
-let hlsInst=null, shakaInst=null;
-let hideT=null, drag=false, toastT=null;
+let hlsInst=null,shakaInst=null;
+let hideT=null,drag=false,toastT=null;
 let isLiveStream=false;
-let _edgeCache=0, _edgeTS=0, _jumping=false;
-const LIVE_THRESH=12, DELAY_SHOW=6;
-let _lastUrl=null, _lastTitle=null, _lastDrm=null;
+let _edgeCache=0,_edgeTS=0,_jumping=false;
+const LIVE_THRESH=12,DELAY_SHOW=6;
+let _lastUrl=null,_lastTitle=null,_lastDrm=null;
 
 function fmt(s){if(!s||isNaN(s))return'0:00';const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=Math.floor(s%60);return h?`${h}:${pad(m)}:${pad(sc)}`:`${m}:${pad(sc)}`}
 function pad(n){return String(n).padStart(2,'0')}
@@ -738,7 +660,7 @@ function switchTab(t){
   $('tabLive').classList.toggle('on',t==='live');
   $('customTab').style.display=t==='custom'?'flex':'none';
   $('liveTvTab').style.display=t==='live'?'flex':'none';
-  if(t==='live'&&!channelsLoaded) fetchChannels();
+  if(t==='live'&&!channelsLoaded)fetchChannels();
 }
 urlIn.addEventListener('input',()=>{
   const v=urlIn.value;
@@ -747,12 +669,9 @@ urlIn.addEventListener('input',()=>{
 });
 
 // ══════════════════════════════════════════════════════════
-// CHANNEL LOADER
+// CHANNEL LOADER (Live TV tab)
 // ══════════════════════════════════════════════════════════
-const OLD_JSON_URL = 'https://binge-giotv.pages.dev/data/id.json';
-const NEW_JSON_URL = 'https://jtv-proxy.sanjusanjay0444.workers.dev/';
-
-let channelsData=[], selectedChIdx=-1, channelsLoaded=false;
+let channelsData=[],selectedChIdx=-1,channelsLoaded=false;
 
 async function fetchChannels(){
   $('chLoading').style.display='flex';
@@ -760,72 +679,18 @@ async function fetchChannels(){
   $('chGrid').style.display='none';
   $('chUpdated').style.display='none';
   $('playLiveBtn').style.display='none';
-
   try{
-    const [resOld, resNew] = await Promise.allSettled([
-      fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
-      fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
-    ]);
-
-    let normalizedChannels = [];
-    let updatedTimestamp = '';
-
-    if (resOld.status === 'fulfilled' && resOld.value) {
-      const jsonOld = resOld.value;
-      updatedTimestamp = jsonOld.updatedAt || updatedTimestamp;
-      const rawOld = Array.isArray(jsonOld) ? jsonOld : (jsonOld.channels || []);
-      
-      rawOld.forEach(ch => {
-        normalizedChannels.push({
-          id:     ch.id || '',
-          name:   ch.name || 'Unknown Channel',
-          url:    ch.url || '', 
-          cookie: ch.cookie || '', 
-          keyId:  ch.keyId || '',
-          key:    ch.key || '',
-          logo:   ch.logo || '',
-        });
-      });
-    }
-
-    if (resNew.status === 'fulfilled' && resNew.value) {
-      const jsonNew = resNew.value;
-      const rawNew = Array.isArray(jsonNew) ? jsonNew : (jsonNew.channels || []);
-      
-      rawNew.forEach(ch => {
-        let baseMpdUrl = ch.channel_url || '';
-        if (baseMpdUrl.includes('?')) {
-          baseMpdUrl = baseMpdUrl.split('?')[0];
-        }
-
-        normalizedChannels.push({
-          id:     ch.channel_id || '',
-          name:   ch.channel_name || 'Unknown Channel',
-          url:    baseMpdUrl,
-          cookie: ch.cookie || '',
-          keyId:  ch.keyId || '',
-          key:    ch.key || '',
-          logo:   ch.channel_logo || '',
-        });
-      });
-    }
-
-    if (normalizedChannels.length === 0) throw new Error('No data retrieved from endpoints');
-
-    channelsData = normalizedChannels;
+    const map = await getChMap();
+    const chs = Object.values(map);
+    if(!chs.length) throw new Error('No channels');
+    channelsData = chs;
     channelsLoaded = true;
-    $('chLoading').style.display = 'none';
+    $('chLoading').style.display='none';
     renderChannelGrid();
-
-    if (updatedTimestamp) {
-      $('chUpdated').innerHTML = `🕐 Keys updated: <b>${updatedTimestamp}</b>`;
-      $('chUpdated').style.display = 'block';
-    }
-
   }catch(e){
     $('chLoading').style.display='none';
     $('chErr').style.display='block';
-    console.error('fetchChannels error:', e);
+    console.error('fetchChannels error:',e);
   }
 }
 
@@ -839,8 +704,7 @@ function renderChannelGrid(){
       <img class="ch-logo" src="${ch.logo}" alt="${ch.name}"
         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 44 44%22><rect width=%2244%22 height=%2244%22 fill=%22%231a1a1a%22/><text x=%2222%22 y=%2228%22 text-anchor=%22middle%22 fill=%22%23444%22 font-size=%2214%22>📺</text></svg>'">
       <span class="ch-name">${ch.name}</span>
-      <span class="ch-tag">🔒 HD</span>
-    `;
+      <span class="ch-tag">🔒 HD</span>`;
     card.onclick=()=>selectChannel(i);
     grid.appendChild(card);
   });
@@ -852,25 +716,98 @@ function selectChannel(idx){
   document.querySelectorAll('.ch-card').forEach((c,i)=>c.classList.toggle('sel',i===idx));
   selectedChIdx=idx;
   const btn=$('playLiveBtn');
-  btn.style.opacity='1';
-  btn.style.cursor='pointer';
+  btn.style.opacity='1';btn.style.cursor='pointer';
   btn.textContent='▶  Play: '+channelsData[idx].name;
 }
 
 function playSelectedLive(){
   if(selectedChIdx<0){showToast('Select a channel first');return;}
   const ch=channelsData[selectedChIdx];
-  loadVideo(ch.url, ch.name, false, {
-    keyId:  ch.keyId,
-    key:    ch.key,
-    cookie: ch.cookie,
-  });
+  loadVideo(ch.url,ch.name,false,{keyId:ch.keyId,key:ch.key,cookie:ch.cookie});
+}
+
+// ══════════════════════════════════════════════════════════
+// BUNDLE URL HANDLER — permanent link (IDs only)
+// ══════════════════════════════════════════════════════════
+async function handleBundleParam(bundleRaw){
+  try{
+    const decoded = JSON.parse(dob(decodeURIComponent(bundleRaw)));
+    if(!decoded) throw new Error('Decode failed');
+
+    // ── NEW format: { title, ids: [...] } — PERMANENT ──
+    if(decoded.ids && decoded.ids.length > 0){
+      showToast('⏳ Loading bundle…',3000);
+      LS.style.display='flex';
+      let map;
+      try{ map = await getChMap(); }
+      catch(e){ throw new Error('Could not fetch channel feed: '+e.message); }
+
+      const resolved = decoded.ids.map(id=>map[id]).filter(Boolean);
+      if(!resolved.length){
+        errMsg.textContent='No channels found. Feed may have changed.';
+        err.style.display='flex';
+        return;
+      }
+      renderBundleChannels({title:decoded.title, channels:resolved});
+      return;
+    }
+
+    // ── LEGACY format: { title, channels: [...] } ──
+    // Still works but keys may have rotated — we try to refresh by name match
+    if(decoded.channels && decoded.channels.length > 0){
+      showToast('⏳ Loading bundle…',2000);
+      LS.style.display='flex';
+      // Try to refresh keys from live feed by name match
+      let map = {};
+      try{ map = await getChMap(); }catch{}
+
+      const nameMap = {};
+      Object.values(map).forEach(ch=>{ nameMap[ch.name] = ch; });
+
+      const refreshed = decoded.channels.map(ch=>{
+        const live = nameMap[ch.name];
+        if(live) return live; // use fresh keys
+        return ch;            // fallback to baked-in (may be stale)
+      });
+      renderBundleChannels({title:decoded.title, channels:refreshed});
+      return;
+    }
+
+    errMsg.textContent='Bundle is empty or invalid.';
+    err.style.display='flex';
+
+  }catch(e){
+    console.error('Bundle param error:',e);
+    errMsg.textContent='Invalid bundle URL: '+e.message;
+    err.style.display='flex';
+  }
+}
+
+function renderBundleChannels(bundle){
+  channelsData = bundle.channels.map(ch=>({
+    id:     ch.id     || ch.name,
+    name:   ch.name,
+    url:    ch.url,
+    keyId:  ch.keyId  || '',
+    key:    ch.key    || '',
+    cookie: ch.cookie || '',
+    logo:   ch.logo   || '',
+  }));
+  channelsLoaded = true;
+  switchTab('live');
+  $('chLoading').style.display='none';
+  $('chErr').style.display='none';
+  renderChannelGrid();
+  $('chUpdated').innerHTML=`📦 Bundle: <b>${bundle.title||'Channels'}</b> — ${channelsData.length} channels`;
+  $('chUpdated').style.display='block';
+  $('tabLive').textContent=`📺 ${bundle.title||'Bundle'}`;
+  LS.style.display='flex';
 }
 
 // ══════════════════════════════════════════════════════════
 // SESSION SYSTEM
 // ══════════════════════════════════════════════════════════
-let SID=null, SROLE=null, SSTART=null, SURL=null, STITLE=null, SDRM=null, SCHID=null;
+let SID=null,SROLE=null,SSTART=null,SURL=null,STITLE=null,SDRM=null,SCHID=null;
 let _hbT=null,_pollT=null,_ageT=null,_guestPingT=null;
 const STTL=8000;
 function genId(){return Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4)}
@@ -880,56 +817,55 @@ function getVC(){let c=1;try{const p=`sx_v_${SID}_`;for(let i=0;i<localStorage.l
 const _gk={};
 function guestPing(){if(!SID||SROLE!=='guest')return;if(!_gk.k)_gk.k=`sx_v_${SID}_${genId()}`;try{localStorage.setItem(_gk.k,JSON.stringify({ts:Date.now()}))}catch{}}
 
-function startHostSession(url, title, drm) {
-  SID = genId(); SROLE = 'host'; SSTART = Date.now();
-  SURL = url; STITLE = title || ''; SDRM = drm || null;
+async function startHostSession(url,title,drm){
+  SID=genId();SROLE='host';SSTART=Date.now();
+  SURL=url;STITLE=title||'';SDRM=drm||null;
 
-  // Find matching channel ID from loaded data so the share URL stays permanent
-  let channelId = null;
-  if (channelsData && channelsData.length > 0) {
-    const match = channelsData.find(ch => {
-      const chBase = ch.url.split('?')[0];
-      const urlBase = url.split('?')[0];
-      return chBase === urlBase || ch.name === title;
+  // Find channel ID for permanent share link
+  let channelId=null;
+  try{
+    const map=await getChMap();
+    const match=Object.values(map).find(ch=>{
+      const chBase=ch.url.split('?')[0];
+      const uBase=url.split('?')[0];
+      return chBase===uBase||ch.name===title;
     });
-    if (match) channelId = match.id;
-  }
+    if(match)channelId=match.id;
+  }catch{}
+  SCHID=channelId;
 
-  SCHID = channelId; // store for hash building
-
-  try { localStorage.setItem(sKey(SID), hostState()) } catch {}
+  try{localStorage.setItem(sKey(SID),hostState())}catch{}
   clearInterval(_hbT);
-  _hbT = setInterval(() => {
-    try { localStorage.setItem(sKey(SID), hostState()) } catch {}
+  _hbT=setInterval(()=>{
+    try{localStorage.setItem(sKey(SID),hostState())}catch{}
     updateSharePanel();
-  }, 4000);
+  },4000);
+  history.replaceState(null,'',buildHash(SID,url,title,drm,channelId));
+  showSessUI('host');updateSharePanel();startAge();
+}
 
-  history.replaceState(null, '', buildHash(SID, url, title, drm, channelId));
-  showSessUI('host'); updateSharePanel(); startAge();
-}
-function buildHash(id, url, title, drm, channelId) {
-  const p = new URLSearchParams({ sid: id });
-  
-  if (channelId) {
-    // Permanent: store only the channel ID — keys fetched fresh at join time
-    p.set('chid', obf(channelId));
-    p.set('t', obf(title || ''));
-  } else {
-    // Fallback for custom URLs with no channel match
-    p.set('src', obf(url));
-    p.set('t', obf(title || ''));
-    if (drm && drm.keyId) p.set('k1', obf(drm.keyId));
-    if (drm && drm.key)   p.set('k2', obf(drm.key));
-    if (drm && drm.cookie) p.set('k3', obf(drm.cookie));
+function buildHash(id,url,title,drm,channelId){
+  const p=new URLSearchParams({sid:id});
+  if(channelId){
+    p.set('chid',obf(channelId));
+    p.set('t',obf(title||''));
+  }else{
+    p.set('src',obf(url));
+    p.set('t',obf(title||''));
+    if(drm&&drm.keyId)p.set('k1',obf(drm.keyId));
+    if(drm&&drm.key)p.set('k2',obf(drm.key));
+    if(drm&&drm.cookie)p.set('k3',obf(drm.cookie));
   }
-  return `${location.pathname}?${p}`;
+  return`${location.pathname}?${p}`;
 }
+
 function endHostSession(){
   if(SROLE!=='host'||!SID)return;
   try{localStorage.setItem(sKey(SID),JSON.stringify({ended:true,ts:Date.now()}));setTimeout(()=>{try{localStorage.removeItem(sKey(SID))}catch{}},30000)}catch{}
   clearInterval(_hbT);clearInterval(_ageT);
   SROLE=null;history.replaceState(null,'',location.pathname);hideSessUI();
 }
+
 function joinAsGuest(id,url,title,drm){
   SID=id;SROLE='guest';SSTART=Date.now();SURL=url;STITLE=title||'';SDRM=drm||null;
   _gk.k=null;
@@ -937,6 +873,7 @@ function joinAsGuest(id,url,title,drm){
   clearInterval(_guestPingT);_guestPingT=setInterval(guestPing,5000);guestPing();
   showSessUI('guest');updateSharePanel();startAge();pollHost();
 }
+
 function pollHost(){
   if(!SID||SROLE!=='guest')return;
   try{
@@ -951,6 +888,7 @@ function pollHost(){
     spStatus.textContent=s.live?'🔴 Live':'▶ Playing';
   }catch{}
 }
+
 function onSessEnd(){
   clearInterval(_pollT);clearInterval(_guestPingT);clearInterval(_ageT);
   vid.pause();
@@ -959,22 +897,27 @@ function onSessEnd(){
   sessionBadge.style.display='flex';sessionBadge.className='guest';sessionBadgeTxt.textContent='Session ended';
   sharePanel.classList.add('open');showUI();showToast('⛔ Session ended',3000);
 }
+
 function showSessUI(r){sessionBadge.style.display='flex';sessionBadge.className=r;shareBtn.style.display='flex';if(r==='host'){sessionBadgeTxt.textContent='Sharing';shareBtnTxt.textContent='Session'}else{sessionBadgeTxt.textContent='Joined';shareBtnTxt.textContent='Joined'}}
 function hideSessUI(){sessionBadge.style.display='none';shareBtn.style.display='none';sharePanel.classList.remove('open')}
 function startAge(){clearInterval(_ageT);_ageT=setInterval(()=>{if(!SSTART)return;const s=Math.floor((Date.now()-SSTART)/1000);spSessionAge.textContent=s<60?s+'s':Math.floor(s/60)+'m '+s%60+'s'},1000)}
-function updateSharePanel() {
-  if (!SID) return;
-  shareUrlInput.value = location.origin + buildHash(SID, SURL, STITLE, SDRM, SCHID);
+
+function updateSharePanel(){
+  if(!SID)return;
+  shareUrlInput.value=location.origin+buildHash(SID,SURL,STITLE,SDRM,SCHID);
   if(SROLE==='host'){spViewers.textContent=getVC();spStatus.textContent=isLiveStream?'🔴 Live':'▶ Playing';spGuestNotice.style.display='none';spEndedNotice.style.display='none';spDesc.style.display='block'}
   else{spGuestNotice.style.display='block';spDesc.style.display='none'}
 }
+
 function toggleSharePanel(){if(sharePanel.classList.contains('open')){sharePanel.classList.remove('open')}else{updateSharePanel();sharePanel.classList.add('open');showUI()}}
 function closeSharePanel(){sharePanel.classList.remove('open')}
+
 function copyShareUrl(){
   navigator.clipboard.writeText(shareUrlInput.value)
     .then(()=>{spCopyBtn.textContent='Copied!';spCopyBtn.classList.add('copied');setTimeout(()=>{spCopyBtn.textContent='Copy';spCopyBtn.classList.remove('copied')},2000)})
     .catch(()=>{shareUrlInput.select();document.execCommand('copy');spCopyBtn.textContent='Copied!';setTimeout(()=>spCopyBtn.textContent='Copy',2000)});
 }
+
 window.addEventListener('beforeunload',()=>{
   if(SROLE==='host')endHostSession();
   if(SROLE==='guest'&&_gk.k){try{localStorage.removeItem(_gk.k)}catch{}}
@@ -998,10 +941,7 @@ function detectLive(){
 function getLiveEdge(){
   if(shakaInst){
     const now=Date.now();
-    if(now-_edgeTS>2000){
-      const sk=vid.seekable;
-      if(sk&&sk.length>0){_edgeCache=sk.end(sk.length-1);_edgeTS=now;}
-    }
+    if(now-_edgeTS>2000){const sk=vid.seekable;if(sk&&sk.length>0){_edgeCache=sk.end(sk.length-1);_edgeTS=now;}}
     return _edgeCache||0;
   }
   if(hlsInst&&hlsInst.liveSyncPosition)return hlsInst.liveSyncPosition;
@@ -1021,6 +961,7 @@ function jumpToLive(){
   showToast('▶ Jumped to live');
   setTimeout(()=>{_jumping=false;updateLiveBadge();},1200);
 }
+
 function updateLiveBadge(){
   if(!isLiveStream){liveBadge.style.display='none';delayLbl.style.display='none';progFill.classList.remove('live-fill');return}
   liveBadge.style.display='flex';progFill.classList.add('live-fill');
@@ -1031,6 +972,7 @@ function updateLiveBadge(){
   if(!atLive&&delay>DELAY_SHOW){delayLbl.style.display='inline';delayLbl.textContent=`-${Math.min(Math.round(delay),999)}s`}
   else{delayLbl.style.display='none'}
 }
+
 function updateLiveProgress(){
   if(!isLiveStream||drag)return;
   const sk=vid.seekable;
@@ -1073,13 +1015,13 @@ async function loadVideo(url,title,asGuest=false,drm=null){
   vidTitle.textContent=title||'Now Playing';
 
   const isDash=url.includes('.mpd')||url.includes('/mpd')||url.includes('WDVLive');
-  const isHLS =!isDash&&(url.includes('.m3u8')||url.includes('/hls')||url.includes('playlist'));
+  const isHLS=!isDash&&(url.includes('.m3u8')||url.includes('/hls')||url.includes('playlist'));
 
   LS.style.display='none';
 
-  if(isDash)      { await loadShaka(url,title,drm); }
-  else if(isHLS)  { loadHLS(url); }
-  else            { vid.src=url; vid.play().catch(()=>{}); }
+  if(isDash){await loadShaka(url,title,drm);}
+  else if(isHLS){loadHLS(url);}
+  else{vid.src=url;vid.play().catch(()=>{});}
 
   if(!asGuest){endHostSession();startHostSession(url,title||'',drm);}
 }
@@ -1099,57 +1041,32 @@ async function loadShaka(url,title,drm){
     errMsg.textContent='DASH not supported. Please use Chrome or Edge.';
     err.style.display='flex';return;
   }
-
   shakaInst=new shaka.Player(vid);
-
   const cfg={
-    streaming:{
-      bufferingGoal:12,
-      rebufferingGoal:3,
-      retryParameters:{maxAttempts:6,baseDelay:800,backoffFactor:2},
-      bufferBehind:60,
-      ignoreTextStreamFailures:true,
-    },
-    manifest:{
-      retryParameters:{maxAttempts:6,baseDelay:800},
-    },
+    streaming:{bufferingGoal:12,rebufferingGoal:3,retryParameters:{maxAttempts:6,baseDelay:800,backoffFactor:2},bufferBehind:60,ignoreTextStreamFailures:true},
+    manifest:{retryParameters:{maxAttempts:6,baseDelay:800}},
     abr:{enabled:true},
   };
-
   if(drm&&drm.keyId&&drm.key){
     cfg.drm={clearKeys:{[drm.keyId.toLowerCase()]:drm.key.toLowerCase()}};
     drmBadge.style.display='flex';
   }
-
   shakaInst.configure(cfg);
-
   if(drm&&drm.cookie){
-    const rawVal = drm.cookie.startsWith('__hdnea__=')
-      ? drm.cookie.slice('__hdnea__='.length)
-      : drm.cookie;
-
+    const rawVal=drm.cookie.startsWith('__hdnea__=')?drm.cookie.slice('__hdnea__='.length):drm.cookie;
     shakaInst.getNetworkingEngine().registerRequestFilter((type,request)=>{
-      request.uris = request.uris.map(uri=>{
-        const isJio = uri.includes('jiotvpllive.cdn.jio.com')
-                   || uri.includes('jiotvmblive.cdn.jio.com')
-                   || uri.includes('cdn.jio.com');
-        if(isJio && !uri.includes('__hdnea__')){
-          return uri + (uri.includes('?')?'&':'?') + '__hdnea__=' + rawVal;
-        }
+      request.uris=request.uris.map(uri=>{
+        const isJio=uri.includes('jiotvpllive.cdn.jio.com')||uri.includes('jiotvmblive.cdn.jio.com')||uri.includes('cdn.jio.com');
+        if(isJio&&!uri.includes('__hdnea__')){return uri+(uri.includes('?')?'&':'?')+'__hdnea__='+rawVal;}
         return uri;
       });
     });
   }
-
   shakaInst.addEventListener('error',ev=>{
-    const ec=ev.detail;
-    spin.classList.remove('on');
+    const ec=ev.detail;spin.classList.remove('on');
     const msg=`Error ${ec.code}${ec.data&&ec.data[0]?' — '+String(ec.data[0]).slice(0,80):''}`;
-    errMsg.textContent=msg;
-    err.style.display='flex';
-    showToast('⚠ '+msg,3000);
+    errMsg.textContent=msg;err.style.display='flex';showToast('⚠ '+msg,3000);
   });
-
   shakaInst.addEventListener('streaming',()=>{
     if(shakaInst.isLive()){
       isLiveStream=true;
@@ -1158,24 +1075,16 @@ async function loadShaka(url,title,drm){
       updateLiveBadge();timeLbl.textContent='LIVE';
     }
   });
-
   spin.classList.add('on');
   try{
     await shakaInst.load(url);
     vid.play().catch(()=>{});
-
     const live=shakaInst.isLive();
     if(live){
       isLiveStream=true;
       const sk=vid.seekable;
-      if(sk&&sk.length>0){
-        const edge=sk.end(sk.length-1);
-        _edgeCache=edge;_edgeTS=Date.now();
-        vid.currentTime=Math.max(0,edge-2);
-      }
-      updateLiveBadge();
-      showToast('🔴 Live — '+title,2000);
-
+      if(sk&&sk.length>0){const edge=sk.end(sk.length-1);_edgeCache=edge;_edgeTS=Date.now();vid.currentTime=Math.max(0,edge-2);}
+      updateLiveBadge();showToast('🔴 Live — '+title,2000);
       const _ep=setInterval(()=>{
         if(!shakaInst){clearInterval(_ep);return}
         const sk2=vid.seekable;
@@ -1183,19 +1092,14 @@ async function loadShaka(url,title,drm){
         updateLiveBadge();
       },5000);
     }
-
     buildShakaQual();
-
   }catch(e){
     spin.classList.remove('on');
     const msg=e.message||'Failed to load DASH stream';
-    errMsg.textContent=msg;
-    err.style.display='flex';
-    console.error('Shaka load error:',e);
+    errMsg.textContent=msg;err.style.display='flex';console.error('Shaka load error:',e);
   }
 }
 
-// build quality list helper
 function buildShakaQual(){
   if(!shakaInst)return;
   const tracks=shakaInst.getVariantTracks().sort((a,b)=>b.height-a.height);
@@ -1204,29 +1108,19 @@ function buildShakaQual(){
   const auto=document.createElement('div');
   auto.className='ditem on';
   auto.innerHTML='Auto<span class="chk">✓</span>';
-  auto.onclick=()=>{
-    shakaInst.configure({abr:{enabled:true}});
-    qualMenu.querySelectorAll('.ditem').forEach(el=>el.classList.toggle('on',el===auto));
-    qualMenu.classList.remove('open');qualLbl.textContent='Auto';showToast('Quality: Auto');
-  };
+  auto.onclick=()=>{shakaInst.configure({abr:{enabled:true}});qualMenu.querySelectorAll('.ditem').forEach(el=>el.classList.toggle('on',el===auto));qualMenu.classList.remove('open');qualLbl.textContent='Auto';showToast('Quality: Auto')};
   qualMenu.appendChild(auto);
   tracks.forEach(t=>{
-    const el=document.createElement('div');
-    el.className='ditem';
+    const el=document.createElement('div');el.className='ditem';
     const lb=t.height?t.height+'p':(t.bandwidth?Math.round(t.bandwidth/1000)+'kbps':'Track '+t.id);
     el.innerHTML=`${lb}<span class="chk">✓</span>`;
-    el.onclick=()=>{
-      shakaInst.configure({abr:{enabled:false}});
-      shakaInst.selectVariantTrack(t,true);
-      qualMenu.querySelectorAll('.ditem').forEach(x=>x.classList.toggle('on',x===el));
-      qualMenu.classList.remove('open');qualLbl.textContent=lb;showToast('Quality: '+lb);
-    };
+    el.onclick=()=>{shakaInst.configure({abr:{enabled:false}});shakaInst.selectVariantTrack(t,true);qualMenu.querySelectorAll('.ditem').forEach(x=>x.classList.toggle('on',x===el));qualMenu.classList.remove('open');qualLbl.textContent=lb;showToast('Quality: '+lb)};
     qualMenu.appendChild(el);
   });
 }
 
 // ══════════════════════════════════════════════════════════
-// HLS via hls.js
+// HLS
 // ══════════════════════════════════════════════════════════
 function loadHLS(url){
   if(Hls.isSupported()){
@@ -1248,17 +1142,14 @@ function loadHLS(url){
 
 function tryDemo(url,title){urlIn.value=url;titIn.value=title;drmFields.style.display='none';loadVideo(url,title)}
 
-playNow.addEventListener('click', granularityPlayback);
+playNow.addEventListener('click',granularityPlayback);
 function granularityPlayback(){
   const url=urlIn.value.trim();
   if(!url){urlIn.style.borderColor='#ff4757';return}
   urlIn.style.borderColor='';
   const isDash=url.includes('.mpd')||url.includes('/mpd')||url.includes('WDVLive');
   let drm=null;
-  if(isDash){
-    const kid=keyIdIn.value.trim(),k=keyIn.value.trim(),ck=cookieIn.value.trim();
-    if(kid&&k) drm={keyId:kid,key:k,cookie:ck||null};
-  }
+  if(isDash){const kid=keyIdIn.value.trim(),k=keyIn.value.trim(),ck=cookieIn.value.trim();if(kid&&k)drm={keyId:kid,key:k,cookie:ck||null};}
   loadVideo(url,titIn.value.trim(),false,drm);
 }
 urlIn.addEventListener('keydown',e=>{if(e.key==='Enter')playNow.click()});
@@ -1275,96 +1166,60 @@ function goBack(){
 }
 
 // ══════════════════════════════════════════════════════════
-// URL PARAMS
+// URL PARAMS — entry point
 // ══════════════════════════════════════════════════════════
-(async function checkParams() {
-  const q = new URLSearchParams(location.search);
-  const bundleRaw = q.get('bundle');
-  if (bundleRaw) { handleBundleParam(bundleRaw); return; }
+(async function checkParams(){
+  const q=new URLSearchParams(location.search);
 
-  const sid   = q.get('sid');
-  const chid  = q.get('chid');   // NEW: permanent channel ID path
-  const srcRaw = q.get('src');
-  const tRaw  = q.get('t');
-  const k1 = q.get('k1'), k2 = q.get('k2'), k3 = q.get('k3');
+  // ── BUNDLE param ──
+  const bundleRaw=q.get('bundle');
+  if(bundleRaw){await handleBundleParam(bundleRaw);return;}
 
-  if (!chid && !srcRaw) return;
+  // ── SESSION / CHANNEL params ──
+  const sid=q.get('sid');
+  const chid=q.get('chid');
+  const srcRaw=q.get('src');
+  const tRaw=q.get('t');
+  const k1=q.get('k1'),k2=q.get('k2'),k3=q.get('k3');
 
-  if (chid) {
-    // Permanent share: resolve channel ID → fresh keys
-    const channelId = dob(chid);
-    const title     = dob(tRaw || '');
-    showToast('⏳ Fetching stream…', 3000);
+  if(!chid&&!srcRaw)return;
 
-    try {
-      const [r1, r2] = await Promise.allSettled([
-        fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
-        fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
-      ]);
-
-      const chMap = {};
-      if (r1.status === 'fulfilled' && r1.value) {
-        const raw = Array.isArray(r1.value) ? r1.value : (r1.value.channels || []);
-        raw.forEach(ch => {
-          if (ch.id) chMap[ch.id] = { name: ch.name, url: ch.url, keyId: ch.keyId || '', key: ch.key || '', cookie: ch.cookie || '' };
-        });
+  if(chid){
+    const channelId=dob(chid);
+    const title=dob(tRaw||'');
+    showToast('⏳ Fetching stream…',3000);
+    try{
+      const map=await getChMap();
+      const ch=map[channelId];
+      if(!ch||!ch.url)throw new Error('Channel not found in feed');
+      const drm=(ch.keyId&&ch.key)?{keyId:ch.keyId,key:ch.key,cookie:ch.cookie||null}:null;
+      if(sid){
+        try{const st=JSON.parse(localStorage.getItem(sKey(sid))||'{}');if(st.ended){loadVideo(ch.url,ch.name,true,drm);showToast('⚠ Session ended — playing directly',3000);return;}}catch{}
+        loadVideo(ch.url,ch.name,true,drm);
+        setTimeout(()=>joinAsGuest(sid,ch.url,ch.name,drm),600);
+        showToast('👀 Joining shared session…',2500);
+      }else{
+        loadVideo(ch.url,ch.name,false,drm);
       }
-      if (r2.status === 'fulfilled' && r2.value) {
-        const raw = Array.isArray(r2.value) ? r2.value : (r2.value.channels || []);
-        raw.forEach(ch => {
-          let url = ch.channel_url || '';
-          if (url.includes('?')) url = url.split('?')[0];
-          if (ch.channel_id) chMap[ch.channel_id] = { name: ch.channel_name, url, keyId: ch.keyId || '', key: ch.key || '', cookie: ch.cookie || '' };
-        });
-      }
-
-      const ch = chMap[channelId];
-      if (!ch || !ch.url) throw new Error('Channel not found in feed');
-
-      const drm = (ch.keyId && ch.key)
-        ? { keyId: ch.keyId, key: ch.key, cookie: ch.cookie || null }
-        : null;
-
-      if (sid) {
-        // Guest joining a live session
-        try {
-          const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}');
-          if (st.ended) {
-            loadVideo(ch.url, ch.name, true, drm);
-            showToast('⚠ Session ended — playing directly', 3000);
-            return;
-          }
-        } catch {}
-        loadVideo(ch.url, ch.name, true, drm);
-        setTimeout(() => joinAsGuest(sid, ch.url, ch.name, drm), 600);
-        showToast('👀 Joining shared session…', 2500);
-      } else {
-        loadVideo(ch.url, ch.name, false, drm);
-      }
-
-    } catch(e) {
-      console.error('chid resolve failed', e);
-      errMsg.textContent = 'Could not load channel. Feed may have changed. ' + (e.message || '');
-      err.style.display = 'flex';
+    }catch(e){
+      console.error('chid resolve failed',e);
+      errMsg.textContent='Could not load channel. '+e.message;
+      err.style.display='flex';
     }
     return;
   }
 
-  // Legacy path: src + optional DRM keys baked in
-  const src   = dob(srcRaw);
-  const title = dob(tRaw || '');
-  const drm   = (k1 && k2) ? { keyId: dob(k1), key: dob(k2), cookie: k3 ? dob(k3) : null } : null;
-
-  if (src && sid) {
-    try {
-      const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}');
-      if (st.ended) { loadVideo(src, title, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; }
-    } catch {}
-    loadVideo(src, title, true, drm);
-    setTimeout(() => joinAsGuest(sid, src, title, drm), 600);
-    showToast('👀 Joining shared session…', 2500);
-  } else if (src) {
-    loadVideo(src, title, false, drm);
+  // Legacy src path
+  const src=dob(srcRaw);
+  const title=dob(tRaw||'');
+  const drm=(k1&&k2)?{keyId:dob(k1),key:dob(k2),cookie:k3?dob(k3):null}:null;
+  if(src&&sid){
+    try{const st=JSON.parse(localStorage.getItem(sKey(sid))||'{}');if(st.ended){loadVideo(src,title,true,drm);showToast('⚠ Session ended — playing directly',3000);return;}}catch{}
+    loadVideo(src,title,true,drm);
+    setTimeout(()=>joinAsGuest(sid,src,title,drm),600);
+    showToast('👀 Joining shared session…',2500);
+  }else if(src){
+    loadVideo(src,title,false,drm);
   }
 })();
 
@@ -1420,7 +1275,7 @@ function setQ(lv){if(!hlsInst)return;hlsInst.currentLevel=lv;qualMenu.querySelec
 qualBtn.addEventListener('click',e=>{e.stopPropagation();qualMenu.classList.toggle('open');speedMenu.classList.remove('open');audioMenu.classList.remove('open')});
 
 // ══════════════════════════════════════════════════════════
-// AUDIO TRACKS (HLS)
+// AUDIO TRACKS
 // ══════════════════════════════════════════════════════════
 function buildAudio(){
   if(!hlsInst)return;
@@ -1446,7 +1301,7 @@ function setAudio(idx){
 audioBtn.addEventListener('click',e=>{e.stopPropagation();audioMenu.classList.toggle('open');qualMenu.classList.remove('open');speedMenu.classList.remove('open')});
 
 // ══════════════════════════════════════════════════════════
-// SPEED / FULLSCREEN / PIP / UI MANAGEMENT
+// SPEED / FULLSCREEN / PIP / UI
 // ══════════════════════════════════════════════════════════
 speedLbl.addEventListener('click',e=>{e.stopPropagation();speedMenu.classList.toggle('open');qualMenu.classList.remove('open');audioMenu.classList.remove('open')});
 document.querySelectorAll('.ditem[data-s]').forEach(el=>{
@@ -1465,7 +1320,7 @@ player.addEventListener('mousemove',()=>{showUI();if(!vid.paused)schedHide()});
 player.addEventListener('mouseleave',()=>{if(!vid.paused)schedHide()});
 document.addEventListener('click',e=>{
   if(!sharePanel.contains(e.target)&&!sessionBadge.contains(e.target)&&!shareBtn.contains(e.target))sharePanel.classList.remove('open');
-  qualMenu.classList.remove('open');speedMenu.classList.open = false; speedMenu.classList.remove('open');audioMenu.classList.remove('open');
+  qualMenu.classList.remove('open');speedMenu.classList.remove('open');audioMenu.classList.remove('open');
 });
 document.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
@@ -1484,78 +1339,29 @@ document.addEventListener('keydown',e=>{
   showUI();if(!vid.paused)schedHide();
 });
 
+// ══════════════════════════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════════════════════════
+let sbChannels=[],sbSelected=new Set(),sbLoaded=false;
 
-// ══════════════════════════════════════════════════════
-// SIDEBAR TOGGLE
-// ══════════════════════════════════════════════════════
 function toggleSidebar(){
-  const sb=document.getElementById('bundleSidebar');
-  const btn=document.getElementById('bundleToggle');
+  const sb=$('bundleSidebar');
+  const btn=$('bundleToggle');
   const isOpen=sb.classList.contains('open');
   sb.classList.toggle('open',!isOpen);
   btn.classList.toggle('open',!isOpen);
-  if(!isOpen && !sbLoaded) sbFetchChannels();
+  if(!isOpen&&!sbLoaded)sbFetchChannels();
 }
 
-async function handleBundlePlay(id, name, fallbackUrl) {
-  // For legacy bundles: try to find channel by URL match in fresh data, else use fallback
-  try {
-    const [r1, r2] = await Promise.allSettled([
-      fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
-      fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
-    ]);
-    let found = null;
-    if (r1.status === 'fulfilled' && r1.value) {
-      const raw = Array.isArray(r1.value) ? r1.value : (r1.value.channels || []);
-      found = raw.find(ch => ch.name === name);
-      if (found) { loadVideo(found.url, found.name, false, { keyId: found.keyId || '', key: found.key || '', cookie: found.cookie || null }); return; }
-    }
-    if (r2.status === 'fulfilled' && r2.value) {
-      const raw = Array.isArray(r2.value) ? r2.value : (r2.value.channels || []);
-      found = raw.find(ch => ch.channel_name === name);
-      if (found) {
-        let url = found.channel_url || '';
-        if (url.includes('?')) url = url.split('?')[0];
-        loadVideo(url, found.channel_name, false, { keyId: found.keyId || '', key: found.key || '', cookie: found.cookie || null }); return;
-      }
-    }
-  } catch(e) {}
-  // Absolute fallback — use whatever was in the old bundle (will 403 if keys rotated)
-  loadVideo(fallbackUrl, name, false, null);
-}
- 
-// ══════════════════════════════════════════════════════
-// CHANNEL DATA
-// ══════════════════════════════════════════════════════
-const OLD_JSON='https://binge-giotv.pages.dev/data/id.json';
-const NEW_JSON='https://jtv-proxy.sanjusanjay0444.workers.dev/';
- 
-let sbChannels=[], sbSelected=new Set(), sbLoaded=false;
- 
 async function sbFetchChannels(){
-  const loading=document.getElementById('sbChLoading');
-  const errEl=document.getElementById('sbChErr');
-  const wrap=document.getElementById('sbChWrap');
-  loading.style.display='flex'; errEl.style.display='none'; wrap.style.display='none';
+  const loading=$('sbChLoading');
+  const errEl=$('sbChErr');
+  const wrap=$('sbChWrap');
+  loading.style.display='flex';errEl.style.display='none';wrap.style.display='none';
   try{
-    const [r1,r2]=await Promise.allSettled([
-      fetch(OLD_JSON+'?_='+Date.now()).then(r=>r.ok?r.json():null),
-      fetch(NEW_JSON+'?_='+Date.now()).then(r=>r.ok?r.json():null)
-    ]);
-    let channels=[];
-    if(r1.status==='fulfilled'&&r1.value){
-      const raw=Array.isArray(r1.value)?r1.value:(r1.value.channels||[]);
-      raw.forEach(ch=>channels.push({id:ch.id||'',name:ch.name||'Channel',url:ch.url||'',keyId:ch.keyId||'',key:ch.key||'',cookie:ch.cookie||'',logo:ch.logo||''}));
-    }
-    if(r2.status==='fulfilled'&&r2.value){
-      const raw=Array.isArray(r2.value)?r2.value:(r2.value.channels||[]);
-      raw.forEach(ch=>{
-        let url=ch.channel_url||'';
-        if(url.includes('?'))url=url.split('?')[0];
-        channels.push({id:ch.channel_id||'',name:ch.channel_name||'Channel',url,keyId:ch.keyId||'',key:ch.key||'',cookie:ch.cookie||'',logo:ch.channel_logo||''});
-      });
-    }
-    if(!channels.length) throw new Error('No channels');
+    const map=await getChMap();
+    const channels=Object.values(map);
+    if(!channels.length)throw new Error('No channels');
     sbChannels=channels;
     sbLoaded=true;
     loading.style.display='none';
@@ -1567,9 +1373,9 @@ async function sbFetchChannels(){
     console.error(e);
   }
 }
- 
+
 function renderSbChannels(){
-  const list=document.getElementById('sbChList');
+  const list=$('sbChList');
   list.innerHTML='';
   sbChannels.forEach((ch,i)=>{
     const row=document.createElement('div');
@@ -1579,20 +1385,19 @@ function renderSbChannels(){
       <img class="ch-row-img" src="${ch.logo}" alt="${ch.name}"
         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 fill=%22%231a1a1a%22/><text x=%2216%22 y=%2220%22 text-anchor=%22middle%22 fill=%22%23444%22 font-size=%2212%22>📺</text></svg>'">
       <span class="ch-row-name">${ch.name}</span>
-      <div class="ch-row-check">✓</div>
-    `;
+      <div class="ch-row-check">✓</div>`;
     row.onclick=()=>toggleCh(i,row);
     list.appendChild(row);
   });
   updateSelCount();
 }
- 
+
 function toggleCh(i,row){
   if(sbSelected.has(i)){sbSelected.delete(i);row.classList.remove('selected')}
   else{sbSelected.add(i);row.classList.add('selected')}
   updateSelCount();
 }
- 
+
 function toggleSelectAll(){
   const allSelected=sbSelected.size===sbChannels.length;
   sbSelected.clear();
@@ -1602,77 +1407,74 @@ function toggleSelectAll(){
   });
   updateSelCount();
 }
- 
+
 function updateSelCount(){
   const n=sbSelected.size;
-  document.getElementById('selCountTxt').textContent=n+' selected';
-  document.getElementById('selAllBtn').textContent=n===sbChannels.length?'Deselect all':'Select all';
-  document.getElementById('genBtn').disabled=n===0;
+  $('selCountTxt').textContent=n+' selected';
+  $('selAllBtn').textContent=n===sbChannels.length?'Deselect all':'Select all';
+  $('genBtn').disabled=n===0;
 }
- 
-// ══════════════════════════════════════════════════════
-// BUNDLE GENERATION
-// ══════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════
+// BUNDLE GENERATION — stores IDs only → permanent links
+// ══════════════════════════════════════════════════════════
 let _lastBundleUrl='';
- 
+
 function generateBundle(){
-  if(sbSelected.size===0) return;
+  if(sbSelected.size===0)return;
 
-  const base = document.getElementById('playerBaseUrl').value.trim() 
-               || window.location.origin + window.location.pathname;
-  const name = document.getElementById('bundleName').value.trim() || 'Channel Bundle';
+  const base=$('playerBaseUrl').value.trim()||window.location.origin+window.location.pathname;
+  const name=$('bundleName').value.trim()||'Channel Bundle';
 
-  // CHANGED: store only channel IDs, not URLs/keys
-  const channelIds = [];
-  sbSelected.forEach(i => {
-    const ch = sbChannels[i];
-    channelIds.push(ch.id);           // just the ID
+  // Store channel IDs only — keys fetched fresh on every open
+  const ids=[];
+  sbSelected.forEach(i=>{
+    const ch=sbChannels[i];
+    if(ch.id)ids.push(ch.id);
   });
 
-  const payload = JSON.stringify({ title: name, ids: channelIds });
-  const encoded = obf(payload);
+  const payload=JSON.stringify({title:name,ids});
+  const encoded=obf(payload);
+  const finalUrl=`${base}?bundle=${encodeURIComponent(encoded)}`;
+  _lastBundleUrl=finalUrl;
 
-  const finalUrl = `${base}?bundle=${encodeURIComponent(encoded)}`;
-  _lastBundleUrl = finalUrl;
+  $('bundleUrlText').textContent=finalUrl;
 
-  document.getElementById('bundleUrlText').textContent = finalUrl;
-
-  const snippet = `import StreamXPlayer from './StreamXPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
-  document.getElementById('embedSnippet').textContent = snippet;
-  document.getElementById('bundleResult').style.display = 'flex';
+  const snippet=`import StreamXPlayer from './StreamXPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
+  $('embedSnippet').textContent=snippet;
+  $('bundleResult').style.display='flex';
 }
- 
+
 function copyBundleUrl(){
   navigator.clipboard.writeText(_lastBundleUrl).then(()=>{
-    const btn=document.getElementById('bundleCopyBtn');
-    btn.textContent='✅ Copied!'; btn.classList.add('copied');
+    const btn=$('bundleCopyBtn');
+    btn.textContent='✅ Copied!';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='📋 Copy URL';btn.classList.remove('copied')},2000);
   }).catch(()=>{
     const ta=document.createElement('textarea');
-    ta.value=_lastBundleUrl; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    document.getElementById('bundleCopyBtn').textContent='✅ Copied!';
-    setTimeout(()=>document.getElementById('bundleCopyBtn').textContent='📋 Copy URL',2000);
+    ta.value=_lastBundleUrl;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    $('bundleCopyBtn').textContent='✅ Copied!';
+    setTimeout(()=>$('bundleCopyBtn').textContent='📋 Copy URL',2000);
   });
 }
- 
+
 function openBundleUrl(){window.open(_lastBundleUrl,'_blank')}
- 
+
 function copyEmbed(){
-  const code=document.getElementById('embedSnippet').textContent;
+  const code=$('embedSnippet').textContent;
   navigator.clipboard.writeText(code).catch(()=>{
     const ta=document.createElement('textarea');
-    ta.value=code; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
+    ta.value=code;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
   });
   const btn=event.target;
   btn.textContent='✅ Copied!';
   setTimeout(()=>btn.textContent='Copy React snippet',2000);
 }
- 
-// Auto-set base URL
-document.getElementById('playerBaseUrl').value=window.location.origin+window.location.pathname;
 
+// Auto-set player base URL
+$('playerBaseUrl').value=window.location.origin+window.location.pathname;
 </script>
 </body>
 </html>
