@@ -817,46 +817,49 @@ function getVC(){let c=1;try{const p=`sx_v_${SID}_`;for(let i=0;i<localStorage.l
 const _gk={};
 function guestPing(){if(!SID||SROLE!=='guest')return;if(!_gk.k)_gk.k=`sx_v_${SID}_${genId()}`;try{localStorage.setItem(_gk.k,JSON.stringify({ts:Date.now()}))}catch{}}
 
-async function startHostSession(url,title,drm){
-  SID=genId();SROLE='host';SSTART=Date.now();
-  SURL=url;STITLE=title||'';SDRM=drm||null;
+function startHostSession(url, title, drm) {
+  SID = genId(); SROLE = 'host'; SSTART = Date.now();
+  SURL = url; STITLE = title || ''; SDRM = drm || null;
 
-  // Find channel ID for permanent share link
-  let channelId=null;
-  try{
-    const map=await getChMap();
-    const match=Object.values(map).find(ch=>{
-      const chBase=ch.url.split('?')[0];
-      const uBase=url.split('?')[0];
-      return chBase===uBase||ch.name===title;
+  let channelId = null, channelLogo = null;
+  if (channelsData && channelsData.length > 0) {
+    const match = channelsData.find(ch => {
+      const chBase = ch.url.split('?')[0];
+      const urlBase = url.split('?')[0];
+      return chBase === urlBase || ch.name === title;
     });
-    if(match)channelId=match.id;
-  }catch{}
-  SCHID=channelId;
+    if (match) { channelId = match.id; channelLogo = match.logo || null; }
+  }
 
-  try{localStorage.setItem(sKey(SID),hostState())}catch{}
+  SCHID = channelId;
+
+  try { localStorage.setItem(sKey(SID), hostState()) } catch {}
   clearInterval(_hbT);
-  _hbT=setInterval(()=>{
-    try{localStorage.setItem(sKey(SID),hostState())}catch{}
+  _hbT = setInterval(() => {
+    try { localStorage.setItem(sKey(SID), hostState()) } catch {}
     updateSharePanel();
-  },4000);
-  history.replaceState(null,'',buildHash(SID,url,title,drm,channelId));
-  showSessUI('host');updateSharePanel();startAge();
+  }, 4000);
+
+  history.replaceState(null, '', buildHash(SID, url, title, drm, channelId, channelLogo));
+  showSessUI('host'); updateSharePanel(); startAge();
 }
 
-function buildHash(id,url,title,drm,channelId){
-  const p=new URLSearchParams({sid:id});
-  if(channelId){
-    p.set('chid',obf(channelId));
-    p.set('t',obf(title||''));
-  }else{
-    p.set('src',obf(url));
-    p.set('t',obf(title||''));
-    if(drm&&drm.keyId)p.set('k1',obf(drm.keyId));
-    if(drm&&drm.key)p.set('k2',obf(drm.key));
-    if(drm&&drm.cookie)p.set('k3',obf(drm.cookie));
+function buildHash(id, url, title, drm, channelId, logo) {
+  const p = new URLSearchParams({ sid: id });
+  
+  if (channelId) {
+    p.set('chid', obf(channelId));
+    p.set('t', obf(title || ''));
+    if (logo) p.set('lg', obf(logo));
+  } else {
+    p.set('src', obf(url));
+    p.set('t', obf(title || ''));
+    if (drm && drm.keyId) p.set('k1', obf(drm.keyId));
+    if (drm && drm.key)   p.set('k2', obf(drm.key));
+    if (drm && drm.cookie) p.set('k3', obf(drm.cookie));
+    if (logo) p.set('lg', obf(logo));
   }
-  return`${location.pathname}?${p}`;
+  return `${location.pathname}?${p}`;
 }
 
 function endHostSession(){
@@ -902,9 +905,11 @@ function showSessUI(r){sessionBadge.style.display='flex';sessionBadge.className=
 function hideSessUI(){sessionBadge.style.display='none';shareBtn.style.display='none';sharePanel.classList.remove('open')}
 function startAge(){clearInterval(_ageT);_ageT=setInterval(()=>{if(!SSTART)return;const s=Math.floor((Date.now()-SSTART)/1000);spSessionAge.textContent=s<60?s+'s':Math.floor(s/60)+'m '+s%60+'s'},1000)}
 
-function updateSharePanel(){
-  if(!SID)return;
-  shareUrlInput.value=location.origin+buildHash(SID,SURL,STITLE,SDRM,SCHID);
+let SLOGO = null;
+
+function updateSharePanel() {
+  if (!SID) return;
+  shareUrlInput.value = location.origin + buildHash(SID, SURL, STITLE, SDRM, SCHID, SLOGO);
   if(SROLE==='host'){spViewers.textContent=getVC();spStatus.textContent=isLiveStream?'🔴 Live':'▶ Playing';spGuestNotice.style.display='none';spEndedNotice.style.display='none';spDesc.style.display='block'}
   else{spGuestNotice.style.display='block';spDesc.style.display='none'}
 }
