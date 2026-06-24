@@ -1180,13 +1180,15 @@ function goBack(){
   const bundleRaw=q.get('bundle');
   if(bundleRaw){await handleBundleParam(bundleRaw);return;}
 
-  // ── DIRECT URL param (Telegram stream) ──  ✅ ADD THIS
-  const directUrl = q.get('url');
-  const directTitle = q.get('title');
+  // ── DIRECT ?url= param (Telegram proxy stream) ──
+  const directUrl=q.get('url');
+  const directTitle=q.get('title');
   if(directUrl){
-    loadVideo(decodeURIComponent(directUrl), decodeURIComponent(directTitle || 'Movie'), false, null);
+    loadVideo(directUrl, directTitle||'Movie', false, null);
     return;
   }
+
+  
 
   // ── SESSION / CHANNEL params ──
   const sid=q.get('sid');
