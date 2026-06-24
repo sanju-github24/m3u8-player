@@ -289,7 +289,7 @@
     </div>
 
     <div id="customTab">
-      <input class="ls-in" id="urlIn" placeholder="Paste HLS (.m3u8), DASH (.mpd), or MP4 URL…"/>
+      <input class="ls-in" id="urlIn" placeholder="Paste HLS (.m3u8), DASH (.mpd), MP4, WebM URL…"/>
       <input class="ls-in" id="titIn" placeholder="Title (optional)" style="padding:10px 16px;font-size:.85rem"/>
       <div id="drmFields">
         <div class="drm-hdr">🔑 ClearKey DRM — required for encrypted DASH streams</div>
@@ -300,7 +300,7 @@
       <button class="ls-play" id="playNow">▶  Play</button>
       <div class="ls-div">— Quick demos —</div>
       <div class="ls-demos">
-        <button class="ls-demo" onclick="tryDemo('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Mux HLS Demo')">🎬 HLS</button>
+        <button class="ls-demo" onclick="tryDemo('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Mux HLS Demo')">📡 HLS</button>
         <button class="ls-demo" onclick="tryDemo('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4','Big Buck Bunny')">🐰 MP4</button>
         <button class="ls-demo" onclick="tryDemo('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4','Elephants Dream')">🐘 MP4 2</button>
       </div>
@@ -451,7 +451,7 @@
         </button>
         <div class="drop drop-top" id="audioMenu"></div>
       </div>
-      <div class="menu-wrap">
+      <div class="menu-wrap" id="qualWrap">
         <button class="top-btn" id="qualBtn">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
           <span class="lbl" id="qualLbl">Auto</span>
@@ -556,12 +556,61 @@ function obf(s){if(!s)return'';try{return btoa(_xor(unescape(encodeURIComponent(
 function dob(s){if(!s)return'';try{let t=s.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return decodeURIComponent(escape(_xor(atob(t),_S)))}catch{try{return atob(s)}catch{return s}}}
 
 // ══════════════════════════════════════════════════════════
+// URL TYPE DETECTION — robust, order-safe
+// ══════════════════════════════════════════════════════════
+/**
+ * Returns: 'hls' | 'dash' | 'mp4' | 'proxy'
+ *
+ * Priority order:
+ *  1. Custom proxy paths → 'proxy' (falls through to native video element)
+ *  2. DASH indicators    → 'dash'
+ *  3. HLS indicators     → 'hls'  (STRICT — only .m3u8 extension or explicit /hls/ path)
+ *  4. Everything else    → 'mp4'  (native <video> handles mp4/webm/ogg/mov/mkv/blob/data)
+ *
+ * Key fix: removed `url.includes('playlist')` — far too broad and incorrectly
+ * routes many MP4 URLs (e.g. YouTube-style) into the HLS path.
+ */
+function detectUrlType(url) {
+  if (!url) return 'mp4';
+
+  // Strip query string for extension checks only
+  const clean = url.split('?')[0].toLowerCase();
+
+  // 1. Custom proxy intercept — treat as native video
+  if (url.includes('/stream?fileId=') || url.includes('/stream/')) {
+    return 'proxy';
+  }
+
+  // 2. DASH — check before HLS because some DASH manifests are on /hls/ CDN paths
+  if (
+    clean.endsWith('.mpd') ||
+    url.includes('/mpd') ||
+    url.includes('WDVLive') ||
+    url.includes('manifest.mpd') ||
+    url.includes('dash.xml')
+  ) {
+    return 'dash';
+  }
+
+  // 3. HLS — STRICT: only match actual .m3u8 extension or explicit /hls/ path segment
+  if (
+    clean.endsWith('.m3u8') ||
+    clean.includes('.m3u8?') ||
+    /\/hls\//.test(url)
+  ) {
+    return 'hls';
+  }
+
+  // 4. Everything else — native video element (MP4, WebM, OGG, MOV, MKV, blob:, data:, etc.)
+  return 'mp4';
+}
+
+// ══════════════════════════════════════════════════════════
 // DATA FEEDS
 // ══════════════════════════════════════════════════════════
 const OLD_JSON_URL = 'https://binge-giotv.pages.dev/data/id.json';
 const NEW_JSON_URL = 'https://jtv-proxy.sanjusanjay0444.workers.dev/';
 
-// Shared channel map populated once feeds are fetched
 let _chMap = null;
 let _chMapPromise = null;
 
@@ -644,6 +693,9 @@ let _edgeCache=0,_edgeTS=0,_jumping=false;
 const LIVE_THRESH=12,DELAY_SHOW=6;
 let _lastUrl=null,_lastTitle=null,_lastDrm=null;
 
+// Track native video event listeners so we can cleanly remove them
+let _mp4Listeners = {};
+
 function fmt(s){if(!s||isNaN(s))return'0:00';const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=Math.floor(s%60);return h?`${h}:${pad(m)}:${pad(sc)}`:`${m}:${pad(sc)}`}
 function pad(n){return String(n).padStart(2,'0')}
 function showToast(msg,dur=1800){toast.textContent=msg;toast.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('on'),dur)}
@@ -659,10 +711,11 @@ function switchTab(t){
   $('liveTvTab').style.display=t==='live'?'flex':'none';
   if(t==='live'&&!channelsLoaded)fetchChannels();
 }
+
 urlIn.addEventListener('input',()=>{
   const v=urlIn.value;
-  const isDash=v.includes('.mpd')||v.includes('/mpd')||v.includes('WDVLive');
-  drmFields.style.display=isDash?'flex':'none';
+  const type = detectUrlType(v);
+  drmFields.style.display = type === 'dash' ? 'flex' : 'none';
 });
 
 // ══════════════════════════════════════════════════════════
@@ -724,14 +777,13 @@ function playSelectedLive(){
 }
 
 // ══════════════════════════════════════════════════════════
-// BUNDLE URL HANDLER — permanent link (IDs only)
+// BUNDLE URL HANDLER
 // ══════════════════════════════════════════════════════════
 async function handleBundleParam(bundleRaw){
   try{
     const decoded = JSON.parse(dob(decodeURIComponent(bundleRaw)));
     if(!decoded) throw new Error('Decode failed');
 
-    // ── NEW format: { title, ids: [...] } — PERMANENT ──
     if(decoded.ids && decoded.ids.length > 0){
       showToast('⏳ Loading bundle…',3000);
       LS.style.display='flex';
@@ -749,7 +801,6 @@ async function handleBundleParam(bundleRaw){
       return;
     }
 
-    // ── LEGACY format: { title, channels: [...] } ──
     if(decoded.channels && decoded.channels.length > 0){
       showToast('⏳ Loading bundle…',2000);
       LS.style.display='flex';
@@ -761,8 +812,8 @@ async function handleBundleParam(bundleRaw){
 
       const refreshed = decoded.channels.map(ch=>{
         const live = nameMap[ch.name];
-        if(live) return live; 
-        return ch;            
+        if(live) return live;
+        return ch;
       });
       renderBundleChannels({title:decoded.title, channels:refreshed});
       return;
@@ -841,7 +892,6 @@ function startHostSession(url, title, drm) {
 
 function buildHash(id, url, title, drm, channelId, logo) {
   const p = new URLSearchParams({ sid: id });
-  
   if (channelId) {
     p.set('chid', obf(channelId));
     p.set('t', obf(title || ''));
@@ -988,87 +1038,142 @@ function updateLiveProgress(){
 }
 
 // ══════════════════════════════════════════════════════════
-// DESTROY
+// DESTROY — cleanly removes all MP4 listeners too
 // ══════════════════════════════════════════════════════════
 function destroyPlayers(){
   _edgeCache=0;_edgeTS=0;_jumping=false;
+
+  // Remove any lingering native video listeners
+  if (_mp4Listeners.meta) { vid.removeEventListener('loadedmetadata', _mp4Listeners.meta); }
+  if (_mp4Listeners.err)  { vid.removeEventListener('error', _mp4Listeners.err); }
+  if (_mp4Listeners.timeupdate) { vid.removeEventListener('timeupdate', _mp4Listeners.timeupdate); }
+  _mp4Listeners = {};
+
   if(hlsInst){hlsInst.destroy();hlsInst=null}
   if(shakaInst){shakaInst.destroy().catch(()=>{});shakaInst=null}
-  vid.src='';
+  vid.pause();
+  vid.removeAttribute('src');
+  vid.load(); // Reset the media element fully
 }
 
 // ══════════════════════════════════════════════════════════
-// LOAD VIDEO
+// LOAD VIDEO — unified entry point
 // ══════════════════════════════════════════════════════════
-async function loadVideo(url,title,asGuest=false,drm=null){
+async function loadVideo(url, title, asGuest=false, drm=null){
   err.style.display='none';
   errMsg.textContent='Could not play this stream.';
   isLiveStream=false;
-  liveBadge.style.display='none';delayLbl.style.display='none';
+  liveBadge.style.display='none';
+  delayLbl.style.display='none';
   progFill.classList.remove('live-fill');
   audioWrap.style.display='none';
   drmBadge.style.display='none';
-  qualBtn.parentElement.style.display='block'; // Reset display state from direct fallback
-  
+  // Reset quality selector
+  const qualWrap=$('qualWrap');
+  if(qualWrap) qualWrap.style.display='block';
+  qualLbl.textContent='Auto';
+  qualMenu.innerHTML='';
+
   destroyPlayers();
 
-  _lastUrl=url;_lastTitle=title;_lastDrm=drm;
+  _lastUrl=url; _lastTitle=title; _lastDrm=drm;
   vidTitle.textContent=title||'Now Playing';
 
-  // ✅ SPECIAL PARSER INTERCEPT: Force custom VPS proxy links into native video engine handler directly
-  const isCustomProxy = url.includes('/stream?fileId=') || url.includes('/stream/');
-  
-  const isDash=!isCustomProxy && (url.includes('.mpd')||url.includes('/mpd')||url.includes('WDVLive'));
-  const isHLS=!isCustomProxy && !isDash && (url.includes('.m3u8')||url.includes('/hls')||url.includes('playlist'));
-
   LS.style.display='none';
+  spin.classList.add('on');
 
-  if(isDash){
-    await loadShaka(url,title,drm);
-  }
-  else if(isHLS){
+  const type = detectUrlType(url);
+
+  if(type === 'dash'){
+    await loadShaka(url, title, drm);
+  } else if(type === 'hls'){
     loadHLS(url);
-  }
-  else{
-    // Raw MP4 / direct backend proxy video streaming interface
-    qualBtn.parentElement.style.display='none';
-    audioWrap.style.display='none';
-
-    vid.src=url;
-
-    vid.addEventListener('loadedmetadata',function _mp4meta(){
-      isLiveStream=false;
-      timeLbl.textContent=`${fmt(vid.currentTime)} / ${fmt(vid.duration)}`;
-      vid.removeEventListener('loadedmetadata',_mp4meta);
-    },{once:true});
-
-    vid.addEventListener('error',function _mp4err(){
-      errMsg.textContent='Could not load this video file. Make sure your server is running, and headers allow access (CORS-enabled if cross-origin).';
-      err.style.display='flex';
-      vid.removeEventListener('error',_mp4err);
-    },{once:true});
-
-    vid.play().catch(()=>{});
-    showToast('▶ '+(title||'Playing video'),1800);
+  } else {
+    // MP4 / WebM / OGG / MOV / MKV / proxy — native <video> element
+    loadNative(url, title);
   }
 
-  if(!asGuest){endHostSession();startHostSession(url,title||'',drm);}
+  if(!asGuest){ endHostSession(); startHostSession(url, title||'', drm); }
 }
 
 function retryLast(){
   if(!_lastUrl)return;
   err.style.display='none';
-  loadVideo(_lastUrl,_lastTitle,false,_lastDrm);
+  loadVideo(_lastUrl, _lastTitle, false, _lastDrm);
+}
+
+// ══════════════════════════════════════════════════════════
+// NATIVE VIDEO (MP4 / WebM / proxy streams)
+// ══════════════════════════════════════════════════════════
+function loadNative(url, title){
+  // Hide quality and audio menus — not applicable for native playback
+  const qualWrap=$('qualWrap');
+  if(qualWrap) qualWrap.style.display='none';
+  audioWrap.style.display='none';
+
+  // Define listeners before setting src so we never miss early-firing events
+  _mp4Listeners.meta = function(){
+    spin.classList.remove('on');
+    isLiveStream = detectLive();
+    if(isLiveStream){
+      updateLiveBadge();
+      timeLbl.textContent='LIVE';
+    } else {
+      timeLbl.textContent = fmt(0) + ' / ' + fmt(vid.duration);
+    }
+  };
+
+  _mp4Listeners.err = function(){
+    spin.classList.remove('on');
+    const ve = vid.error;
+    let msg = 'Could not load video.';
+    if(ve){
+      switch(ve.code){
+        case 1: msg='Playback aborted.'; break;
+        case 2: msg='Network error while loading. Check CORS headers if cross-origin.'; break;
+        case 3: msg='Video decoding error. The format may not be supported in this browser.'; break;
+        case 4: msg='Unsupported format or source not found. Try MP4 (H.264) for best compatibility.'; break;
+      }
+    }
+    errMsg.textContent = msg;
+    err.style.display='flex';
+  };
+
+  _mp4Listeners.timeupdate = function(){
+    if(isLiveStream){ updateLiveProgress(); return; }
+    if(drag || !vid.duration) return;
+    const p = vid.currentTime / vid.duration;
+    progFill.style.width = (p*100)+'%';
+    progThumb.style.left = (p*100)+'%';
+    timeLbl.textContent = fmt(vid.currentTime)+' / '+fmt(vid.duration);
+  };
+
+  // Attach before src assignment — critical for catching immediate errors
+  vid.addEventListener('loadedmetadata', _mp4Listeners.meta,    {once:true});
+  vid.addEventListener('error',          _mp4Listeners.err,     {once:true});
+
+  vid.src = url;
+  vid.load();
+
+  vid.play().catch(e=>{
+    // Autoplay blocked — not an error, user can press play
+    if(e.name !== 'NotAllowedError') console.warn('play() failed:', e);
+    spin.classList.remove('on');
+    showToast('▶ Press play to start', 2500);
+  });
+
+  showToast('▶ '+(title||'Playing video'), 1800);
 }
 
 // ══════════════════════════════════════════════════════════
 // SHAKA — MPEG-DASH + ClearKey DRM
 // ══════════════════════════════════════════════════════════
-async function loadShaka(url,title,drm){
+async function loadShaka(url, title, drm){
   shaka.polyfill.installAll();
   if(!shaka.Player.isBrowserSupported()){
+    spin.classList.remove('on');
     errMsg.textContent='DASH not supported. Please use Chrome or Edge.';
-    err.style.display='flex';return;
+    err.style.display='flex'; return;
   }
   shakaInst=new shaka.Player(vid);
   const cfg={
@@ -1092,19 +1197,19 @@ async function loadShaka(url,title,drm){
     });
   }
   shakaInst.addEventListener('error',ev=>{
-    const ec=ev.detail;spin.classList.remove('on');
+    const ec=ev.detail;
+    spin.classList.remove('on');
     const msg=`Error ${ec.code}${ec.data&&ec.data[0]?' — '+String(ec.data[0]).slice(0,80):''}`;
-    errMsg.textContent=msg;err.style.display='flex';showToast('⚠ '+msg,3000);
+    errMsg.textContent=msg; err.style.display='flex'; showToast('⚠ '+msg,3000);
   });
   shakaInst.addEventListener('streaming',()=>{
     if(shakaInst.isLive()){
       isLiveStream=true;
       const sk=vid.seekable;
       if(sk&&sk.length>0){_edgeCache=sk.end(sk.length-1);_edgeTS=Date.now();}
-      updateLiveBadge();timeLbl.textContent='LIVE';
+      updateLiveBadge(); timeLbl.textContent='LIVE';
     }
   });
-  spin.classList.add('on');
   try{
     await shakaInst.load(url);
     vid.play().catch(()=>{});
@@ -1113,7 +1218,7 @@ async function loadShaka(url,title,drm){
       isLiveStream=true;
       const sk=vid.seekable;
       if(sk&&sk.length>0){const edge=sk.end(sk.length-1);_edgeCache=edge;_edgeTS=Date.now();vid.currentTime=Math.max(0,edge-2);}
-      updateLiveBadge();showToast('🔴 Live — '+title,2000);
+      updateLiveBadge(); showToast('🔴 Live — '+title, 2000);
       const _ep=setInterval(()=>{
         if(!shakaInst){clearInterval(_ep);return}
         const sk2=vid.seekable;
@@ -1122,10 +1227,11 @@ async function loadShaka(url,title,drm){
       },5000);
     }
     buildShakaQual();
+    spin.classList.remove('on');
   }catch(e){
     spin.classList.remove('on');
     const msg=e.message||'Failed to load DASH stream';
-    errMsg.textContent=msg;err.style.display='flex';console.error('Shaka load error:',e);
+    errMsg.textContent=msg; err.style.display='flex'; console.error('Shaka load error:',e);
   }
 }
 
@@ -1140,7 +1246,7 @@ function buildShakaQual(){
   auto.onclick=()=>{shakaInst.configure({abr:{enabled:true}});qualMenu.querySelectorAll('.ditem').forEach(el=>el.classList.toggle('on',el===auto));qualMenu.classList.remove('open');qualLbl.textContent='Auto';showToast('Quality: Auto')};
   qualMenu.appendChild(auto);
   tracks.forEach(t=>{
-    const el=document.createElement('div');el.className='ditem';
+    const el=document.createElement('div'); el.className='ditem';
     const lb=t.height?t.height+'p':(t.bandwidth?Math.round(t.bandwidth/1000)+'kbps':'Track '+t.id);
     el.innerHTML=`${lb}<span class="chk">✓</span>`;
     el.onclick=()=>{shakaInst.configure({abr:{enabled:false}});shakaInst.selectVariantTrack(t,true);qualMenu.querySelectorAll('.ditem').forEach(x=>x.classList.toggle('on',x===el));qualMenu.classList.remove('open');qualLbl.textContent=lb;showToast('Quality: '+lb)};
@@ -1154,42 +1260,74 @@ function buildShakaQual(){
 function loadHLS(url){
   if(Hls.isSupported()){
     hlsInst=new Hls({enableWorker:true,lowLatencyMode:true,liveSyncDurationCount:3,liveMaxLatencyDurationCount:10,maxBufferLength:30,backBufferLength:60});
-    hlsInst.loadSource(url);hlsInst.attachMedia(vid);
+    hlsInst.loadSource(url);
+    hlsInst.attachMedia(vid);
     hlsInst.on(Hls.Events.MANIFEST_PARSED,()=>{
-      vid.play().catch(()=>{});buildHLSQual();buildAudio();
-      setTimeout(()=>{isLiveStream=detectLive();if(isLiveStream){const e=getLiveEdge();if(e>0)vid.currentTime=Math.max(0,e-1);updateLiveBadge();showToast('🔴 Live stream')}},800);
+      spin.classList.remove('on');
+      vid.play().catch(()=>{});
+      buildHLSQual();
+      buildAudio();
+      setTimeout(()=>{
+        isLiveStream=detectLive();
+        if(isLiveStream){const e=getLiveEdge();if(e>0)vid.currentTime=Math.max(0,e-1);updateLiveBadge();showToast('🔴 Live stream')}
+      },800);
     });
     hlsInst.on(Hls.Events.LEVEL_LOADED,(_,d)=>{if(d.details&&d.details.live){isLiveStream=true;updateLiveBadge()}});
     hlsInst.on(Hls.Events.AUDIO_TRACKS_UPDATED,()=>buildAudio());
-    hlsInst.on(Hls.Events.ERROR,(_,d)=>{if(d.fatal){errMsg.textContent='HLS error: '+d.type;err.style.display='flex';}});
+    hlsInst.on(Hls.Events.ERROR,(_,d)=>{
+      if(d.fatal){
+        spin.classList.remove('on');
+        errMsg.textContent='HLS error: '+d.type+(d.details?' ('+d.details+')':'');
+        err.style.display='flex';
+      }
+    });
   }else if(vid.canPlayType('application/vnd.apple.mpegurl')){
+    // Safari native HLS
     vid.src=url;
-    vid.addEventListener('loadedmetadata',()=>{isLiveStream=detectLive();if(isLiveStream){const e=getLiveEdge();if(e>0)vid.currentTime=Math.max(0,e-1);updateLiveBadge()}},{once:true});
+    vid.addEventListener('loadedmetadata',()=>{
+      spin.classList.remove('on');
+      isLiveStream=detectLive();
+      if(isLiveStream){const e=getLiveEdge();if(e>0)vid.currentTime=Math.max(0,e-1);updateLiveBadge();}
+    },{once:true});
+    vid.addEventListener('error',()=>{ spin.classList.remove('on'); },{once:true});
     vid.play().catch(()=>{});
-  }else{vid.src=url;vid.play().catch(()=>{});}
+  }else{
+    // Fallback: treat as native video
+    spin.classList.remove('on');
+    loadNative(url, _lastTitle);
+  }
 }
 
-function tryDemo(url,title){urlIn.value=url;titIn.value=title;drmFields.style.display='none';loadVideo(url,title)}
+function tryDemo(url, title){
+  urlIn.value=url; titIn.value=title; drmFields.style.display='none';
+  loadVideo(url, title);
+}
 
-playNow.addEventListener('click',granularityPlayback);
+playNow.addEventListener('click', granularityPlayback);
 function granularityPlayback(){
   const url=urlIn.value.trim();
-  if(!url){urlIn.style.borderColor='#ff4757';return}
+  if(!url){urlIn.style.borderColor='#ff4757';setTimeout(()=>urlIn.style.borderColor='',2000);return;}
   urlIn.style.borderColor='';
-  const isDash=url.includes('.mpd')||url.includes('/mpd')||url.includes('WDVLive');
+  const type = detectUrlType(url);
   let drm=null;
-  if(isDash){const kid=keyIdIn.value.trim(),k=keyIn.value.trim(),ck=cookieIn.value.trim();if(kid&&k)drm={keyId:kid,key:k,cookie:ck||null};}
-  loadVideo(url,titIn.value.trim(),false,drm);
+  if(type === 'dash'){
+    const kid=keyIdIn.value.trim(), k=keyIn.value.trim(), ck=cookieIn.value.trim();
+    if(kid&&k) drm={keyId:kid, key:k, cookie:ck||null};
+  }
+  loadVideo(url, titIn.value.trim(), false, drm);
 }
 urlIn.addEventListener('keydown',e=>{if(e.key==='Enter')playNow.click()});
 
 function goBack(){
   endHostSession();
-  if(SROLE==='guest'){clearInterval(_pollT);clearInterval(_guestPingT)}
-  SROLE=null;SID=null;
-  LS.style.display='flex';vid.pause();
-  isLiveStream=false;liveBadge.style.display='none';
-  hideSessUI();drmBadge.style.display='none';
+  if(SROLE==='guest'){clearInterval(_pollT);clearInterval(_guestPingT);}
+  SROLE=null; SID=null;
+  LS.style.display='flex';
+  vid.pause();
+  isLiveStream=false;
+  liveBadge.style.display='none';
+  hideSessUI();
+  drmBadge.style.display='none';
   history.replaceState(null,'',location.pathname);
   destroyPlayers();
 }
@@ -1200,11 +1338,9 @@ function goBack(){
 (async function checkParams(){
   const q=new URLSearchParams(location.search);
 
-  // ── BUNDLE param ──
   const bundleRaw=q.get('bundle');
   if(bundleRaw){await handleBundleParam(bundleRaw);return;}
 
-  // ── DIRECT ?url= param (Telegram proxy stream) ──
   const directUrl=q.get('url');
   const directTitle=q.get('title');
   if(directUrl){
@@ -1212,7 +1348,6 @@ function goBack(){
     return;
   }
 
-  // ── SESSION / CHANNEL params ──
   const sid=q.get('sid');
   const chid=q.get('chid');
   const srcRaw=q.get('src');
@@ -1246,7 +1381,6 @@ function goBack(){
     return;
   }
 
-  // Legacy src path
   const src=dob(srcRaw);
   const title=dob(tRaw||'');
   const drm=(k1&&k2)?{keyId:dob(k1),key:dob(k2),cookie:k3?dob(k3):null}:null;
@@ -1283,8 +1417,25 @@ fwBtn.addEventListener('click',e=>{e.stopPropagation();skip(10)});
 function updVol(){vPath.setAttribute('d',(vid.muted||vid.volume===0)?P.voff:P.von)}
 muteBtn.addEventListener('click',e=>{e.stopPropagation();vid.muted=!vid.muted;volSlider.value=vid.muted?0:vid.volume*100;updVol();showToast(vid.muted?'🔇 Muted':'🔊 Unmuted')});
 volSlider.addEventListener('input',e=>{e.stopPropagation();vid.volume=e.target.value/100;vid.muted=vid.volume===0;updVol()});
-vid.addEventListener('timeupdate',()=>{if(isLiveStream){updateLiveProgress();return}if(drag||!vid.duration)return;const p=vid.currentTime/vid.duration;progFill.style.width=(p*100)+'%';progThumb.style.left=(p*100)+'%';timeLbl.textContent=`${fmt(vid.currentTime)} / ${fmt(vid.duration)}`});
-vid.addEventListener('progress',()=>{if(isLiveStream)return;if(!vid.duration||!vid.buffered.length)return;progBuf.style.width=(vid.buffered.end(vid.buffered.length-1)/vid.duration*100)+'%'});
+
+// Global timeupdate handler for HLS / DASH / live streams
+// (Native MP4 uses its own listener registered in loadNative)
+vid.addEventListener('timeupdate',()=>{
+  // Skip if native MP4 listener is active (avoids double-updating)
+  if(_mp4Listeners.timeupdate) return;
+  if(isLiveStream){updateLiveProgress();return}
+  if(drag||!vid.duration)return;
+  const p=vid.currentTime/vid.duration;
+  progFill.style.width=(p*100)+'%';
+  progThumb.style.left=(p*100)+'%';
+  timeLbl.textContent=`${fmt(vid.currentTime)} / ${fmt(vid.duration)}`;
+});
+
+vid.addEventListener('progress',()=>{
+  if(isLiveStream)return;
+  if(!vid.duration||!vid.buffered.length)return;
+  progBuf.style.width=(vid.buffered.end(vid.buffered.length-1)/vid.duration*100)+'%';
+});
 
 progWrap.addEventListener('mousemove',e=>{
   const r=progTrack.getBoundingClientRect(),p=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
@@ -1312,7 +1463,7 @@ function setQ(lv){if(!hlsInst)return;hlsInst.currentLevel=lv;qualMenu.querySelec
 qualBtn.addEventListener('click',e=>{e.stopPropagation();qualMenu.classList.toggle('open');speedMenu.classList.remove('open');audioMenu.classList.remove('open')});
 
 // ══════════════════════════════════════════════════════════
-// AUDIO TRACKS
+// AUDIO TRACKS (HLS)
 // ══════════════════════════════════════════════════════════
 function buildAudio(){
   if(!hlsInst)return;
@@ -1350,7 +1501,6 @@ pipBtn.addEventListener('click',async e=>{e.stopPropagation();try{if(document.pi
 vid.addEventListener('waiting',()=>spin.classList.add('on'));
 vid.addEventListener('canplay',()=>spin.classList.remove('on'));
 vid.addEventListener('playing',()=>spin.classList.remove('on'));
-vid.addEventListener('error',()=>{spin.classList.remove('on');});
 function showUI(){player.classList.remove('hide-ui');player.classList.add('show-ui');clearTimeout(hideT)}
 function schedHide(){clearTimeout(hideT);hideT=setTimeout(()=>{if(!vid.paused&&!sharePanel.classList.contains('open')){player.classList.add('hide-ui');player.classList.remove('show-ui')}},3500)}
 player.addEventListener('mousemove',()=>{showUI();if(!vid.paused)schedHide()});
@@ -1453,29 +1603,21 @@ function updateSelCount(){
 }
 
 // ══════════════════════════════════════════════════════════
-// BUNDLE GENERATION — stores IDs only → permanent links
+// BUNDLE GENERATION
 // ══════════════════════════════════════════════════════════
 let _lastBundleUrl='';
 
 function generateBundle(){
   if(sbSelected.size===0)return;
-
   const base=$('playerBaseUrl').value.trim()||window.location.origin+window.location.pathname;
   const name=$('bundleName').value.trim()||'Channel Bundle';
-
   const ids=[];
-  sbSelected.forEach(i=>{
-    const ch=sbChannels[i];
-    if(ch.id)ids.push(ch.id);
-  });
-
+  sbSelected.forEach(i=>{const ch=sbChannels[i];if(ch.id)ids.push(ch.id);});
   const payload=JSON.stringify({title:name,ids});
   const encoded=obf(payload);
   const finalUrl=`${base}?bundle=${encodeURIComponent(encoded)}`;
   _lastBundleUrl=finalUrl;
-
   $('bundleUrlText').textContent=finalUrl;
-
   const snippet=`import StreamXPlayer from './StreamXPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
   $('embedSnippet').textContent=snippet;
   $('bundleResult').style.display='flex';
@@ -1509,7 +1651,6 @@ function copyEmbed(){
   setTimeout(()=>btn.textContent='Copy React snippet',2000);
 }
 
-// Auto-set player base URL
 $('playerBaseUrl').value=window.location.origin+window.location.pathname;
 </script>
 </body>
