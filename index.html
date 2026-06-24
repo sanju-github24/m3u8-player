@@ -116,7 +116,7 @@
     .bL,.bC,.bR{display:flex;align-items:center;gap:2px}
     .ibtn{background:none;border:none;color:#fff;cursor:pointer;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
     .ibtn:hover{background:rgba(255,255,255,.1)}
-    .skip-btn{display:flex;align-items:center;gap:3px;background:none;border:none;color:#fff;cursor:pointer;padding:8px;border-radius:8px;font-size:.83rem;font-weight:700;font-family:'Inter',sans-serif;transition:background .15s}
+    .skip-btn{display:flex;align-items:center;gap:3px;background:none;border:none;color:#fff;cursor:pointer;padding:8px;border-radius:8px;font-size:#0.83rem;font-weight:700;font-family:'Inter',sans-serif;transition:background .15s}
     .skip-btn:hover{background:rgba(255,255,255,.1)}
     .skip-btn svg{width:19px;height:19px;fill:#fff}
     #liveBadge{display:none;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:.76rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;border:none;letter-spacing:.04em}
@@ -320,10 +320,8 @@
   </div>
 </div>
 
-<!-- BUNDLE TOGGLE -->
 <button id="bundleToggle" onclick="toggleSidebar()">📦 BUNDLE</button>
 
-<!-- SIDEBAR -->
 <div id="bundleSidebar">
   <div class="sb-header">
     <div class="sb-header-row">
@@ -396,7 +394,6 @@
   </div>
 </div>
 
-<!-- PLAYER -->
 <div id="player" class="show-ui">
   <video id="video" preload="metadata" playsinline></video>
   <div id="clickZone"></div>
@@ -753,11 +750,9 @@ async function handleBundleParam(bundleRaw){
     }
 
     // ── LEGACY format: { title, channels: [...] } ──
-    // Still works but keys may have rotated — we try to refresh by name match
     if(decoded.channels && decoded.channels.length > 0){
       showToast('⏳ Loading bundle…',2000);
       LS.style.display='flex';
-      // Try to refresh keys from live feed by name match
       let map = {};
       try{ map = await getChMap(); }catch{}
 
@@ -766,8 +761,8 @@ async function handleBundleParam(bundleRaw){
 
       const refreshed = decoded.channels.map(ch=>{
         const live = nameMap[ch.name];
-        if(live) return live; // use fresh keys
-        return ch;            // fallback to baked-in (may be stale)
+        if(live) return live; 
+        return ch;            
       });
       renderBundleChannels({title:decoded.title, channels:refreshed});
       return;
@@ -1013,20 +1008,49 @@ async function loadVideo(url,title,asGuest=false,drm=null){
   progFill.classList.remove('live-fill');
   audioWrap.style.display='none';
   drmBadge.style.display='none';
-  timeLbl.textContent='LIVE';
+  qualBtn.parentElement.style.display='block'; // Reset display state from direct fallback
+  
   destroyPlayers();
 
   _lastUrl=url;_lastTitle=title;_lastDrm=drm;
   vidTitle.textContent=title||'Now Playing';
 
-  const isDash=url.includes('.mpd')||url.includes('/mpd')||url.includes('WDVLive');
-  const isHLS=!isDash&&(url.includes('.m3u8')||url.includes('/hls')||url.includes('playlist'));
+  // ✅ SPECIAL PARSER INTERCEPT: Force custom VPS proxy links into native video engine handler directly
+  const isCustomProxy = url.includes('/stream?fileId=') || url.includes('/stream/');
+  
+  const isDash=!isCustomProxy && (url.includes('.mpd')||url.includes('/mpd')||url.includes('WDVLive'));
+  const isHLS=!isCustomProxy && !isDash && (url.includes('.m3u8')||url.includes('/hls')||url.includes('playlist'));
 
   LS.style.display='none';
 
-  if(isDash){await loadShaka(url,title,drm);}
-  else if(isHLS){loadHLS(url);}
-  else{vid.src=url;vid.play().catch(()=>{});}
+  if(isDash){
+    await loadShaka(url,title,drm);
+  }
+  else if(isHLS){
+    loadHLS(url);
+  }
+  else{
+    // Raw MP4 / direct backend proxy video streaming interface
+    qualBtn.parentElement.style.display='none';
+    audioWrap.style.display='none';
+
+    vid.src=url;
+
+    vid.addEventListener('loadedmetadata',function _mp4meta(){
+      isLiveStream=false;
+      timeLbl.textContent=`${fmt(vid.currentTime)} / ${fmt(vid.duration)}`;
+      vid.removeEventListener('loadedmetadata',_mp4meta);
+    },{once:true});
+
+    vid.addEventListener('error',function _mp4err(){
+      errMsg.textContent='Could not load this video file. Make sure your server is running, and headers allow access (CORS-enabled if cross-origin).';
+      err.style.display='flex';
+      vid.removeEventListener('error',_mp4err);
+    },{once:true});
+
+    vid.play().catch(()=>{});
+    showToast('▶ '+(title||'Playing video'),1800);
+  }
 
   if(!asGuest){endHostSession();startHostSession(url,title||'',drm);}
 }
@@ -1188,8 +1212,6 @@ function goBack(){
     return;
   }
 
-  
-
   // ── SESSION / CHANNEL params ──
   const sid=q.get('sid');
   const chid=q.get('chid');
@@ -1328,7 +1350,7 @@ pipBtn.addEventListener('click',async e=>{e.stopPropagation();try{if(document.pi
 vid.addEventListener('waiting',()=>spin.classList.add('on'));
 vid.addEventListener('canplay',()=>spin.classList.remove('on'));
 vid.addEventListener('playing',()=>spin.classList.remove('on'));
-vid.addEventListener('error',()=>{spin.classList.remove('on');if(!shakaInst){errMsg.textContent='Video error: stream may be offline or expired.';err.style.display='flex';}});
+vid.addEventListener('error',()=>{spin.classList.remove('on');});
 function showUI(){player.classList.remove('hide-ui');player.classList.add('show-ui');clearTimeout(hideT)}
 function schedHide(){clearTimeout(hideT);hideT=setTimeout(()=>{if(!vid.paused&&!sharePanel.classList.contains('open')){player.classList.add('hide-ui');player.classList.remove('show-ui')}},3500)}
 player.addEventListener('mousemove',()=>{showUI();if(!vid.paused)schedHide()});
@@ -1441,7 +1463,6 @@ function generateBundle(){
   const base=$('playerBaseUrl').value.trim()||window.location.origin+window.location.pathname;
   const name=$('bundleName').value.trim()||'Channel Bundle';
 
-  // Store channel IDs only — keys fetched fresh on every open
   const ids=[];
   sbSelected.forEach(i=>{
     const ch=sbChannels[i];
