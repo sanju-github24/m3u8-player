@@ -1261,6 +1261,11 @@ function buildShakaQual(){
 // HLS — UPDATED FOR MASTER MANIFEST CROSS-ORIGIN RECOVERY
 // ══════════════════════════════════════════════════════════
 function loadHLS(url){
+
+  if (location.protocol === 'https:' && url.startsWith('http://')) {
+    url = 'https://' + url.slice(7);
+  }
+  
   if(Hls.isSupported()){
     hlsInst = new Hls({
       enableWorker: true,
