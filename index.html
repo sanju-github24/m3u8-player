@@ -1257,11 +1257,32 @@ function buildShakaQual(){
 // ══════════════════════════════════════════════════════════
 // HLS
 // ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// HLS — UPDATED FOR MASTER MANIFEST CROSS-ORIGIN RECOVERY
+// ══════════════════════════════════════════════════════════
 function loadHLS(url){
   if(Hls.isSupported()){
-    hlsInst=new Hls({enableWorker:true,lowLatencyMode:true,liveSyncDurationCount:3,liveMaxLatencyDurationCount:10,maxBufferLength:30,backBufferLength:60});
+    hlsInst = new Hls({
+      enableWorker: true,
+      lowLatencyMode: true,
+      liveSyncDurationCount: 3,
+      liveMaxLatencyDurationCount: 10,
+      maxBufferLength: 30,
+      backBufferLength: 60,
+      
+      // ── THE CRITICAL CORS TRACKING FIXES ──
+      xhrSetup: function (xhr, url) {
+        xhr.withCredentials = false; // Prevents cookie scattering issues
+      },
+      fetchSetup: function (context, init) {
+        init.credentials = 'omit'; // Forces safe absolute cross-origin lookups
+        return new Request(context, init);
+      }
+    });
+    
     hlsInst.loadSource(url);
     hlsInst.attachMedia(vid);
+    
     hlsInst.on(Hls.Events.MANIFEST_PARSED,()=>{
       spin.classList.remove('on');
       vid.play().catch(()=>{});
@@ -1281,8 +1302,8 @@ function loadHLS(url){
         err.style.display='flex';
       }
     });
-  }else if(vid.canPlayType('application/vnd.apple.mpegurl')){
-    // Safari native HLS
+  } else if(vid.canPlayType('application/vnd.apple.mpegurl')){
+    // Safari native layout fallback
     vid.src=url;
     vid.addEventListener('loadedmetadata',()=>{
       spin.classList.remove('on');
@@ -1291,8 +1312,7 @@ function loadHLS(url){
     },{once:true});
     vid.addEventListener('error',()=>{ spin.classList.remove('on'); },{once:true});
     vid.play().catch(()=>{});
-  }else{
-    // Fallback: treat as native video
+  } else {
     spin.classList.remove('on');
     loadNative(url, _lastTitle);
   }
