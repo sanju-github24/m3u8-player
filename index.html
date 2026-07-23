@@ -712,6 +712,18 @@ async function getFancodeMatches(){
   }
 }
 
+// Resolve a shareable channel/match id → fresh stream entry. FanCode ids (fc_*)
+// are looked up in the live feed so the signed token is always current; JioTV ids
+// come from the channel map. This is what makes a shared FanCode link keep working.
+async function resolveChannelById(id){
+  if(id && id.indexOf('fc_') === 0){
+    const list = await getFancodeMatches();
+    return list.find(c => c.id === id) || null;
+  }
+  const map = await getChMap();
+  return map[id] || null;
+}
+
 // ══════════════════════════════════════════════════════════
 // DOM REFS
 // ══════════════════════════════════════════════════════════
@@ -1582,8 +1594,7 @@ function goBack(){
     const title=dob(tRaw||'');
     showToast('⏳ Fetching stream…',3000);
     try{
-      const map=await getChMap();
-      const ch=map[channelId];
+      const ch=await resolveChannelById(channelId);
       if(!ch||!ch.url)throw new Error('Channel not found in feed');
       const drm=(ch.keyId&&ch.key)?{keyId:ch.keyId,key:ch.key,cookie:ch.cookie||null}:null;
       if(sid){
