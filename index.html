@@ -712,10 +712,21 @@ async function getFancodeMatches(){
   }
 }
 
-// Resolve a shareable channel/match id → fresh stream entry. FanCode ids (fc_*)
-// are looked up in the live feed so the signed token is always current; JioTV ids
-// come from the channel map. This is what makes a shared FanCode link keep working.
+// The current primary FanCode live match (first live in the feed), fresh token.
+async function getFancodeLive(){
+  const list = await getFancodeMatches();
+  return list[0] || null;
+}
+
+// Resolve a shareable channel/match id → fresh stream entry.
+//  - 'fc_live'  → whatever FanCode match is live right now (channel-style).
+//  - 'fc_<id>'  → that specific match, if still live.
+//  - otherwise  → JioTV channel map.
+// FanCode always resolves against the live feed so the signed token is current.
 async function resolveChannelById(id){
+  if(id === 'fc_live'){
+    return await getFancodeLive();
+  }
   if(id && id.indexOf('fc_') === 0){
     const list = await getFancodeMatches();
     return list.find(c => c.id === id) || null;
@@ -794,6 +805,8 @@ urlIn.addEventListener('input',()=>{
 // CHANNEL LOADER (Live TV tab)
 // ══════════════════════════════════════════════════════════
 let channelsData=[],selectedChIdx=-1,channelsLoaded=false;
+// Stable channel id of what's currently playing (for permanent share links).
+let _playingChannelId=null,_playingChannelLogo=null;
 
 async function fetchChannels(){
   $('chLoading').style.display='flex';
@@ -806,8 +819,13 @@ async function fetchChannels(){
     const [mapRes, fcRes] = await Promise.allSettled([ getChMap(), getFancodeMatches() ]);
     const chs = mapRes.status === 'fulfilled' ? Object.values(mapRes.value) : [];
     const fc  = fcRes.status  === 'fulfilled' ? fcRes.value : [];
-    // FanCode live matches first, then JioTV channels.
-    channelsData = [...fc, ...chs];
+    // Collapse all FanCode live matches into ONE "FanCode Live" channel entry
+    // that always resolves to whatever is currently live (like a TV channel).
+    const fcEntry = fc.length ? [{
+      id:'fc_live', name:'🔴 FanCode Live', url:fc[0].url,
+      keyId:'', key:'', cookie:'', logo:fc[0].logo, fcLive:true
+    }] : [];
+    channelsData = [...fcEntry, ...chs];
     if(!channelsData.length) throw new Error('No channels');
     channelsLoaded = true;
     $('chLoading').style.display='none';
@@ -845,9 +863,20 @@ function selectChannel(idx){
   btn.textContent='▶  Play: '+channelsData[idx].name;
 }
 
-function playSelectedLive(){
+async function playSelectedLive(){
   if(selectedChIdx<0){showToast('Select a channel first');return;}
   const ch=channelsData[selectedChIdx];
+  if(ch.fcLive || ch.id==='fc_live'){
+    // Always resolve the current live match fresh, so this one entry keeps
+    // playing whatever FanCode is showing now.
+    showToast('⏳ Getting current live…',2500);
+    const cur=await getFancodeLive();
+    if(!cur||!cur.url){errMsg.textContent='No FanCode match is live right now.';err.style.display='flex';return;}
+    _playingChannelId='fc_live'; _playingChannelLogo=ch.logo||cur.logo||null;
+    loadVideo(cur.url, cur.name, false, null);
+    return;
+  }
+  _playingChannelId=ch.id; _playingChannelLogo=ch.logo||null;
   loadVideo(ch.url,ch.name,false,{keyId:ch.keyId,key:ch.key,cookie:ch.cookie});
 }
 
@@ -942,12 +971,14 @@ function startHostSession(url, title, drm) {
   SID = genId(); SROLE = 'host'; SSTART = Date.now();
   SURL = url; STITLE = title || ''; SDRM = drm || null;
 
-  let channelId = null, channelLogo = null;
-  if (channelsData && channelsData.length > 0) {
+  // Prefer the explicitly-tracked channel id (e.g. 'fc_live') so the share link
+  // stays permanent; else fall back to matching the stream against the list.
+  let channelId = _playingChannelId, channelLogo = _playingChannelLogo;
+  if (!channelId && channelsData && channelsData.length > 0) {
     const match = channelsData.find(ch => {
-      const chBase = ch.url.split('?')[0];
+      const chBase = (ch.url||'').split('?')[0];
       const urlBase = url.split('?')[0];
-      return chBase === urlBase || ch.name === title;
+      return (chBase && chBase === urlBase) || ch.name === title;
     });
     if (match) { channelId = match.id; channelLogo = match.logo || null; }
   }
@@ -1533,6 +1564,7 @@ function loadHLS(url){
 
 function tryDemo(url, title){
   urlIn.value=url; titIn.value=title; drmFields.style.display='none';
+  _playingChannelId=null; _playingChannelLogo=null;
   loadVideo(url, title);
 }
 
@@ -1547,6 +1579,7 @@ function granularityPlayback(){
     const kid=keyIdIn.value.trim(), k=keyIn.value.trim(), ck=cookieIn.value.trim();
     if(kid&&k) drm={keyId:kid, key:k, cookie:ck||null};
   }
+  _playingChannelId=null; _playingChannelLogo=null;
   loadVideo(url, titIn.value.trim(), false, drm);
 }
 urlIn.addEventListener('keydown',e=>{if(e.key==='Enter')playNow.click()});
@@ -1596,6 +1629,8 @@ function goBack(){
     try{
       const ch=await resolveChannelById(channelId);
       if(!ch||!ch.url)throw new Error('Channel not found in feed');
+      // Keep the shared id (e.g. 'fc_live') so re-sharing stays permanent.
+      _playingChannelId=channelId; _playingChannelLogo=ch.logo||null;
       const drm=(ch.keyId&&ch.key)?{keyId:ch.keyId,key:ch.key,cookie:ch.cookie||null}:null;
       if(sid){
         try{const st=JSON.parse(localStorage.getItem(sKey(sid))||'{}');if(st.ended){loadVideo(ch.url,ch.name,true,drm);showToast('⚠ Session ended — playing directly',3000);return;}}catch{}
