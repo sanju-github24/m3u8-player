@@ -1411,7 +1411,12 @@ async function loadHLSViaShaka(url){
     },{once:true});
     vid.addEventListener('error',()=>{
       spin.classList.remove('on');
-      errMsg.textContent='Could not play this stream. It may be region-locked or the link expired.';
+      const canNative = vid.canPlayType('application/vnd.apple.mpegurl') || vid.canPlayType('application/x-mpegURL');
+      errMsg.innerHTML = canNative
+        ? 'Could not play this stream. The link may have expired.'
+        : 'FanCode blocks cross-origin playback in desktop browsers.<br>'
+          + 'Use a CORS-unblock browser extension, watch on your phone, '
+          + 'or run the local proxy (<code>?lp=http://localhost:8787/proxy</code>).';
       err.style.display='flex';
     },{once:true});
     vid.play().catch(()=>{ vid.muted=true; vid.play().catch(()=>{}); });
@@ -1431,10 +1436,11 @@ function loadHLS(url){
     if (LOCAL_PROXY) {
       url = viaLocalProxy(url);   // fall through to the hls.js path below
     } else {
-      // Mobile / no proxy: go straight to native <video src>. Shaka/hls.js can't
-      // play FanCode cross-origin (its variant children are CORS-less), so skip
-      // them — native media loads aren't subject to CORS (works on mobile).
-      playFancodeNative(url);
+      // No local proxy: try Shaka first, then native <video src>. Shaka plays when
+      // CORS is bypassed (a CORS/m3u8 browser extension on desktop) + residential
+      // IP; if Shaka is CORS-blocked (clean mobile browser) it falls to native,
+      // which isn't CORS-bound. This covers desktop-with-extension AND mobile.
+      loadHLSViaShaka(url);
       return;
     }
   }
