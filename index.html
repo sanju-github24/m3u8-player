@@ -1334,6 +1334,18 @@ function preferShakaHls(url){
   catch{ return false; }
 }
 
+// Optional LOCAL CORS proxy for DESKTOP FanCode playback (see fancode-local-proxy.js).
+// Run that script on your machine, then set this — via ?lp=http://localhost:8787/proxy
+// (persisted), or localStorage 'fc_local_proxy'. Empty = mobile-only native path.
+let LOCAL_PROXY = '';
+try{
+  const _lp = new URLSearchParams(location.search).get('lp');
+  if(_lp){ localStorage.setItem('fc_local_proxy', _lp); }
+  LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
+}catch{}
+function viaLocalProxy(url){ return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
+function isLocalUrl(u){ return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
+
 // Play an HLS URL the same way the working reference site does.
 async function loadHLSViaShaka(url){
   try{
@@ -1379,14 +1391,21 @@ async function loadHLSViaShaka(url){
 
 function loadHLS(url){
 
-  if (location.protocol === 'https:' && url.startsWith('http://')) {
+  if (location.protocol === 'https:' && url.startsWith('http://') && !isLocalUrl(url)) {
     url = 'https://' + url.slice(7);
   }
 
-  // FanCode-style hosts: use Shaka (+native fallback), exactly like the working site.
+  // FanCode-style hosts.
   if (preferShakaHls(url)) {
-    loadHLSViaShaka(url);
-    return;
+    // Desktop: if a local proxy is configured, route through it so hls.js can play
+    // (proxy adds CORS + rewrites variants/segments, using your residential IP).
+    if (LOCAL_PROXY) {
+      url = viaLocalProxy(url);   // fall through to the hls.js path below
+    } else {
+      // Mobile / no proxy: Shaka then native <video src>, like the reference site.
+      loadHLSViaShaka(url);
+      return;
+    }
   }
 
   if(Hls.isSupported()){
