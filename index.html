@@ -652,6 +652,57 @@ async function getChMap() {
   return _chMapPromise;
 }
 
+// ── FanCode live-matches feed ──────────────────────────────
+// Pre-signed hdntl playback URLs, refreshed ~hourly by a third-party scraper.
+// We only read it; no token generation happens here. Swap this URL if you run
+// your own generator that writes the same JSON shape.
+const FANCODE_FEED_URL = 'https://raw.githubusercontent.com/doctor-8trange/zyphx8/refs/heads/main/data/fancode.json';
+
+// Pull the highest-resolution signed variant URL out of a master playlist text.
+function fcBestVariant(masterText){
+  if(!masterText) return '';
+  const lines = masterText.split('\n');
+  let best = { res: -1, url: '' };
+  for(let i=0;i<lines.length;i++){
+    const m = /RESOLUTION=\d+x(\d+)/i.exec(lines[i]);
+    if(m){
+      const res = parseInt(m[1],10);
+      const url = (lines[i+1]||'').trim();
+      if(url && !url.startsWith('#') && res > best.res) best = { res, url };
+    }
+  }
+  return best.url;
+}
+
+async function getFancodeMatches(){
+  try{
+    const res = await fetch(FANCODE_FEED_URL + '?_=' + Date.now());
+    if(!res.ok) throw new Error('feed '+res.status);
+    const data = await res.json();
+    const matches = data.matches || [];
+    return matches
+      .filter(m => (m.status||'').toUpperCase() === 'LIVE' && m.auto_streams && m.auto_streams[0])
+      .map(m => {
+        const s = m.auto_streams[0];
+        // Use the highest signed VARIANT URL from the master text. The bare
+        // index.m3u8 master is NOT covered by the hdntl signature (403), so we
+        // point straight at e.g. the signed 1080p.m3u8, which plays.
+        const url = fcBestVariant(s.auto);
+        if(!url) return null;
+        return {
+          id: 'fc_' + (m.match_id || m.title),
+          name: '🔴 ' + (m.title || 'FanCode Live'),
+          url, keyId:'', key:'', cookie:'',
+          logo: (m.image_cdn && (m.image_cdn.LOGO || m.image_cdn.APP)) || m.image || ''
+        };
+      })
+      .filter(Boolean);
+  }catch(e){
+    console.warn('FanCode feed failed:', e);
+    return [];
+  }
+}
+
 // ══════════════════════════════════════════════════════════
 // DOM REFS
 // ══════════════════════════════════════════════════════════
@@ -730,10 +781,13 @@ async function fetchChannels(){
   $('chUpdated').style.display='none';
   $('playLiveBtn').style.display='none';
   try{
-    const map = await getChMap();
-    const chs = Object.values(map);
-    if(!chs.length) throw new Error('No channels');
-    channelsData = chs;
+    // Load JioTV channel map and FanCode live matches in parallel.
+    const [mapRes, fcRes] = await Promise.allSettled([ getChMap(), getFancodeMatches() ]);
+    const chs = mapRes.status === 'fulfilled' ? Object.values(mapRes.value) : [];
+    const fc  = fcRes.status  === 'fulfilled' ? fcRes.value : [];
+    // FanCode live matches first, then JioTV channels.
+    channelsData = [...fc, ...chs];
+    if(!channelsData.length) throw new Error('No channels');
     channelsLoaded = true;
     $('chLoading').style.display='none';
     renderChannelGrid();
