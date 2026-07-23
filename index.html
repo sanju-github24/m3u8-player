@@ -1345,6 +1345,19 @@ try{
 function viaLocalProxy(url){ return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
 function isLocalUrl(u){ return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
 
+// Route FanCode by what the browser can actually do:
+//  - Native HLS available (iOS Safari, or a native-HLS browser extension) →
+//    <video src>, which is NOT CORS-bound and plays directly.
+//  - No native HLS (Android Chrome, desktop Chrome) → MSE via Shaka; only works
+//    if a CORS-unblock extension is present or via the local proxy.
+function playFancode(url){
+  try{ if(hlsInst){ hlsInst.destroy(); hlsInst=null; } }catch{}
+  try{ if(shakaInst){ shakaInst.destroy(); shakaInst=null; } }catch{}
+  const canNative = !!(vid.canPlayType('application/vnd.apple.mpegurl') || vid.canPlayType('application/x-mpegURL'));
+  if(canNative){ playFancodeNative(url); return; }
+  loadHLSViaShaka(url);
+}
+
 // Native <video src> playback for FanCode (no proxy). Works on iOS Safari /
 // Android Chrome (native HLS, not CORS-bound). Desktop has no native HLS → shows
 // a clear hint to run the local proxy.
@@ -1439,11 +1452,8 @@ function loadHLS(url){
     if (LOCAL_PROXY) {
       url = viaLocalProxy(url);   // fall through to the hls.js path below
     } else {
-      // No local proxy: try Shaka first, then native <video src>. Shaka plays when
-      // CORS is bypassed (a CORS/m3u8 browser extension on desktop) + residential
-      // IP; if Shaka is CORS-blocked (clean mobile browser) it falls to native,
-      // which isn't CORS-bound. This covers desktop-with-extension AND mobile.
-      loadHLSViaShaka(url);
+      // No local proxy: native-first for browsers that can (iOS Safari), else MSE.
+      playFancode(url);
       return;
     }
   }
