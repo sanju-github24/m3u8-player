@@ -657,6 +657,11 @@ async function getChMap() {
 // We only read it; no token generation happens here. Swap this URL if you run
 // your own generator that writes the same JSON shape.
 const FANCODE_FEED_URL = 'https://raw.githubusercontent.com/doctor-8trange/zyphx8/refs/heads/main/data/fancode.json';
+// CORS-enabled proxy that serves a freshly-signed master playlist for each match
+// (the bare FanCode index.m3u8 is 403 without a signature; this proxy signs it and
+// adds Access-Control-Allow-Origin). We route the master through here so quality is
+// adaptive and the token is always fresh instead of the ~24h one baked in the JSON.
+const FANCODE_MASTER_PROXY = 'https://dai-fancode.pages.dev';
 
 // Pull the highest-resolution signed variant URL out of a master playlist text.
 function fcBestVariant(masterText){
@@ -684,10 +689,15 @@ async function getFancodeMatches(){
       .filter(m => (m.status||'').toUpperCase() === 'LIVE' && m.auto_streams && m.auto_streams[0])
       .map(m => {
         const s = m.auto_streams[0];
-        // Use the highest signed VARIANT URL from the master text. The bare
-        // index.m3u8 master is NOT covered by the hdntl signature (403), so we
-        // point straight at e.g. the signed 1080p.m3u8, which plays.
-        const url = fcBestVariant(s.auto);
+        // Prefer the proxy master (adaptive + always freshly signed): take the
+        // FanCode Primary_Playback_URL and swap its host to the proxy.
+        // Fall back to the highest signed variant baked into the JSON.
+        let url = '';
+        const primary = m.STREAMING_CDN && m.STREAMING_CDN.Primary_Playback_URL;
+        if(primary){
+          try{ url = FANCODE_MASTER_PROXY + new URL(primary).pathname; }catch{}
+        }
+        if(!url) url = fcBestVariant(s.auto);
         if(!url) return null;
         return {
           id: 'fc_' + (m.match_id || m.title),
@@ -1317,7 +1327,7 @@ function buildShakaQual(){
 // Hosts best played with Shaka + native fallback instead of hls.js (e.g. FanCode).
 // This mirrors the reference player that plays these reliably: Shaka.load(url),
 // and if Shaka throws, fall back to a plain native <video src>.
-const HLS_SHAKA_HOSTS = ['fancode.com'];
+const HLS_SHAKA_HOSTS = ['fancode.com', 'dai-fancode.pages.dev'];
 
 function preferShakaHls(url){
   try{ return HLS_SHAKA_HOSTS.some(h => new URL(url).hostname.endsWith(h)); }
