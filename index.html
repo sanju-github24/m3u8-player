@@ -1335,7 +1335,11 @@ function preferShakaHls(url){
 let LOCAL_PROXY = '';
 try{
   const _lp = new URLSearchParams(location.search).get('lp');
-  if(_lp){ localStorage.setItem('fc_local_proxy', _lp); }
+  if(_lp !== null){
+    // ?lp=off (or empty) clears it; otherwise store the proxy URL.
+    if(!_lp || _lp === 'off'){ localStorage.removeItem('fc_local_proxy'); }
+    else { localStorage.setItem('fc_local_proxy', _lp); }
+  }
   LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
 }catch{}
 function viaLocalProxy(url){ return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
