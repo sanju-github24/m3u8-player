@@ -689,15 +689,10 @@ async function getFancodeMatches(){
       .filter(m => (m.status||'').toUpperCase() === 'LIVE' && m.auto_streams && m.auto_streams[0])
       .map(m => {
         const s = m.auto_streams[0];
-        // Prefer the proxy master (adaptive + always freshly signed): take the
-        // FanCode Primary_Playback_URL and swap its host to the proxy.
-        // Fall back to the highest signed variant baked into the JSON.
-        let url = '';
-        const primary = m.STREAMING_CDN && m.STREAMING_CDN.Primary_Playback_URL;
-        if(primary){
-          try{ url = FANCODE_MASTER_PROXY + new URL(primary).pathname; }catch{}
-        }
-        if(!url) url = fcBestVariant(s.auto);
+        // Use the raw highest signed variant URL directly — exactly what the
+        // reference player (run-machine) hands to Shaka. This plays wherever that
+        // one does (mobile native, or desktop with a CORS-unblock extension).
+        const url = fcBestVariant(s.auto);
         if(!url) return null;
         return {
           id: 'fc_' + (m.match_id || m.title),
@@ -1380,9 +1375,13 @@ async function loadHLSViaShaka(url){
   try{
     shaka.polyfill.installAll();
     shakaInst = new shaka.Player(vid);
+    // Fail FAST: if Shaka is CORS-blocked (clean browser, or a native-HLS-only
+    // extension) we want to drop to native <video src> in ~1s, not after 25s of
+    // retries. Native is where playback actually happens for most desktop setups.
     shakaInst.configure({
       streaming:{ bufferingGoal:10, rebufferingGoal:2, bufferBehind:30,
-                  retryParameters:{maxAttempts:6,baseDelay:800,backoffFactor:2} },
+                  retryParameters:{maxAttempts:1,baseDelay:200,backoffFactor:1,timeout:6000} },
+      manifest:{ retryParameters:{maxAttempts:1,baseDelay:200,backoffFactor:1,timeout:6000} },
       abr:{ enabled:true },
     });
     shakaInst.addEventListener('error', ev=>{ console.warn('Shaka error', ev.detail); });
