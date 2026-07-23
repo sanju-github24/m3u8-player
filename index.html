@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- CRITICAL: FanCode's CDN 403s requests carrying our origin as Referer.
+       no-referrer makes the browser send NO Referer, so segment/manifest
+       requests return 200 (this is what makes native HLS play on iOS Safari). -->
+  <meta name="referrer" content="no-referrer"/>
   <title>StreamX Player</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
