@@ -1370,10 +1370,18 @@ function buildShakaQual(){
 // This mirrors the reference player that plays these reliably: Shaka.load(url),
 // and if Shaka throws, fall back to a plain native <video src>.
 const HLS_SHAKA_HOSTS = ['fancode.com', 'dai-fancode.pages.dev'];
+// FanCode HLS path signature: <matchid>_<lang>_hls_<hash>..._h264/<quality>.m3u8
+// (used on their Akamai AND CloudFront CDNs — CORS-less, needs the native path).
+const FANCODE_PATH_RE = /_hls_[a-z0-9]+.*_h264\//i;
 
 function preferShakaHls(url){
-  try{ return HLS_SHAKA_HOSTS.some(h => new URL(url).hostname.endsWith(h)); }
-  catch{ return false; }
+  try{
+    const u = new URL(url);
+    if (HLS_SHAKA_HOSTS.some(h => u.hostname.endsWith(h))) return true;
+    // FanCode served via CloudFront (random host) — match by its path signature.
+    if (u.hostname.endsWith('cloudfront.net') && FANCODE_PATH_RE.test(u.pathname)) return true;
+    return false;
+  }catch{ return false; }
 }
 
 // Optional LOCAL CORS proxy for DESKTOP FanCode playback (see fancode-local-proxy.js).
