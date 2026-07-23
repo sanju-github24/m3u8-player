@@ -1346,6 +1346,35 @@ try{
 function viaLocalProxy(url){ return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
 function isLocalUrl(u){ return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
 
+// Native <video src> playback for FanCode (no proxy). Works on iOS Safari /
+// Android Chrome (native HLS, not CORS-bound). Desktop has no native HLS → shows
+// a clear hint to run the local proxy.
+function playFancodeNative(url){
+  try{ if(shakaInst){ shakaInst.destroy(); shakaInst=null; } }catch{}
+  try{ if(hlsInst){ hlsInst.destroy(); hlsInst=null; } }catch{}
+  const canNative = vid.canPlayType('application/vnd.apple.mpegurl') || vid.canPlayType('application/x-mpegURL');
+  vid.src = url;
+  vid.addEventListener('loadedmetadata',()=>{
+    spin.classList.remove('on');
+    isLiveStream=detectLive();
+    if(isLiveStream){const ed=getLiveEdge();if(ed>0)vid.currentTime=Math.max(0,ed-1);updateLiveBadge();}
+  },{once:true});
+  vid.addEventListener('error',()=>{
+    spin.classList.remove('on');
+    errMsg.innerHTML = canNative
+      ? 'Could not play this stream. The link may have expired.'
+      : 'FanCode can’t play in desktop browsers directly.<br>Run the local proxy '
+        + '(<code>node fancode-local-proxy.js</code>) and open this page with '
+        + '<code>?lp=http://localhost:8787/proxy</code>, or watch on your phone.';
+    err.style.display='flex';
+  },{once:true});
+  vid.play().catch(()=>{ vid.muted=true; vid.play().catch(()=>{}); });
+  if(!canNative){
+    // Desktop: metadata/error may never fire for HLS; surface the hint promptly.
+    setTimeout(()=>{ if(vid.readyState < 1 && err.style.display!=='flex'){ vid.dispatchEvent(new Event('error')); } }, 3500);
+  }
+}
+
 // Play an HLS URL the same way the working reference site does.
 async function loadHLSViaShaka(url){
   try{
@@ -1402,8 +1431,10 @@ function loadHLS(url){
     if (LOCAL_PROXY) {
       url = viaLocalProxy(url);   // fall through to the hls.js path below
     } else {
-      // Mobile / no proxy: Shaka then native <video src>, like the reference site.
-      loadHLSViaShaka(url);
+      // Mobile / no proxy: go straight to native <video src>. Shaka/hls.js can't
+      // play FanCode cross-origin (its variant children are CORS-less), so skip
+      // them — native media loads aren't subject to CORS (works on mobile).
+      playFancodeNative(url);
       return;
     }
   }
