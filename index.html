@@ -1260,12 +1260,71 @@ function buildShakaQual(){
 // ══════════════════════════════════════════════════════════
 // HLS — UPDATED FOR MASTER MANIFEST CROSS-ORIGIN RECOVERY
 // ══════════════════════════════════════════════════════════
+// Hosts best played with Shaka + native fallback instead of hls.js (e.g. FanCode).
+// This mirrors the reference player that plays these reliably: Shaka.load(url),
+// and if Shaka throws, fall back to a plain native <video src>.
+const HLS_SHAKA_HOSTS = ['fancode.com'];
+
+function preferShakaHls(url){
+  try{ return HLS_SHAKA_HOSTS.some(h => new URL(url).hostname.endsWith(h)); }
+  catch{ return false; }
+}
+
+// Play an HLS URL the same way the working reference site does.
+async function loadHLSViaShaka(url){
+  try{
+    shaka.polyfill.installAll();
+    shakaInst = new shaka.Player(vid);
+    shakaInst.configure({
+      streaming:{ bufferingGoal:10, rebufferingGoal:2, bufferBehind:30,
+                  retryParameters:{maxAttempts:6,baseDelay:800,backoffFactor:2} },
+      abr:{ enabled:true },
+    });
+    shakaInst.addEventListener('error', ev=>{ console.warn('Shaka error', ev.detail); });
+    shakaInst.addEventListener('streaming',()=>{
+      if(shakaInst && shakaInst.isLive()){ isLiveStream=true; updateLiveBadge(); timeLbl.textContent='LIVE'; }
+    });
+    await shakaInst.load(url);
+    spin.classList.remove('on');
+    vid.play().catch(()=>{ vid.muted=true; vid.play().catch(()=>{}); });
+    if(shakaInst.isLive()){
+      isLiveStream=true;
+      const sk=vid.seekable;
+      if(sk&&sk.length>0){const edge=sk.end(sk.length-1);_edgeCache=edge;_edgeTS=Date.now();vid.currentTime=Math.max(0,edge-2);}
+      updateLiveBadge(); showToast('🔴 Live', 1500);
+    }
+    buildShakaQual();
+  }catch(e){
+    // Mirror the reference: on Shaka failure, drop to native <video src>.
+    console.warn('Shaka HLS failed, trying native:', e);
+    try{ if(shakaInst){ shakaInst.destroy(); shakaInst=null; } }catch{}
+    vid.src = url;
+    vid.addEventListener('loadedmetadata',()=>{
+      spin.classList.remove('on');
+      isLiveStream=detectLive();
+      if(isLiveStream){const ed=getLiveEdge();if(ed>0)vid.currentTime=Math.max(0,ed-1);updateLiveBadge();}
+    },{once:true});
+    vid.addEventListener('error',()=>{
+      spin.classList.remove('on');
+      errMsg.textContent='Could not play this stream. It may be region-locked or the link expired.';
+      err.style.display='flex';
+    },{once:true});
+    vid.play().catch(()=>{ vid.muted=true; vid.play().catch(()=>{}); });
+  }
+}
+
 function loadHLS(url){
 
   if (location.protocol === 'https:' && url.startsWith('http://')) {
     url = 'https://' + url.slice(7);
   }
-  
+
+  // FanCode-style hosts: use Shaka (+native fallback), exactly like the working site.
+  if (preferShakaHls(url)) {
+    loadHLSViaShaka(url);
+    return;
+  }
+
   if(Hls.isSupported()){
     hlsInst = new Hls({
       enableWorker: true,
