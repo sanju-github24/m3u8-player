@@ -1500,6 +1500,25 @@ function loadHLS(url){
     url = 'https://' + url.slice(7);
   }
 
+  // JioHotstar live: the hdnea master hands back an hdntl cookie that authorizes
+  // variants/segments, which the browser can't replay cross-origin — and Hotstar
+  // 403s datacenter IPs, so a hosted proxy won't do. Route through the local
+  // residential-IP proxy (hotstar-proxy-local.mjs), then fall through to hls.js.
+  try {
+    if (/\.hotstar\.com$/i.test(new URL(url).hostname)) {
+      if (LOCAL_PROXY) {
+        url = viaLocalProxy(url);
+      } else {
+        spin.classList.remove('on');
+        errMsg.innerHTML = 'JioHotstar needs the local proxy. Run '
+          + '<code>node hotstar-proxy-local.mjs</code> on your machine, then open '
+          + 'this page with <code>?lp=http://127.0.0.1:8787</code> once.';
+        err.style.display = 'flex';
+        return;
+      }
+    }
+  } catch {}
+
   // FanCode-style hosts.
   if (preferShakaHls(url)) {
     // Desktop: if a local proxy is configured, route through it so hls.js can play
