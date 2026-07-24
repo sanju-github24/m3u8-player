@@ -1400,6 +1400,20 @@ try{
 function viaLocalProxy(url){ return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
 function isLocalUrl(u){ return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
 
+// Separate proxy JUST for JioHotstar (hotstar-proxy-local.mjs). Kept fully independent
+// of LOCAL_PROXY so FanCode's ?lp= behaviour is completely unchanged. Set via
+// ?hp=<url> (persisted), or localStorage 'hs_local_proxy'. ?hp=off clears it.
+let HOTSTAR_PROXY = '';
+try{
+  const _hp = new URLSearchParams(location.search).get('hp');
+  if(_hp !== null){
+    if(!_hp || _hp === 'off'){ localStorage.removeItem('hs_local_proxy'); }
+    else { localStorage.setItem('hs_local_proxy', _hp); }
+  }
+  HOTSTAR_PROXY = localStorage.getItem('hs_local_proxy') || '';
+}catch{}
+function viaHotstarProxy(url){ return HOTSTAR_PROXY + '?url=' + encodeURIComponent(url); }
+
 // Route FanCode by what the browser can actually do:
 //  - Native HLS available (iOS Safari, or a native-HLS browser extension) →
 //    <video src>, which is NOT CORS-bound and plays directly.
@@ -1506,13 +1520,13 @@ function loadHLS(url){
   // residential-IP proxy (hotstar-proxy-local.mjs), then fall through to hls.js.
   try {
     if (/\.hotstar\.com$/i.test(new URL(url).hostname)) {
-      if (LOCAL_PROXY) {
-        url = viaLocalProxy(url);
+      if (HOTSTAR_PROXY) {
+        url = viaHotstarProxy(url);   // uses ?hp=, NOT FanCode's ?lp=
       } else {
         spin.classList.remove('on');
-        errMsg.innerHTML = 'JioHotstar needs the local proxy. Run '
+        errMsg.innerHTML = 'JioHotstar needs its own local proxy. Run '
           + '<code>node hotstar-proxy-local.mjs</code> on your machine, then open '
-          + 'this page with <code>?lp=http://127.0.0.1:8787</code> once.';
+          + 'this page with <code>?hp=http://127.0.0.1:8787</code> once.';
         err.style.display = 'flex';
         return;
       }
