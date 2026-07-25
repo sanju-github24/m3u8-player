@@ -3306,7 +3306,10 @@
     // Hosts best played with Shaka + native fallback instead of hls.js (e.g. FanCode).
     // This mirrors the reference player that plays these reliably: Shaka.load(url),
     // and if Shaka throws, fall back to a plain native <video src>.
-    const HLS_SHAKA_HOSTS = ['fancode.com', 'dai-fancode.pages.dev', 'in-mc-flive.fancode.com'];
+    const HLS_SHAKA_HOSTS = ['fancode.com',
+      'dai-fancode.pages.dev',
+      'in-mc-flive.fancode.com',
+      'in-ak-flive.akamaized.net'];
     // FanCode HLS path signature: <matchid>_<lang>_hls_<hash>..._h264/<quality>.m3u8
     // (used on their Akamai AND CloudFront CDNs — CORS-less, needs the native path).
     const FANCODE_PATH_RE = /_hls_[a-z0-9]+.*_h264\//i;
