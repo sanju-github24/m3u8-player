@@ -2113,6 +2113,7 @@
       <div class="ls-tabs">
         <button class="ls-tab on" id="tabCustom" onclick="switchTab('custom')">🔗 Custom URL</button>
         <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV</button>
+        <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
       <div id="customTab">
@@ -2149,6 +2150,19 @@
           ⚠ Failed to load channels. <a onclick="fetchChannels();return false">Retry</a>
         </div>
         <div id="chGrid" class="ch-grid" style="display:none"></div>
+      </div>
+
+      <!-- iptv-org's public playlist. ~10,000 channels, so nothing is rendered
+           until you search: painting them all locks the browser for seconds. -->
+      <div id="iptvTab" style="display:none">
+        <input class="ls-in" id="iptvSearch" placeholder="Search 10,000+ channels — try &quot;bbc&quot;, &quot;kannada&quot;, &quot;news&quot;…" />
+        <div id="iptvStatus" class="ch-loading" style="display:none">
+          <div class="mini-spin"></div><span id="iptvStatusText">Loading playlist…</span>
+        </div>
+        <div id="iptvGrid" class="ch-grid" style="display:none"></div>
+        <div id="iptvHint" style="font-size:.72rem;color:rgba(255,255,255,.35);text-align:center;padding:14px 6px">
+          Type at least two letters to search.
+        </div>
         <div id="chUpdated" class="updated-badge" style="display:none"></div>
         <button class="ls-play" id="playLiveBtn" style="display:none;opacity:.4;cursor:not-allowed"
           onclick="playSelectedLive()">
@@ -2527,10 +2541,12 @@
         return 'dash';
       }
 
-      // 3. HLS — STRICT: only match actual .m3u8 extension or explicit /hls/ path segment
+      // 3. HLS — .m3u8, an explicit /hls/ path, OR HLS playlists served as .txt
+      //    (some CDNs obfuscate the manifest extension, e.g. cf-master.<ts>.txt).
       if (
         clean.endsWith('.m3u8') ||
         clean.includes('.m3u8?') ||
+        clean.endsWith('.txt') ||
         /\/hls\//.test(url)
       ) {
         return 'hls';
@@ -2725,16 +2741,132 @@
     function switchTab(t) {
       $('tabCustom').classList.toggle('on', t === 'custom');
       $('tabLive').classList.toggle('on', t === 'live');
+      $('tabIptv').classList.toggle('on', t === 'iptv');
       $('customTab').style.display = t === 'custom' ? 'flex' : 'none';
       $('liveTvTab').style.display = t === 'live' ? 'flex' : 'none';
+      $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
       if (t === 'live' && !channelsLoaded) fetchChannels();
+      if (t === 'iptv') loadIptv();
     }
+
+    document.getElementById('iptvSearch').addEventListener('input', (e) => {
+      clearTimeout(_iptvTimer);
+      const v = e.target.value;
+      _iptvTimer = setTimeout(() => iptvSearch(v), 180);   // debounce: 10k scans per keystroke is wasteful
+    });
 
     urlIn.addEventListener('input', () => {
       const v = urlIn.value;
       const type = detectUrlType(v);
       drmFields.style.display = type === 'dash' ? 'flex' : 'none';
     });
+
+    // ══════════════════════════════════════════════════════════
+    // IPTV — iptv-org's public playlist
+    // ══════════════════════════════════════════════════════════
+    /* One 2.8MB text file holding ~10,000 channels. It is fetched once and
+       parsed into memory; nothing is drawn until you type, because painting ten
+       thousand cards freezes the tab for several seconds and no one scrolls a
+       list that long anyway. */
+    const IPTV_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+    let iptvChannels = null, iptvLoading = false;
+
+    /* #EXTINF:-1 tvg-id="X" tvg-logo="…" group-title="News",Channel Name
+       https://…/stream.m3u8
+       Attributes are optional and their order varies, so each is read by name
+       rather than by position, and the display name is whatever follows the
+       last comma on the line. */
+    function parseM3U(text) {
+      const out = [];
+      const lines = text.split(/\r?\n/);
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.startsWith('#EXTINF')) continue;
+        const attr = (k) => (new RegExp(k + '="([^"]*)"').exec(line) || [, ''])[1];
+        const name = (line.split(',').pop() || '').trim();
+        // the URL is the next line that is neither blank nor a directive
+        let url = '';
+        for (let j = i + 1; j < lines.length; j++) {
+          const n = lines[j].trim();
+          if (!n) continue;
+          if (n.startsWith('#')) continue;
+          url = n; i = j; break;
+        }
+        // a handful of entries carry something that is not a web URL
+        if (!name || !/^https?:\/\//i.test(url)) continue;
+        /* tvg-id is "BBCAmerica.us@SD" — the country is the part after the dot,
+           and the @SD/@HD suffix is a stream-quality marker, not part of it. */
+        const cc = (attr('tvg-country') || attr('tvg-id').split('.').pop() || '')
+          .split('@')[0].trim().toUpperCase();
+        out.push({ name, url, logo: attr('tvg-logo'), group: attr('group-title'), country: cc });
+      }
+      return out;
+    }
+
+    async function loadIptv() {
+      if (iptvChannels || iptvLoading) return;
+      iptvLoading = true;
+      $('iptvStatus').style.display = 'flex';
+      $('iptvHint').style.display = 'none';
+      $('iptvStatusText').textContent = 'Loading playlist (2.8MB)…';
+      try {
+        const res = await fetch(IPTV_URL);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        iptvChannels = parseM3U(await res.text());
+        $('iptvStatus').style.display = 'none';
+        $('iptvHint').style.display = 'block';
+        $('iptvHint').textContent = `${iptvChannels.length.toLocaleString()} channels loaded — type at least two letters to search.`;
+      } catch (e) {
+        $('iptvStatusText').textContent = 'Could not load the playlist: ' + e.message;
+      } finally {
+        iptvLoading = false;
+      }
+    }
+
+    let _iptvTimer = null;
+    function iptvSearch(q) {
+      const grid = $('iptvGrid'), hint = $('iptvHint');
+      q = q.trim().toLowerCase();
+      if (!iptvChannels) return;
+      if (q.length < 2) {
+        grid.style.display = 'none'; hint.style.display = 'block';
+        hint.textContent = `${iptvChannels.length.toLocaleString()} channels loaded — type at least two letters to search.`;
+        return;
+      }
+      // capped: a broad word like "tv" matches thousands, and drawing them all
+      // is exactly the freeze this design avoids
+      const hits = [];
+      for (const c of iptvChannels) {
+        if (c.name.toLowerCase().includes(q) || (c.group || '').toLowerCase().includes(q)) hits.push(c);
+        if (hits.length >= 120) break;
+      }
+      hint.style.display = hits.length ? 'none' : 'block';
+      if (!hits.length) { grid.style.display = 'none'; hint.textContent = `Nothing matches “${q}”.`; return; }
+
+      grid.innerHTML = '';
+      for (const c of hits) {
+        const card = document.createElement('div');
+        card.className = 'ch-card';
+        card.title = `${c.name}${c.group ? ' · ' + c.group : ''}`;
+        card.innerHTML =
+          (c.logo ? `<img class="ch-logo" src="${c.logo}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`
+                  : `<div class="ch-logo"></div>`) +
+          `<div class="ch-name">${c.name.replace(/[<>&]/g, '')}</div>` +
+          (c.country ? `<div class="ch-tag">${c.country}</div>` : '');
+        card.onclick = () => playIptv(c);
+        grid.appendChild(card);
+      }
+      grid.style.display = 'grid';
+    }
+
+    /* Many of these are dead, geo-locked or refuse a cross-origin request from
+       a file:// page — that is the nature of a public list, not a fault here.
+       Say so plainly rather than leaving a black rectangle. */
+    function playIptv(ch) {
+      _playingChannelId = null;
+      _playingChannelLogo = ch.logo || null;
+      loadVideo(ch.url, ch.name);
+    }
 
     // ══════════════════════════════════════════════════════════
     // CHANNEL LOADER (Live TV tab)
