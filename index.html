@@ -3187,10 +3187,10 @@
         `FanCode refused the proxy for <b>${name}</b>` + (status ? ` (${status})` : '')
         + `. The match is live — FanCode serves India only, and this request left `
         + `from somewhere else.<br><br>`
-        + `Any Indian address fixes this one. Deploy the site's `
-        + `<code>/api/live-proxy</code> function (pinned to Mumbai) and set `
-        + `<code>localStorage.in_proxy = 'https://&lt;your-site&gt;/api/live-proxy'</code>, `
-        + `or run <code>node fancode-local-proxy.js</code> locally and set `
+        + `This player's own <code>/api/live-proxy</code> runs in Mumbai and should `
+        + `have handled it, so either it is not deployed or its region is not `
+        + `pinned to <code>bom1</code>.<br><br>`
+        + `Failing that, run <code>node fancode-local-proxy.js</code> locally and set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code>.`;
       err.style.display = 'flex';
     }
@@ -3880,8 +3880,9 @@
        measured on five providers without exception. Those two need a
        residential address, which is what LOCAL_PROXY is for.
 
-       Set it once from the console:
-         localStorage.in_proxy = 'https://<your-site>/api/live-proxy'   */
+       It ships with this player, so when the page is served over http(s) it is
+       simply next door and needs no setting. Opened as a file:// there is no
+       origin to call, and localStorage.in_proxy can name one elsewhere. */
     let IN_PROXY = '';
     try {
       const _lp = new URLSearchParams(location.search).get('lp');
@@ -3891,7 +3892,8 @@
         else { localStorage.setItem('fc_local_proxy', _lp); }
       }
       LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
-      IN_PROXY = localStorage.getItem('in_proxy') || '';
+      IN_PROXY = localStorage.getItem('in_proxy')
+        || (location.protocol.startsWith('http') ? location.origin + '/api/live-proxy' : '');
     } catch { }
     function viaLocalProxy(url) { return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
     function isLocalUrl(u) { return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
