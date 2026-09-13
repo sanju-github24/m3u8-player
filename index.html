@@ -2206,7 +2206,7 @@
         <div id="chUpdated" class="updated-badge" style="display:none"></div>
         <button class="ls-play" id="playLiveBtn" style="display:none;opacity:.4;cursor:not-allowed"
           onclick="playSelectedLive()">
-          ▶ Select a channel first
+          ▶ Replay last channel
         </button>
       </div>
     </div>
@@ -3305,7 +3305,11 @@
         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 44 44%22><rect width=%2244%22 height=%2244%22 fill=%22%231a1a1a%22/><text x=%2222%22 y=%2228%22 text-anchor=%22middle%22 fill=%22%23444%22 font-size=%2214%22>📺</text></svg>'">
       <span class="ch-name">${ch.name}</span>
       <span class="ch-tag">🔒 HD</span>`;
-        card.onclick = () => selectChannel(i);
+        /* One click plays, as every other tab does. It used to only select,
+           leaving the actual play on a button below a scrolling grid — so on
+           a long channel list the button was off-screen and the card looked
+           broken. Selection still happens, for the highlight. */
+        card.onclick = () => { selectChannel(i); playSelectedLive(); };
         grid.appendChild(card);
       });
       grid.style.display = 'grid';
