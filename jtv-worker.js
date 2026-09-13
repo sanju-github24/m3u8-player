@@ -28,7 +28,7 @@ const JTV_JSON   = 'https://raw.githubusercontent.com/sportlive18/jio-tv-auto-up
 const JTV_PLUS   = 'https://jtv-plus.jijenoh451.workers.dev/stream/data.json';
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: cors() });
     }
@@ -39,7 +39,15 @@ export default {
     if (reqUrl.searchParams.has('url')) {
       return handleProxy(reqUrl);
     }
-    return handleFeed();
+    return handleFeed(env);
+  },
+
+  /* Hourly cron (see SETUP at the foot of this file).
+     This does not serve anything — requests always go to the live feed — it
+     just keeps the KV snapshot warm so the fallback is an hour old at worst
+     rather than however long ago someone last loaded the page. */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(refreshSnapshot(env));
   },
 };
 
@@ -74,38 +82,89 @@ const BROWSERISH = {
   'priority':           'u=1, i',
 };
 
-async function handleFeed() {
+const SOURCES = [
+  ['jtv.json', JTV_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' }],
+  ['jtv-plus', JTV_PLUS, BROWSERISH],
+];
+
+/* One source, fetched and normalized. Throws rather than returning junk, so
+   the caller can move to the next source. */
+async function loadSource(name, url, headers) {
+  const res  = await fetchFresh(url, headers);
+  const text = await res.text();
+
+  // An HTML body means a block page or a 404, not a feed.
+  if (!res.ok || text.trim().startsWith('<') || text.includes('telegram')) {
+    throw new Error(`HTTP ${res.status}, ${text.slice(0, 120)}`);
+  }
+
+  const parsed = JSON.parse(text);
+  const rows = Array.isArray(parsed) ? parsed : (parsed.channels || Object.values(parsed));
+
+  const normalized = rows.map(normalize).filter(ch => ch.channel_id && ch.channel_url);
+  if (!normalized.length) throw new Error('parsed 0 channels');
+  return normalized;
+}
+
+async function handleFeed(env) {
   const errors = [];
 
-  for (const [name, url, headers] of [
-    ['jtv.json',  JTV_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' }],
-    ['jtv-plus',  JTV_PLUS, BROWSERISH],
-  ]) {
+  for (const [name, url, headers] of SOURCES) {
     try {
-      const res  = await fetchFresh(url, headers);
-      const text = await res.text();
-
-      // An HTML body means a block page or a 404, not a feed.
-      if (!res.ok || text.trim().startsWith('<') || text.includes('telegram')) {
-        errors.push(`${name}: HTTP ${res.status}, ${text.slice(0, 120)}`);
-        continue;
-      }
-
-      const parsed = JSON.parse(text);
-      const rows = Array.isArray(parsed)
-        ? parsed
-        : (parsed.channels || Object.values(parsed));
-
-      const normalized = rows.map(normalize).filter(ch => ch.channel_id && ch.channel_url);
-      if (!normalized.length) { errors.push(`${name}: parsed 0 channels`); continue; }
-
-      return json(normalized, 200, { 'X-Feed-Source': name });
+      const channels = await loadSource(name, url, headers);
+      // Every success doubles as a snapshot refresh, so the fallback stays
+      // current between cron runs without costing the request anything.
+      saveSnapshot(env, channels);
+      return json(channels, 200, { 'X-Feed-Source': name });
     } catch (e) {
       errors.push(`${name}: ${e.message}`);
     }
   }
 
+  /* Both upstreams are down. The snapshot is stale by definition — that is
+     why it is last — but a channel list with some live tokens in it beats a
+     502, and the header says how old it is so the player could warn. */
+  const snap = await readSnapshot(env);
+  if (snap) {
+    return json(snap.channels, 200, {
+      'X-Feed-Source': 'snapshot',
+      'X-Snapshot-Age-Seconds': String(Math.round((Date.now() - snap.at) / 1000)),
+    });
+  }
+
   return json({ error: 'no_feed', tried: errors }, 502);
+}
+
+// ── Warm fallback, kept in KV ────────────────────────────────
+// Optional: with no KV binding these are no-ops and the worker behaves
+// exactly as it did before, live-only.
+const SNAPSHOT_KEY = 'feed-snapshot';
+
+function saveSnapshot(env, channels) {
+  if (!env || !env.JTV_CACHE) return;
+  // Not awaited on the request path; a failed write must not fail the response.
+  env.JTV_CACHE.put(SNAPSHOT_KEY, JSON.stringify({ at: Date.now(), channels }))
+    .catch(() => {});
+}
+
+async function readSnapshot(env) {
+  if (!env || !env.JTV_CACHE) return null;
+  try {
+    const raw = await env.JTV_CACHE.get(SNAPSHOT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+async function refreshSnapshot(env) {
+  for (const [name, url, headers] of SOURCES) {
+    try {
+      const channels = await loadSource(name, url, headers);
+      if (env && env.JTV_CACHE) {
+        await env.JTV_CACHE.put(SNAPSHOT_KEY, JSON.stringify({ at: Date.now(), channels }));
+      }
+      return;
+    } catch { /* try the next source */ }
+  }
 }
 
 /* Both feeds into the one shape player.html reads.
@@ -154,8 +213,17 @@ function normalize(ch) {
     keyId:        ch.keyId  || '',
     key:          ch.key    || '',
     cookie,
-    expire_time:  ch.expire_time || '0',
+    // Read off the token rather than trusted from the feed, which sends "0".
+    // Lets the player tell "this channel's token died" from "this channel is
+    // broken" — the two look identical from a 403.
+    expire_time:  tokenExpiry(cookie) || ch.expire_time || '0',
   };
+}
+
+/* Unix seconds an __hdnea__ token stops being accepted, as a string. */
+function tokenExpiry(cookie) {
+  const m = /[~&?]exp=(\d+)/.exec(cookie || '');
+  return m ? m[1] : '';
 }
 
 function json(body, status, extra = {}) {
@@ -246,3 +314,29 @@ function cors() {
     'Access-Control-Allow-Headers': '*',
   };
 }
+
+/* ────────────────────────────────────────────────────────────
+   SETUP — the hourly refresh
+
+   Requests always go to the live feed, so the player already gets the newest
+   tokens on every page load. The hourly job exists only to keep a fallback
+   warm for the times raw.githubusercontent is unreachable.
+
+   Deliberately NOT an hourly cache: the tokens on the jiotvpllive channels
+   (Star Sports among them) last about an hour, so an hour-old cache is a
+   cache of dead links. Stale data is the last resort here, never the default.
+
+   Both steps are optional — with neither, the worker runs live-only, exactly
+   as it does today.
+
+   1. Cron trigger:  Worker → Settings → Triggers → Cron Triggers → Add
+                     0 * * * *          (top of every hour)
+
+   2. KV namespace:  Storage & Databases → KV → Create (any name)
+                     Worker → Settings → Bindings → Add → KV namespace
+                     Variable name:  JTV_CACHE      ← must match exactly
+
+   Check which path answered with the response headers:
+     X-Feed-Source: jtv.json | jtv-plus | snapshot
+     X-Snapshot-Age-Seconds: <n>   (only when serving the fallback)
+   ──────────────────────────────────────────────────────────── */
