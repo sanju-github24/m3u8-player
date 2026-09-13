@@ -2114,6 +2114,7 @@
         <button class="ls-tab on" id="tabCustom" onclick="switchTab('custom')">🔗 Custom URL</button>
         <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV</button>
         <button class="ls-tab" id="tabBB" onclick="switchTab('bb')">🎭 Bigg Boss 24/7</button>
+        <button class="ls-tab" id="tabSony" onclick="switchTab('sony')">🏏 SonyLiv Live</button>
         <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
@@ -2161,6 +2162,17 @@
         <div id="bbNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px">
           Same house, six language feeds. Running 24/7.
         </div>
+      </div>
+
+      <!-- SonyLiv's live fixtures, read through the worker. Rebuilt on every
+           visit rather than cached: the list is whatever is on air now. -->
+      <div id="sonyTab" style="display:none">
+        <div id="sonyLoading" class="ch-loading"><div class="mini-spin"></div>Loading live matches…</div>
+        <div id="sonyErr" class="ch-err" style="display:none">
+          ⚠ Could not load SonyLiv fixtures. <a onclick="loadSony(true);return false">Retry</a>
+        </div>
+        <div id="sonyGrid" class="ch-grid" style="display:none"></div>
+        <div id="sonyNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
       </div>
 
       <!-- iptv-org's public playlist. ~10,000 channels, so nothing is rendered
@@ -2753,13 +2765,16 @@
       $('tabCustom').classList.toggle('on', t === 'custom');
       $('tabLive').classList.toggle('on', t === 'live');
       $('tabBB').classList.toggle('on', t === 'bb');
+      $('tabSony').classList.toggle('on', t === 'sony');
       $('tabIptv').classList.toggle('on', t === 'iptv');
       $('customTab').style.display = t === 'custom' ? 'flex' : 'none';
       $('liveTvTab').style.display = t === 'live' ? 'flex' : 'none';
       $('bbTab').style.display = t === 'bb' ? 'flex' : 'none';
+      $('sonyTab').style.display = t === 'sony' ? 'flex' : 'none';
       $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
       if (t === 'live' && !channelsLoaded) fetchChannels();
       if (t === 'bb') renderBiggBoss();
+      if (t === 'sony') loadSony();
       if (t === 'iptv') loadIptv();
     }
 
@@ -3060,6 +3075,84 @@
         + (status ? ` (${status})` : '')
         + `. The feed is live — Hotstar blocks datacenter addresses, so it will `
         + `only load from a home connection in India.<br><br>`
+        + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
+        + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
+      err.style.display = 'flex';
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // SONYLIV LIVE (own tab)
+    // ══════════════════════════════════════════════════════════
+    /* Live sport on SonyLiv. The worker reads the fixtures feed and hands back
+       only what is on air with a playable URL.
+
+       Signed in the query (?hdnea=, acl=/*) and needing no headers at all — a
+       bare request returns 200. What it does not send is CORS, so the browser
+       cannot fetch it directly and something has to stand in the middle. */
+    let _sonyLoaded = false;
+
+    async function loadSony(force) {
+      if (_sonyLoaded && !force) return;
+      $('sonyLoading').style.display = 'flex';
+      $('sonyErr').style.display = 'none';
+      $('sonyGrid').style.display = 'none';
+      try {
+        const r = await fetch(NEW_JSON_URL + '?feed=sonyliv&_=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const list = await r.json();
+        if (!Array.isArray(list) || !list.length) throw new Error('no live fixtures');
+        renderSony(list, r.headers.get('X-Feed-Updated'));
+        _sonyLoaded = true;
+      } catch (e) {
+        $('sonyLoading').style.display = 'none';
+        $('sonyErr').style.display = 'block';
+        console.error('loadSony:', e);
+      }
+    }
+
+    function renderSony(list, updated) {
+      const grid = $('sonyGrid');
+      grid.innerHTML = '';
+      list.forEach((m) => {
+        const card = document.createElement('div');
+        card.className = 'ch-card';
+        card.innerHTML = `
+      <img class="ch-logo" src="${m.logo}" alt="${m.name}"
+        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
+        onerror="this.style.display='none'">
+      <span class="ch-name">${m.name}</span>
+      <span class="ch-tag">🔴 ${m.category}${m.lang ? ' · ' + m.lang : ''}</span>`;
+        card.onclick = () => playSony(m);
+        grid.appendChild(card);
+      });
+      $('sonyLoading').style.display = 'none';
+      $('sonyGrid').style.display = 'grid';
+      $('sonyNote').textContent = (list.length + ' live now')
+        + (updated ? ' · feed updated ' + updated : '');
+    }
+
+    async function playSony(m) {
+      _playingChannelId = null;
+      _playingChannelLogo = m.logo || null;
+
+      // Local proxy first where there is one — see the note in playBiggBoss.
+      if (LOCAL_PROXY) return loadVideo(viaLocalProxy(m.url), m.name);
+
+      const via = viaWorker(m.url);
+      try {
+        const r = await fetch(via, { signal: AbortSignal.timeout(12000) });
+        if (r.ok) return loadVideo(via, m.name);
+        sonyBlocked(m.name, r.status);
+      } catch {
+        sonyBlocked(m.name, 0);
+      }
+    }
+
+    function sonyBlocked(name, status) {
+      errMsg.innerHTML =
+        `SonyLiv refused the proxy for <b>${name}</b>` + (status ? ` (${status})` : '')
+        + `. The match is live and the link is signed — SonyLiv serves India only and `
+        + `turns away hosted servers, so it will not load from a worker.<br><br>`
         + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
       err.style.display = 'flex';

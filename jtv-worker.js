@@ -35,9 +35,13 @@ export default {
 
     const reqUrl = new URL(request.url);
 
-    // Route: ?url= present → HLS proxy; otherwise → channel feed.
+    // Route: ?url= → HLS proxy, ?feed=sonyliv → the SonyLiv fixtures,
+    // otherwise the JioTV channel feed.
     if (reqUrl.searchParams.has('url')) {
       return handleProxy(reqUrl);
+    }
+    if (reqUrl.searchParams.get('feed') === 'sonyliv') {
+      return handleSonyFeed();
     }
     return handleFeed(env);
   },
@@ -326,7 +330,20 @@ async function handleProxy(reqUrl) {
 
 function rewritePlaylist(text, baseUrl, proxyBase, extras = '') {
   const wrap  = (absUrl) => proxyBase + '?url=' + encodeURIComponent(absUrl) + extras;
-  const toAbs = (ref) => new URL(ref, baseUrl).toString();
+
+  /* A child URL with no query of its own inherits the parent's.
+
+     SonyLiv signs with ?hdnea= in the query and an acl of /*, so every variant
+     and segment needs the token too — but a playlist names them relatively,
+     and resolving a relative reference throws the query away. Left alone the
+     master loads and each variant comes back 403. Children that carry their
+     own query are left as they are; they were signed separately. */
+  const parentQuery = baseUrl.search;
+  const toAbs = (ref) => {
+    const u = new URL(ref, baseUrl);
+    if (!u.search && parentQuery) u.search = parentQuery;
+    return u.toString();
+  };
 
   return text
     .split('\n')
@@ -347,6 +364,51 @@ function cors() {
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': '*',
   };
+}
+
+// ────────────────────────────────────────────────────────────
+// 3. SONYLIV FIXTURES
+// ────────────────────────────────────────────────────────────
+/* Live sport on SonyLiv, republished with a signed URL per fixture. Read
+   through here rather than from the browser for the same reason as the
+   channel feed: one place decides what is fresh, and the shape the player
+   reads stays this file's business. */
+const SONY_JSON = 'https://raw.githubusercontent.com/sportlive18/Sonyliv-Playlist-Autoupdate/refs/heads/main/sonyliv.json';
+
+async function handleSonyFeed() {
+  try {
+    const res  = await fetchFresh(SONY_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
+    const text = await res.text();
+    if (!res.ok || text.trim().startsWith('<')) {
+      return json({ error: 'sony_feed', detail: `HTTP ${res.status}` }, 502);
+    }
+
+    const parsed  = JSON.parse(text);
+    const matches = parsed.matches || [];
+
+    /* Only the fixtures that are on air and have a stream. The feed also
+       carries promos for things weeks away, with no URL — a card that cannot
+       play is worse than no card. */
+    const live = matches
+      .filter(m => m.isLive && (m.video_url || m.pub_url || m.dai_url))
+      .map(m => ({
+        id:       String(m.contentId || ''),
+        name:     m.match_name || m.event_name || 'Live',
+        event:    m.event_name || '',
+        category: m.event_category || 'Sports',
+        channel:  m.broadcast_channel || '',
+        lang:     m.audioLanguageName || '',
+        logo:     m.src || '',
+        url:      m.video_url || m.pub_url || m.dai_url,
+      }));
+
+    return json(live, 200, {
+      'X-Feed-Source': 'sonyliv.json',
+      'X-Feed-Updated': String(parsed['last update time'] || ''),
+    });
+  } catch (e) {
+    return json({ error: 'sony_feed', detail: e.message }, 502);
+  }
 }
 
 /* ────────────────────────────────────────────────────────────

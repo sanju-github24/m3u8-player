@@ -88,7 +88,16 @@ function selfBase(req) {
 
 function rewritePlaylist(text, baseUrl, proxyBase) {
   const wrap = (abs) => proxyBase + '?url=' + encodeURIComponent(abs);
-  const toAbs = (ref) => new URL(ref, baseUrl).toString();
+
+  /* A child with no query of its own inherits the parent's. SonyLiv signs in
+     the query (?hdnea=, acl=/*), and resolving a relative reference drops it,
+     so without this the master plays and every variant returns 403. */
+  const parentQuery = baseUrl.search;
+  const toAbs = (ref) => {
+    const u = new URL(ref, baseUrl);
+    if (!u.search && parentQuery) u.search = parentQuery;
+    return u.toString();
+  };
   return text
     .split('\n')
     .map((line) => {
