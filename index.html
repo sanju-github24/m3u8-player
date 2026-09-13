@@ -3010,19 +3010,59 @@
       _bbRendered = true;
     }
 
-    function playBiggBoss(i) {
+    /* The local proxy reads the headers it should send off the target's own
+       query string, so the unlock travels with the URL. */
+    function bbTarget(url) {
+      return url
+        + (url.includes('?') ? '&' : '?')
+        + 'cookie=' + encodeURIComponent(BB_TOKEN)
+        + '&referer=' + encodeURIComponent(BB_REFERER)
+        + '&origin=' + encodeURIComponent('https://www.hotstar.com')
+        + '&user-agent=' + encodeURIComponent(BB_UA);
+    }
+
+    async function playBiggBoss(i) {
       const f = BIGBOSS_FEEDS[i];
       if (!f) return;
       _playingChannelId = null;
       _playingChannelLogo = BB_LOGO;
+      const title = 'Bigg Boss 24/7 — ' + f.lang;
 
-      /* No CORS probe first, unlike playIptv. Probing the bare URL from the
-         browser is guaranteed to fail here — no cookie, no referer — and the
-         probe would report "offline" for a stream that is in fact running. */
-      loadVideo(
-        viaWorker(f.url, { cookie: BB_TOKEN, ref: BB_REFERER, ua: BB_UA }),
-        'Bigg Boss 24/7 — ' + f.lang
-      );
+      /* Local proxy first when one is configured. Hotstar's edge refuses
+         datacenter addresses: the same request that returns 200 from a home
+         connection in India comes back as an Akamai error page from
+         Cloudflare, Render or any other host. Measured, not assumed. The only
+         machine reliably holding an accepted address is the viewer's own. */
+      if (LOCAL_PROXY) {
+        return loadVideo(viaLocalProxy(bbTarget(f.url)), title);
+      }
+
+      /* Otherwise try the worker anyway — it costs one request, and a viewer
+         on a network Hotstar does accept has no reason to run a proxy. No
+         CORS probe first, unlike playIptv: probing the bare URL from the
+         browser cannot succeed (no cookie, no referer) and would report a
+         running stream as offline. */
+      const via = viaWorker(f.url, { cookie: BB_TOKEN, ref: BB_REFERER, ua: BB_UA });
+      try {
+        const r = await fetch(via, { signal: AbortSignal.timeout(12000) });
+        if (r.ok) return loadVideo(via, title);
+        bbBlocked(f.lang, r.status);
+      } catch {
+        bbBlocked(f.lang, 0);
+      }
+    }
+
+    /* Says what actually happened, rather than "stream offline" — the stream
+       is running, this network just is not allowed to fetch it. */
+    function bbBlocked(lang, status) {
+      errMsg.innerHTML =
+        `Hotstar refused the proxy for <b>Bigg Boss ${lang}</b>`
+        + (status ? ` (${status})` : '')
+        + `. The feed is live — Hotstar blocks datacenter addresses, so it will `
+        + `only load from a home connection in India.<br><br>`
+        + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
+        + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
+      err.style.display = 'flex';
     }
 
     // ══════════════════════════════════════════════════════════

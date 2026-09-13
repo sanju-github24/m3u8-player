@@ -284,6 +284,19 @@ async function handleProxy(reqUrl) {
 
   const proxyBase = reqUrl.origin + reqUrl.pathname; // e.g. https://worker.dev/
 
+  /* A refusal is not a playlist, whatever the path says. Akamai answers a
+     denied .m3u8 with an HTML error page, and rewriting that as a playlist
+     turned every one of its lines into a proxy URL — the player then got a
+     200-looking manifest full of nonsense instead of the actual reason. Hand
+     the failure back as it came. */
+  if (!upstream.ok) {
+    const body = await upstream.text();
+    return new Response(body, {
+      status: upstream.status,
+      headers: { ...cors(), 'Content-Type': 'text/plain', 'X-Proxy-Upstream': String(upstream.status) },
+    });
+  }
+
   if (isPlaylist) {
     const text = await upstream.text();
     /* The same headers have to ride along on every segment, not just the
