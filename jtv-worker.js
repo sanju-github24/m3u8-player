@@ -48,15 +48,14 @@ export default {
 // ────────────────────────────────────────────────────────────
 
 /* Neither Cloudflare's edge cache nor GitHub's CDN may answer this: a cached
-   channel list is a list of expired tokens. cacheTtl 0 turns off the edge
-   cache, and the cache-buster defeats raw.githubusercontent's own. */
+   channel list is a list of expired tokens. `cache: no-store` turns off the
+   edge cache, and the cache-buster defeats raw.githubusercontent's own.
+   Note the two cannot be combined — pairing no-store with a cf.cacheTtl is a
+   runtime error ("CacheTtl: 0, is not compatible with cache: no-store"), so
+   this says it once. */
 function fetchFresh(url, headers) {
   const bust = url + (url.includes('?') ? '&' : '?') + '_=' + Date.now();
-  return fetch(bust, {
-    headers,
-    cache: 'no-store',
-    cf: { cacheTtl: 0, cacheEverything: false },
-  });
+  return fetch(bust, { headers, cache: 'no-store' });
 }
 
 const BROWSERISH = {
