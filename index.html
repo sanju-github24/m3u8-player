@@ -2769,6 +2769,16 @@
        thousand cards freezes the tab for several seconds and no one scrolls a
        list that long anyway. */
     const IPTV_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+
+    /* A second, much smaller list: live sport, mostly FanCode, with the
+       current fixtures in it. Worth having alongside iptv-org because that one
+       carries almost no live sport, and these are the streams anyone opening
+       this player during a match is actually looking for.
+
+       Its URLs are signed and expire within hours, which is why it is fetched
+       fresh on every load rather than cached anywhere. */
+    const SPORTS_URL = 'https://raw.githubusercontent.com/sportlive18/All-Playlist/refs/heads/main/combined.m3u';
+
     let iptvChannels = null, iptvLoading = false;
 
     /* #EXTINF:-1 tvg-id="X" tvg-logo="…" group-title="News",Channel Name
@@ -2783,7 +2793,16 @@
         const line = lines[i];
         if (!line.startsWith('#EXTINF')) continue;
         const attr = (k) => (new RegExp(k + '="([^"]*)"').exec(line) || [, ''])[1];
-        const name = (line.split(',').pop() || '').trim();
+        /* The name is everything after the first comma that follows the
+           attribute list — not after the LAST comma, which is what this used
+           to do. Plenty of channel names contain commas of their own
+           ("Sher-E-Punjab T20, 2026 [Hindi]"), and splitting on the last one
+           named that channel "2026 [Hindi]". Attributes are quoted, so the
+           last quote marks where they end; without quotes, fall back to the
+           comma after the duration. */
+        const lastQuote = line.lastIndexOf('"');
+        const nameComma = line.indexOf(',', lastQuote > -1 ? lastQuote : line.indexOf(':'));
+        const name = (nameComma > -1 ? line.slice(nameComma + 1) : '').trim();
         // the URL is the next line that is neither blank nor a directive
         let url = '';
         for (let j = i + 1; j < lines.length; j++) {
@@ -2808,14 +2827,32 @@
       iptvLoading = true;
       $('iptvStatus').style.display = 'flex';
       $('iptvHint').style.display = 'none';
-      $('iptvStatusText').textContent = 'Loading playlist (2.8MB)…';
+      $('iptvStatusText').textContent = 'Loading playlists…';
       try {
-        const res = await fetch(IPTV_URL);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        iptvChannels = parseM3U(await res.text());
+        /* Both at once, and neither is allowed to sink the other: if sport is
+           unreachable you still get iptv-org, and vice versa. */
+        const grab = async (url) => {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return parseM3U(await res.text());
+        };
+        const [sport, world] = await Promise.allSettled([grab(SPORTS_URL), grab(IPTV_URL)]);
+
+        const sportList = sport.status === 'fulfilled'
+          ? sport.value.map(c => ({ ...c, live: true }))
+          : [];
+        const worldList = world.status === 'fulfilled' ? world.value : [];
+
+        // Sport first, so a search for "india" surfaces today's match before a
+        // general-entertainment channel with the same word in its name.
+        iptvChannels = [...sportList, ...worldList];
+        if (!iptvChannels.length) throw new Error(world.reason?.message || 'both playlists failed');
+
         $('iptvStatus').style.display = 'none';
         $('iptvHint').style.display = 'block';
-        $('iptvHint').textContent = `${iptvChannels.length.toLocaleString()} channels loaded — type at least two letters to search.`;
+        $('iptvHint').textContent = sportList.length
+          ? `${sportList.length.toLocaleString()} live sport + ${worldList.length.toLocaleString()} channels — type at least two letters to search.`
+          : `${worldList.length.toLocaleString()} channels loaded — type at least two letters to search.`;
       } catch (e) {
         $('iptvStatusText').textContent = 'Could not load the playlist: ' + e.message;
       } finally {
@@ -2859,12 +2896,45 @@
       grid.style.display = 'grid';
     }
 
-    /* Many of these are dead, geo-locked or refuse a cross-origin request from
-       a file:// page — that is the nature of a public list, not a fault here.
-       Say so plainly rather than leaving a black rectangle. */
-    function playIptv(ch) {
+    /* A public list is full of streams that are dead, geo-locked, or served
+       without CORS headers. That last one is the common case and the confusing
+       one: hls.js fetches segments with XHR, so a server that sends no
+       Access-Control-Allow-Origin blocks playback in Chrome outright, while
+       Safari plays the same URL natively because native HLS does not need CORS.
+       Left alone this is a black rectangle; probing first turns it into a
+       sentence that says what to do. */
+    async function playIptv(ch) {
       _playingChannelId = null;
       _playingChannelLogo = ch.logo || null;
+
+      const nativeHls = document.createElement('video')
+        .canPlayType('application/vnd.apple.mpegurl') !== '';
+      // Safari can play a CORS-less stream natively, so do not stand in its way.
+      if (nativeHls) return loadVideo(ch.url, ch.name);
+
+      try {
+        // A CORS refusal throws here; a dead stream answers with a status.
+        const r = await fetch(ch.url, { method: 'GET', headers: { Range: 'bytes=0-64' },
+                                        signal: AbortSignal.timeout(9000) });
+        if (!r.ok) {
+          errMsg.textContent = `“${ch.name}” answered ${r.status}. Public IPTV entries go offline often — try another.`;
+          err.style.display = 'flex';
+          return;
+        }
+        if (!r.headers.get('access-control-allow-origin')) {
+          errMsg.textContent = `“${ch.name}” is up, but its server sends no CORS headers, `
+            + `so this browser cannot fetch the segments. Safari plays these natively — or pick another channel.`;
+          err.style.display = 'flex';
+          return;
+        }
+      } catch (e) {
+        errMsg.textContent = e.name === 'TimeoutError'
+          ? `“${ch.name}” did not respond. It is probably offline or geo-blocked.`
+          : `“${ch.name}” refused this browser (no CORS, offline, or geo-blocked). `
+            + `Safari can often play these natively.`;
+        err.style.display = 'flex';
+        return;
+      }
       loadVideo(ch.url, ch.name);
     }
 
