@@ -43,6 +43,9 @@ export default {
     if (reqUrl.searchParams.get('feed') === 'sonyliv') {
       return handleSonyFeed();
     }
+    if (reqUrl.searchParams.get('feed') === 'fancode') {
+      return handleFancodeFeed();
+    }
     return handleFeed(env);
   },
 
@@ -409,6 +412,77 @@ async function handleSonyFeed() {
   } catch (e) {
     return json({ error: 'sony_feed', detail: e.message }, 502);
   }
+}
+
+// ────────────────────────────────────────────────────────────
+// 4. FANCODE FIXTURES
+// ────────────────────────────────────────────────────────────
+/* Live sport on FanCode. Two publishers put this out in two different shapes
+   and both are read here, because which one is up varies by the day:
+
+     sportlive18  — dai_url / adfree_url on the row, team names, a thumbnail
+     zyphx8       — auto_streams[0].auto, a map of quality to URL
+
+   Normalizing both means swapping the source later is one line, not a rewrite
+   of the player. */
+const FANCODE_SOURCES = [
+  'https://raw.githubusercontent.com/sportlive18/Fancode-New-Auto-Update/refs/heads/main/fancode.json',
+  'https://raw.githubusercontent.com/doctor-8trange/zyphx8/refs/heads/main/data/fancode.json',
+];
+
+async function handleFancodeFeed() {
+  const errors = [];
+
+  for (const url of FANCODE_SOURCES) {
+    try {
+      const res  = await fetchFresh(url, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
+      const text = await res.text();
+      if (!res.ok || text.trim().startsWith('<')) { errors.push(`HTTP ${res.status}`); continue; }
+
+      const parsed  = JSON.parse(text);
+      const matches = parsed.matches || parsed.data || (Array.isArray(parsed) ? parsed : []);
+
+      const live = matches
+        .filter(m => String(m.status || '').toUpperCase() === 'LIVE')
+        .map(normalizeFancode)
+        .filter(m => m && m.url);
+
+      if (!live.length) { errors.push('no live fixtures'); continue; }
+      return json(live, 200, {
+        'X-Feed-Source': 'fancode',
+        'X-Feed-Updated': String(parsed['last update time'] || parsed.last_updated || ''),
+      });
+    } catch (e) {
+      errors.push(e.message);
+    }
+  }
+
+  return json({ error: 'fancode_feed', tried: errors }, 502);
+}
+
+function normalizeFancode(m) {
+  /* sportlive18 hands over a playable URL directly. zyphx8 nests a map of
+     quality to URL, so pick the highest one it offers. */
+  let url = m.adfree_url || m.dai_url || '';
+  if (!url && m.auto_streams && m.auto_streams[0]) {
+    const auto = m.auto_streams[0].auto || {};
+    const best = ['1080p5', '1080p', '720p', '540p', '480p', '360p', '240p'].find(q => auto[q]);
+    url = best ? auto[best] : (typeof auto === 'string' ? auto : '');
+  }
+  if (!url) return null;
+
+  const teams = [m.team_1, m.team_2].filter(Boolean).join(' vs ');
+  return {
+    id:       String(m.match_id || m.id || ''),
+    name:     m.match_name || teams || m.title || m.short_name || 'Live',
+    event:    m.event_name || m.title || '',
+    category: m.event_category || m.category || 'Sports',
+    lang:     m.language || '',
+    start:    m.startTime || m.startDate || '',
+    logo:     m.src || m.image || (m.image_cdn && (m.image_cdn.LOGO || m.image_cdn.APP)) || '',
+    ua:       m['user-agent'] || '',
+    url,
+  };
 }
 
 /* ────────────────────────────────────────────────────────────

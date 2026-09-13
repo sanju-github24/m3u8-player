@@ -2115,6 +2115,7 @@
         <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV</button>
         <button class="ls-tab" id="tabBB" onclick="switchTab('bb')">🎭 Bigg Boss 24/7</button>
         <button class="ls-tab" id="tabSony" onclick="switchTab('sony')">🏏 SonyLiv Live</button>
+        <button class="ls-tab" id="tabFc" onclick="switchTab('fc')">⚽ FanCode Live</button>
         <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
@@ -2173,6 +2174,16 @@
         </div>
         <div id="sonyGrid" class="ch-grid" style="display:none"></div>
         <div id="sonyNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
+      </div>
+
+      <!-- FanCode's live fixtures, read through the worker. -->
+      <div id="fcTab" style="display:none">
+        <div id="fcLoading" class="ch-loading"><div class="mini-spin"></div>Loading live matches…</div>
+        <div id="fcErr" class="ch-err" style="display:none">
+          ⚠ Could not load FanCode fixtures. <a onclick="loadFc(true);return false">Retry</a>
+        </div>
+        <div id="fcGrid" class="ch-grid" style="display:none"></div>
+        <div id="fcNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
       </div>
 
       <!-- iptv-org's public playlist. ~10,000 channels, so nothing is rendered
@@ -2766,15 +2777,18 @@
       $('tabLive').classList.toggle('on', t === 'live');
       $('tabBB').classList.toggle('on', t === 'bb');
       $('tabSony').classList.toggle('on', t === 'sony');
+      $('tabFc').classList.toggle('on', t === 'fc');
       $('tabIptv').classList.toggle('on', t === 'iptv');
       $('customTab').style.display = t === 'custom' ? 'flex' : 'none';
       $('liveTvTab').style.display = t === 'live' ? 'flex' : 'none';
       $('bbTab').style.display = t === 'bb' ? 'flex' : 'none';
       $('sonyTab').style.display = t === 'sony' ? 'flex' : 'none';
+      $('fcTab').style.display = t === 'fc' ? 'flex' : 'none';
       $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
       if (t === 'live' && !channelsLoaded) fetchChannels();
       if (t === 'bb') renderBiggBoss();
       if (t === 'sony') loadSony();
+      if (t === 'fc') loadFc();
       if (t === 'iptv') loadIptv();
     }
 
@@ -3075,6 +3089,86 @@
         + (status ? ` (${status})` : '')
         + `. The feed is live — Hotstar blocks datacenter addresses, so it will `
         + `only load from a home connection in India.<br><br>`
+        + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
+        + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
+      err.style.display = 'flex';
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // FANCODE LIVE (own tab)
+    // ══════════════════════════════════════════════════════════
+    /* The worker reads the fixtures feed and returns only what is on air with
+       a playable URL. FanCode's edge is the one this player's local proxy was
+       written for: no CORS, and datacenter addresses turned away. */
+    let _fcLoaded = false;
+
+    async function loadFc(force) {
+      if (_fcLoaded && !force) return;
+      $('fcLoading').style.display = 'flex';
+      $('fcErr').style.display = 'none';
+      $('fcGrid').style.display = 'none';
+      try {
+        const r = await fetch(NEW_JSON_URL + '?feed=fancode&_=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const list = await r.json();
+        if (!Array.isArray(list) || !list.length) throw new Error('no live fixtures');
+        renderFc(list, r.headers.get('X-Feed-Updated'));
+        _fcLoaded = true;
+      } catch (e) {
+        $('fcLoading').style.display = 'none';
+        $('fcErr').style.display = 'block';
+        console.error('loadFc:', e);
+      }
+    }
+
+    function renderFc(list, updated) {
+      const grid = $('fcGrid');
+      grid.innerHTML = '';
+      list.forEach((m) => {
+        const card = document.createElement('div');
+        card.className = 'ch-card';
+        card.innerHTML = `
+      <img class="ch-logo" src="${m.logo}" alt="${m.name}"
+        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
+        onerror="this.style.display='none'">
+      <span class="ch-name">${m.name}</span>
+      <span class="ch-tag">🔴 ${m.category}${m.lang ? ' · ' + m.lang : ''}</span>`;
+        card.onclick = () => playFc(m);
+        grid.appendChild(card);
+      });
+      $('fcLoading').style.display = 'none';
+      $('fcGrid').style.display = 'grid';
+      $('fcNote').textContent = (list.length + ' live now')
+        + (updated ? ' · feed updated ' + updated : '');
+    }
+
+    async function playFc(m) {
+      _playingChannelId = null;
+      _playingChannelLogo = m.logo || null;
+
+      /* The feed names the user-agent its edge expects, so pass it on rather
+         than letting the proxy guess. */
+      const target = m.ua
+        ? m.url + (m.url.includes('?') ? '&' : '?') + 'user-agent=' + encodeURIComponent(m.ua)
+        : m.url;
+
+      if (LOCAL_PROXY) return loadVideo(viaLocalProxy(target), m.name);
+
+      const via = viaWorker(m.url, { ua: m.ua, ref: 'https://fancode.com/' });
+      try {
+        const r = await fetch(via, { signal: AbortSignal.timeout(12000) });
+        if (r.ok) return loadVideo(via, m.name);
+        fcBlocked(m.name, r.status);
+      } catch {
+        fcBlocked(m.name, 0);
+      }
+    }
+
+    function fcBlocked(name, status) {
+      errMsg.innerHTML =
+        `FanCode refused the proxy for <b>${name}</b>` + (status ? ` (${status})` : '')
+        + `. The match is live — FanCode's CDN sends no CORS headers and turns away `
+        + `datacenter addresses, so a worker cannot fetch it.<br><br>`
         + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
       err.style.display = 'flex';
