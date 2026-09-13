@@ -251,13 +251,27 @@ async function handleProxy(reqUrl) {
     return new Response('Invalid url', { status: 400, headers: cors() });
   }
 
+  /* Optional caller-supplied headers, for CDNs that want more than CORS.
+     Hotstar's live09p is the case this exists for: it answers 403 unless
+     Cookie, Referer and Origin all arrive together — measured, one or two of
+     the three is not enough. A browser cannot set any of them on a
+     cross-origin request (they are forbidden header names), which is the whole
+     reason those streams need a proxy rather than just a CORS shim. */
+  const cookie = reqUrl.searchParams.get('cookie') || '';
+  const ref    = reqUrl.searchParams.get('ref')    || '';
+  const ua     = reqUrl.searchParams.get('ua')     || '';
+
+  let refOrigin = targetUrl.origin;
+  if (ref) { try { refOrigin = new URL(ref).origin; } catch { /* keep target's */ } }
+
   const upstream = await fetch(targetUrl.toString(), {
     headers: {
-      'User-Agent':
+      'User-Agent': ua ||
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
-      'Referer': targetUrl.origin + '/',
-      'Origin':  targetUrl.origin,
+      'Referer': ref || targetUrl.origin + '/',
+      'Origin':  refOrigin,
       'Accept':  '*/*',
+      ...(cookie ? { 'Cookie': cookie } : {}),
     },
   });
 
@@ -272,7 +286,14 @@ async function handleProxy(reqUrl) {
 
   if (isPlaylist) {
     const text = await upstream.text();
-    const rewritten = rewritePlaylist(text, targetUrl, proxyBase);
+    /* The same headers have to ride along on every segment, not just the
+       playlist — the CDN checks each request, and a signed playlist whose
+       segments arrive bare is exactly how a stream loads and then stalls. */
+    const extras =
+      (cookie ? '&cookie=' + encodeURIComponent(cookie) : '') +
+      (ref    ? '&ref='    + encodeURIComponent(ref)    : '') +
+      (ua     ? '&ua='     + encodeURIComponent(ua)     : '');
+    const rewritten = rewritePlaylist(text, targetUrl, proxyBase, extras);
     return new Response(rewritten, {
       status: upstream.status,
       headers: {
@@ -290,8 +311,8 @@ async function handleProxy(reqUrl) {
   return new Response(upstream.body, { status: upstream.status, headers });
 }
 
-function rewritePlaylist(text, baseUrl, proxyBase) {
-  const wrap  = (absUrl) => proxyBase + '?url=' + encodeURIComponent(absUrl);
+function rewritePlaylist(text, baseUrl, proxyBase, extras = '') {
+  const wrap  = (absUrl) => proxyBase + '?url=' + encodeURIComponent(absUrl) + extras;
   const toAbs = (ref) => new URL(ref, baseUrl).toString();
 
   return text

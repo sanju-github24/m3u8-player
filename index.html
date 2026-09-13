@@ -2113,6 +2113,7 @@
       <div class="ls-tabs">
         <button class="ls-tab on" id="tabCustom" onclick="switchTab('custom')">🔗 Custom URL</button>
         <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV</button>
+        <button class="ls-tab" id="tabBB" onclick="switchTab('bb')">🎭 Bigg Boss 24/7</button>
         <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
@@ -2150,6 +2151,16 @@
           ⚠ Failed to load channels. <a onclick="fetchChannels();return false">Retry</a>
         </div>
         <div id="chGrid" class="ch-grid" style="display:none"></div>
+      </div>
+
+      <!-- The Bigg Boss 24/7 feeds, one per language. Separate from Live TV
+           because they come from Hotstar rather than JioTV and need a
+           different unlock: see BIGBOSS_FEEDS. -->
+      <div id="bbTab" style="display:none">
+        <div id="bbGrid" class="ch-grid"></div>
+        <div id="bbNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px">
+          Same house, six language feeds. Running 24/7.
+        </div>
       </div>
 
       <!-- iptv-org's public playlist. ~10,000 channels, so nothing is rendered
@@ -2741,11 +2752,14 @@
     function switchTab(t) {
       $('tabCustom').classList.toggle('on', t === 'custom');
       $('tabLive').classList.toggle('on', t === 'live');
+      $('tabBB').classList.toggle('on', t === 'bb');
       $('tabIptv').classList.toggle('on', t === 'iptv');
       $('customTab').style.display = t === 'custom' ? 'flex' : 'none';
       $('liveTvTab').style.display = t === 'live' ? 'flex' : 'none';
+      $('bbTab').style.display = t === 'bb' ? 'flex' : 'none';
       $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
       if (t === 'live' && !channelsLoaded) fetchChannels();
+      if (t === 'bb') renderBiggBoss();
       if (t === 'iptv') loadIptv();
     }
 
@@ -2803,40 +2817,21 @@
         const lastQuote = line.lastIndexOf('"');
         const nameComma = line.indexOf(',', lastQuote > -1 ? lastQuote : line.indexOf(':'));
         const name = (nameComma > -1 ? line.slice(nameComma + 1) : '').trim();
-
-        /* The lines between #EXTINF and the URL are not noise. Star Sports and
-           the rest of the Jio Hotstar group are DASH behind ClearKey DRM, and
-           they carry their key on a #KODIPROP line:
-
-             #KODIPROP:inputstream.adaptive.license_type=clearkey
-             #KODIPROP:inputstream.adaptive.license_key=<kid hex>:<key hex>
-
-           Dropping those and handing the .mpd straight to the player is why
-           every one of those channels failed: the manifest loads, the segments
-           are encrypted, and playback dies with nothing on screen to say why.
-           The player already speaks ClearKey through Shaka — it was simply
-           never told the key. */
-        let url = '', drm = null, cookie = '';
+        // the URL is the next line that is neither blank nor a directive
+        let url = '';
         for (let j = i + 1; j < lines.length; j++) {
           const n = lines[j].trim();
           if (!n) continue;
-          if (n.startsWith('#')) {
-            const lk = /license_key=([0-9a-f]{16,}):([0-9a-f]{16,})/i.exec(n);
-            if (lk) drm = { keyId: lk[1], key: lk[2] };
-            const ck = /http-cookie=(.+)$/i.exec(n);
-            if (ck) cookie = ck[1].trim();
-            continue;
-          }
+          if (n.startsWith('#')) continue;
           url = n; i = j; break;
         }
-        if (drm && cookie) drm.cookie = cookie;
         // a handful of entries carry something that is not a web URL
         if (!name || !/^https?:\/\//i.test(url)) continue;
         /* tvg-id is "BBCAmerica.us@SD" — the country is the part after the dot,
            and the @SD/@HD suffix is a stream-quality marker, not part of it. */
         const cc = (attr('tvg-country') || attr('tvg-id').split('.').pop() || '')
           .split('@')[0].trim().toUpperCase();
-        out.push({ name, url, logo: attr('tvg-logo'), group: attr('group-title'), country: cc, drm });
+        out.push({ name, url, logo: attr('tvg-logo'), group: attr('group-title'), country: cc });
       }
       return out;
     }
@@ -2926,23 +2921,6 @@
       _playingChannelId = null;
       _playingChannelLogo = ch.logo || null;
 
-      /* DASH goes straight through, with its key. The probe below is written
-         for HLS: it asks for 64 bytes and reads CORS headers off the reply,
-         which tells you nothing useful about an .mpd — Shaka does its own
-         manifest and segment fetching, and a ClearKey stream that answers the
-         probe perfectly will still fail without the key. Routing these here
-         also keeps them away from the Safari shortcut underneath, which would
-         hand a .mpd to a native player that cannot read one. */
-      const isDash = ch.drm || /\.mpd(\?|$)/i.test(ch.url);
-      if (isDash) {
-        /* Straight through with its key. The proxy default handles the headers
-           these need; what it cannot do is change where the request comes
-           from, and some Hotstar hosts answer only to an Indian address —
-           live09p (the Bigg Boss 24/7 feeds) and the out/v1 paths among them.
-           Those are the ones worth pointing at a local proxy with ?lp=. */
-        return loadVideo(ch.url, ch.name, false, ch.drm || null);
-      }
-
       const nativeHls = document.createElement('video')
         .canPlayType('application/vnd.apple.mpegurl') !== '';
       // Safari can play a CORS-less stream natively, so do not stand in its way.
@@ -2971,7 +2949,80 @@
         err.style.display = 'flex';
         return;
       }
-      loadVideo(ch.url, ch.name, false, ch.drm || null);
+      loadVideo(ch.url, ch.name);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // BIGG BOSS 24/7 (own tab)
+    // ══════════════════════════════════════════════════════════
+    /* Six language feeds of the same house, straight off Hotstar rather than
+       JioTV, which is why they sit apart from Live TV.
+
+       They will not play the way a Live TV channel does. Hotstar's live09p
+       edge answers 403 unless Cookie, Referer and Origin all arrive together
+       — measured: any one or two of the three is still a 403. All three are
+       forbidden header names, meaning a browser refuses to set them on a
+       cross-origin request no matter what you ask hls.js to do. So every
+       request goes through the worker, which is under no such rule and puts
+       the trio on the playlist and on each segment.
+
+       The hdntl token is shared by all six (acl=/*, so it signs any path) and
+       lasts hours, not the minutes a FanCode one does. When it dies every
+       feed here dies at once and the fix is a new token — see BB_TOKEN. */
+    const BB_TOKEN = 'hdntl=exp=1789384155~acl=%2f*~id=d54fea9bbf5c3fd23585305f50b0fcb1~data=hdntl~hmac=aa1ed5b8a0666b7c91dd8d429dada04ad5591ab645f56c17afadc9c30be65fc3';
+    const BB_REFERER = 'https://www.hotstar.com/';
+    const BB_UA = '@virat10';
+    const BB_LOGO = 'https://img10.hotstar.com/image/upload/sources/r1/cms/prod/2305/1788708712305-h.jpg';
+
+    const BIGBOSS_FEEDS = [
+      { lang: 'Hindi',     url: 'https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-hin-2026/93e0d4ee03b34575bbf8f8a55824de63/index_6.m3u8' },
+      { lang: 'Bangla',    url: 'https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-ben-2026/d8b1f4b4b6ad493d845fb9669712ee6e/index_6.m3u8' },
+      { lang: 'Kannada',   url: 'https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-kan-2026/511768cd9dab414aa551e9d15da2202b/index_6.m3u8' },
+      { lang: 'Malayalam', url: 'https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-mal-2026/28fdd2300bf04a60ac3c3318ff009886/index_6.m3u8' },
+      { lang: 'Telugu',    url: 'https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tel-2026/f129670ca03b4bb988c841f9bbdce777/index_6.m3u8' },
+      { lang: 'Tamil',     url: 'https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tam-2026/0e8f0050df134b708ab297477fbf0e86/index_6.m3u8' },
+    ];
+
+    /* The worker doubles as the HLS proxy — same endpoint as the channel feed,
+       told apart by the ?url= parameter. */
+    function viaWorker(url, { cookie = '', ref = '', ua = '' } = {}) {
+      return NEW_JSON_URL + '?url=' + encodeURIComponent(url)
+        + (cookie ? '&cookie=' + encodeURIComponent(cookie) : '')
+        + (ref ? '&ref=' + encodeURIComponent(ref) : '')
+        + (ua ? '&ua=' + encodeURIComponent(ua) : '');
+    }
+
+    let _bbRendered = false;
+    function renderBiggBoss() {
+      if (_bbRendered) return;
+      const grid = $('bbGrid');
+      grid.innerHTML = '';
+      BIGBOSS_FEEDS.forEach((f, i) => {
+        const card = document.createElement('div');
+        card.className = 'ch-card';
+        card.innerHTML = `
+      <img class="ch-logo" src="${BB_LOGO}" alt="Bigg Boss ${f.lang}">
+      <span class="ch-name">Bigg Boss ${f.lang}</span>
+      <span class="ch-tag">🔴 24/7</span>`;
+        card.onclick = () => playBiggBoss(i);
+        grid.appendChild(card);
+      });
+      _bbRendered = true;
+    }
+
+    function playBiggBoss(i) {
+      const f = BIGBOSS_FEEDS[i];
+      if (!f) return;
+      _playingChannelId = null;
+      _playingChannelLogo = BB_LOGO;
+
+      /* No CORS probe first, unlike playIptv. Probing the bare URL from the
+         browser is guaranteed to fail here — no cookie, no referer — and the
+         probe would report "offline" for a stream that is in fact running. */
+      loadVideo(
+        viaWorker(f.url, { cookie: BB_TOKEN, ref: BB_REFERER, ua: BB_UA }),
+        'Bigg Boss 24/7 — ' + f.lang
+      );
     }
 
     // ══════════════════════════════════════════════════════════
@@ -3467,28 +3518,6 @@
         drmBadge.style.display = 'flex';
       }
       shakaInst.configure(cfg);
-
-      /* Route everything through the local proxy when one is configured.
-
-         This has to be a request filter rather than simply loading the proxied
-         URL. A DASH manifest addresses its segments relatively, and Shaka
-         resolves those against the manifest's own URL — hand it
-         "localhost:8787/proxy?url=…" as the manifest and every segment path
-         resolves against the proxy's origin instead of the CDN's. Filtering
-         instead leaves resolution to happen against the real host and rewrites
-         each request as it goes out, manifest, segments and all.
-
-         Needed because livetv.hotstar.com wants a User-Agent, Referer, Origin
-         and Cookie that no browser will let a page set cross-origin. Without a
-         proxy these channels answer 403 and there is nothing the player can do
-         about it. */
-      if (LOCAL_PROXY && needsProxy(url)) {
-        shakaInst.getNetworkingEngine().registerRequestFilter((type, request) => {
-          request.uris = request.uris.map(u =>
-            u.startsWith(LOCAL_PROXY) ? u : viaLocalProxy(u));
-        });
-      }
-
       if (drm && drm.cookie) {
         const rawVal = drm.cookie.startsWith('__hdnea__=') ? drm.cookie.slice('__hdnea__='.length) : drm.cookie;
         shakaInst.getNetworkingEngine().registerRequestFilter((type, request) => {
@@ -3587,19 +3616,7 @@
     // Optional LOCAL CORS proxy for DESKTOP FanCode playback (see fancode-local-proxy.js).
     // Run that script on your machine, then set this — via ?lp=http://localhost:8787/proxy
     // (persisted), or localStorage 'fc_local_proxy'. Empty = mobile-only native path.
-    /* A proxy that is already running, so nothing has to be started by hand.
-
-       These Hotstar streams need a User-Agent, Referer, Origin and cookie that
-       a browser will not let a page set cross-origin, so the request has to be
-       made server-side by something. The site's own backend already proxies
-       streams and now derives those headers from the target URL, which means
-       Star Sports and the Bigg Boss feeds play with nothing running locally.
-
-       ?lp= or a saved fc_local_proxy still wins: FanCode additionally blocks
-       datacenter IPs, so it genuinely needs a proxy on a home connection, and
-       that override is how you point at one. */
-    const REMOTE_PROXY = 'https://movies1-backend.onrender.com/api/live-stream-proxy';
-    let LOCAL_PROXY = REMOTE_PROXY;
+    let LOCAL_PROXY = '';
     try {
       const _lp = new URLSearchParams(location.search).get('lp');
       if (_lp !== null) {
@@ -3607,18 +3624,9 @@
         if (!_lp || _lp === 'off') { localStorage.removeItem('fc_local_proxy'); }
         else { localStorage.setItem('fc_local_proxy', _lp); }
       }
-      LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || REMOTE_PROXY;
+      LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
     } catch { }
     function viaLocalProxy(url) { return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
-
-    /* Hosts that refuse a browser outright. FanCode sends no CORS headers and
-       blocks datacenter IPs; Hotstar's live edge demands headers a page cannot
-       set. Both need the request made server-side. */
-    function needsProxy(url) {
-      return /(^|\.)(fancode\.com|hotstar\.com)/i.test((() => {
-        try { return new URL(url).hostname; } catch { return ''; }
-      })());
-    }
     function isLocalUrl(u) { return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
 
     // Route FanCode by what the browser can actually do:
