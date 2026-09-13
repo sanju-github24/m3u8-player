@@ -119,14 +119,31 @@ async function handleFeed() {
  * the stale token on would make the filter skip the row — it only adds a
  * token where there isn't one — and the CDN would answer 403.
  *
- * Where there is no cookie, the inline token is all the row has, so it stays.
- * It will still expire within the hour, but a token that might work beats a
- * bare URL that certainly will not. */
+ * Where there is no cookie, the token in the query string is promoted into
+ * the cookie field and taken off the URL. It is the same token either way, but
+ * where it sits decides whether anything plays: in the URL it signs the
+ * manifest request and nothing else, and a DASH manifest names its segments
+ * relative to itself, so every .m4s then goes out unsigned and Akamai answers
+ * 403 — the manifest loads and the picture never starts. In the cookie field
+ * the player's request filter puts it on every request, segments included.
+ * These tokens are scoped to the channel's own directory (acl=/bpk-tv/<ch>/*),
+ * which covers exactly those segments.
+ *
+ * This is what the Star Sports channels need: all 23 of them arrive this way,
+ * with a live token that only ever reached the manifest. */
 function normalize(ch) {
   let url = ch.channel_url || ch.url || '';
-  const cookie = ch.cookie || '';
+  let cookie = ch.cookie || '';
+
   const q = url.indexOf('?');
-  if (q !== -1 && cookie) url = url.slice(0, q);
+  if (q !== -1) {
+    if (!cookie) {
+      const inline = new URLSearchParams(url.slice(q + 1)).get('__hdnea__');
+      if (inline) cookie = '__hdnea__=' + inline;
+    }
+    // Only drop the query once something can sign the segments in its place.
+    if (cookie) url = url.slice(0, q);
+  }
 
   return {
     channel_id:   String(ch.channel_id || ch.id || ''),
