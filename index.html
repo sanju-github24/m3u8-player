@@ -137,17 +137,23 @@
     }
 
     /* tabs */
+    /* Wraps rather than overflowing. These were six fixed buttons in a row
+       clipped by overflow:hidden, so the last tabs were cut off the edge of
+       the box and could not be clicked at all. */
     .ls-tabs {
       display: flex;
+      flex-wrap: wrap;
       border: 1px solid rgba(255, 255, 255, .12);
       border-radius: 10px;
       overflow: hidden
     }
 
     .ls-tab {
-      flex: 1;
-      padding: 10px;
-      font-size: .82rem;
+      flex: 1 1 auto;
+      min-width: 104px;
+      white-space: nowrap;
+      padding: 10px 8px;
+      font-size: .78rem;
       font-weight: 600;
       background: transparent;
       border: none;
@@ -2113,9 +2119,9 @@
       <div class="ls-tabs">
         <button class="ls-tab on" id="tabCustom" onclick="switchTab('custom')">🔗 Custom URL</button>
         <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV</button>
-        <button class="ls-tab" id="tabBB" onclick="switchTab('bb')">🎭 Bigg Boss 24/7</button>
-        <button class="ls-tab" id="tabSony" onclick="switchTab('sony')">🏏 SonyLiv Live</button>
-        <button class="ls-tab" id="tabFc" onclick="switchTab('fc')">⚽ FanCode Live</button>
+        <button class="ls-tab" id="tabBB" onclick="switchTab('bb')">🎭 Bigg Boss</button>
+        <button class="ls-tab" id="tabSony" onclick="switchTab('sony')">🏏 SonyLiv</button>
+        <button class="ls-tab" id="tabFc" onclick="switchTab('fc')">⚽ FanCode</button>
         <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
