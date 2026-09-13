@@ -3093,8 +3093,9 @@
       errMsg.innerHTML =
         `Hotstar refused the proxy for <b>Bigg Boss ${lang}</b>`
         + (status ? ` (${status})` : '')
-        + `. The feed is live — Hotstar blocks datacenter addresses, so it will `
-        + `only load from a home connection in India.<br><br>`
+        + `. The feed is live. Hotstar wants an Indian address that is not a `
+        + `hosted server, so no worker or cloud function can fetch it — only a `
+        + `home connection.<br><br>`
         + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
       err.style.display = 'flex';
@@ -3160,23 +3161,37 @@
 
       if (LOCAL_PROXY) return loadVideo(viaLocalProxy(target), m.name);
 
-      const via = viaWorker(m.url, { ua: m.ua, ref: 'https://fancode.com/' });
-      try {
-        const r = await fetch(via, { signal: AbortSignal.timeout(12000) });
-        if (r.ok) return loadVideo(via, m.name);
-        fcBlocked(m.name, r.status);
-      } catch {
-        fcBlocked(m.name, 0);
+      /* Then the Mumbai function, which FanCode accepts. Then the worker, so
+         a viewer already on an Indian connection needs neither configured. */
+      const candidates = [];
+      if (IN_PROXY) {
+        candidates.push(IN_PROXY + '?url=' + encodeURIComponent(m.url)
+          + '&ref=' + encodeURIComponent('https://fancode.com/')
+          + (m.ua ? '&ua=' + encodeURIComponent(m.ua) : ''));
       }
+      candidates.push(viaWorker(m.url, { ua: m.ua, ref: 'https://fancode.com/' }));
+
+      let last = 0;
+      for (const via of candidates) {
+        try {
+          const r = await fetch(via, { signal: AbortSignal.timeout(12000) });
+          if (r.ok) return loadVideo(via, m.name);
+          last = r.status;
+        } catch { last = 0; }
+      }
+      fcBlocked(m.name, last);
     }
 
     function fcBlocked(name, status) {
       errMsg.innerHTML =
         `FanCode refused the proxy for <b>${name}</b>` + (status ? ` (${status})` : '')
-        + `. The match is live — FanCode's CDN sends no CORS headers and turns away `
-        + `datacenter addresses, so a worker cannot fetch it.<br><br>`
-        + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
-        + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
+        + `. The match is live — FanCode serves India only, and this request left `
+        + `from somewhere else.<br><br>`
+        + `Any Indian address fixes this one. Deploy the site's `
+        + `<code>/api/live-proxy</code> function (pinned to Mumbai) and set `
+        + `<code>localStorage.in_proxy = 'https://&lt;your-site&gt;/api/live-proxy'</code>, `
+        + `or run <code>node fancode-local-proxy.js</code> locally and set `
+        + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code>.`;
       err.style.display = 'flex';
     }
 
@@ -3251,8 +3266,9 @@
     function sonyBlocked(name, status) {
       errMsg.innerHTML =
         `SonyLiv refused the proxy for <b>${name}</b>` + (status ? ` (${status})` : '')
-        + `. The match is live and the link is signed — SonyLiv serves India only and `
-        + `turns away hosted servers, so it will not load from a worker.<br><br>`
+        + `. The match is live and the link is signed. SonyLiv wants an Indian `
+        + `address that is not a hosted server, so no worker or cloud function `
+        + `can fetch it — only a home connection.<br><br>`
         + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
       err.style.display = 'flex';
@@ -3854,6 +3870,19 @@
     // Run that script on your machine, then set this — via ?lp=http://localhost:8787/proxy
     // (persisted), or localStorage 'fc_local_proxy'. Empty = mobile-only native path.
     let LOCAL_PROXY = '';
+
+    /* A proxy that runs in India but on a hosted network — the Vercel function
+       at /api/live-proxy, pinned to the bom1 (Mumbai) region.
+
+       It fixes FanCode and only FanCode. That block is purely geographic, so
+       any Indian address clears it. SonyLiv and Hotstar refuse datacenter
+       networks on top of the geography, and no hosted proxy gets past that —
+       measured on five providers without exception. Those two need a
+       residential address, which is what LOCAL_PROXY is for.
+
+       Set it once from the console:
+         localStorage.in_proxy = 'https://<your-site>/api/live-proxy'   */
+    let IN_PROXY = '';
     try {
       const _lp = new URLSearchParams(location.search).get('lp');
       if (_lp !== null) {
@@ -3862,6 +3891,7 @@
         else { localStorage.setItem('fc_local_proxy', _lp); }
       }
       LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
+      IN_PROXY = localStorage.getItem('in_proxy') || '';
     } catch { }
     function viaLocalProxy(url) { return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
     function isLocalUrl(u) { return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
