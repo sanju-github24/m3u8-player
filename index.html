@@ -2803,21 +2803,40 @@
         const lastQuote = line.lastIndexOf('"');
         const nameComma = line.indexOf(',', lastQuote > -1 ? lastQuote : line.indexOf(':'));
         const name = (nameComma > -1 ? line.slice(nameComma + 1) : '').trim();
-        // the URL is the next line that is neither blank nor a directive
-        let url = '';
+
+        /* The lines between #EXTINF and the URL are not noise. Star Sports and
+           the rest of the Jio Hotstar group are DASH behind ClearKey DRM, and
+           they carry their key on a #KODIPROP line:
+
+             #KODIPROP:inputstream.adaptive.license_type=clearkey
+             #KODIPROP:inputstream.adaptive.license_key=<kid hex>:<key hex>
+
+           Dropping those and handing the .mpd straight to the player is why
+           every one of those channels failed: the manifest loads, the segments
+           are encrypted, and playback dies with nothing on screen to say why.
+           The player already speaks ClearKey through Shaka — it was simply
+           never told the key. */
+        let url = '', drm = null, cookie = '';
         for (let j = i + 1; j < lines.length; j++) {
           const n = lines[j].trim();
           if (!n) continue;
-          if (n.startsWith('#')) continue;
+          if (n.startsWith('#')) {
+            const lk = /license_key=([0-9a-f]{16,}):([0-9a-f]{16,})/i.exec(n);
+            if (lk) drm = { keyId: lk[1], key: lk[2] };
+            const ck = /http-cookie=(.+)$/i.exec(n);
+            if (ck) cookie = ck[1].trim();
+            continue;
+          }
           url = n; i = j; break;
         }
+        if (drm && cookie) drm.cookie = cookie;
         // a handful of entries carry something that is not a web URL
         if (!name || !/^https?:\/\//i.test(url)) continue;
         /* tvg-id is "BBCAmerica.us@SD" — the country is the part after the dot,
            and the @SD/@HD suffix is a stream-quality marker, not part of it. */
         const cc = (attr('tvg-country') || attr('tvg-id').split('.').pop() || '')
           .split('@')[0].trim().toUpperCase();
-        out.push({ name, url, logo: attr('tvg-logo'), group: attr('group-title'), country: cc });
+        out.push({ name, url, logo: attr('tvg-logo'), group: attr('group-title'), country: cc, drm });
       }
       return out;
     }
@@ -2907,6 +2926,30 @@
       _playingChannelId = null;
       _playingChannelLogo = ch.logo || null;
 
+      /* DASH goes straight through, with its key. The probe below is written
+         for HLS: it asks for 64 bytes and reads CORS headers off the reply,
+         which tells you nothing useful about an .mpd — Shaka does its own
+         manifest and segment fetching, and a ClearKey stream that answers the
+         probe perfectly will still fail without the key. Routing these here
+         also keeps them away from the Safari shortcut underneath, which would
+         hand a .mpd to a native player that cannot read one. */
+      const isDash = ch.drm || /\.mpd(\?|$)/i.test(ch.url);
+      if (isDash) {
+        /* Say so before playing rather than after failing. These answer 403 to
+           any browser request — the headers their CDN wants are ones a page is
+           not allowed to set — so without the proxy there is nothing to see
+           and no error worth showing. */
+        if (needsProxy(ch.url) && !LOCAL_PROXY) {
+          errMsg.innerHTML = `“${ch.name}” is a Star Sports / Jio Hotstar stream. `
+            + `Its CDN requires headers a browser cannot send, so it needs the local proxy: `
+            + `run <code>node fancode-local-proxy.js</code> and open this page with `
+            + `<code>?lp=http://localhost:8787/proxy</code>.`;
+          err.style.display = 'flex';
+          return;
+        }
+        return loadVideo(ch.url, ch.name, false, ch.drm || null);
+      }
+
       const nativeHls = document.createElement('video')
         .canPlayType('application/vnd.apple.mpegurl') !== '';
       // Safari can play a CORS-less stream natively, so do not stand in its way.
@@ -2935,7 +2978,7 @@
         err.style.display = 'flex';
         return;
       }
-      loadVideo(ch.url, ch.name);
+      loadVideo(ch.url, ch.name, false, ch.drm || null);
     }
 
     // ══════════════════════════════════════════════════════════
@@ -3431,6 +3474,28 @@
         drmBadge.style.display = 'flex';
       }
       shakaInst.configure(cfg);
+
+      /* Route everything through the local proxy when one is configured.
+
+         This has to be a request filter rather than simply loading the proxied
+         URL. A DASH manifest addresses its segments relatively, and Shaka
+         resolves those against the manifest's own URL — hand it
+         "localhost:8787/proxy?url=…" as the manifest and every segment path
+         resolves against the proxy's origin instead of the CDN's. Filtering
+         instead leaves resolution to happen against the real host and rewrites
+         each request as it goes out, manifest, segments and all.
+
+         Needed because livetv.hotstar.com wants a User-Agent, Referer, Origin
+         and Cookie that no browser will let a page set cross-origin. Without a
+         proxy these channels answer 403 and there is nothing the player can do
+         about it. */
+      if (LOCAL_PROXY && needsProxy(url)) {
+        shakaInst.getNetworkingEngine().registerRequestFilter((type, request) => {
+          request.uris = request.uris.map(u =>
+            u.startsWith(LOCAL_PROXY) ? u : viaLocalProxy(u));
+        });
+      }
+
       if (drm && drm.cookie) {
         const rawVal = drm.cookie.startsWith('__hdnea__=') ? drm.cookie.slice('__hdnea__='.length) : drm.cookie;
         shakaInst.getNetworkingEngine().registerRequestFilter((type, request) => {
@@ -3540,6 +3605,15 @@
       LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
     } catch { }
     function viaLocalProxy(url) { return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
+
+    /* Hosts that refuse a browser outright. FanCode sends no CORS headers and
+       blocks datacenter IPs; Hotstar's live edge demands headers a page cannot
+       set. Both need the request made server-side. */
+    function needsProxy(url) {
+      return /(^|\.)(fancode\.com|hotstar\.com)/i.test((() => {
+        try { return new URL(url).hostname; } catch { return ''; }
+      })());
+    }
     function isLocalUrl(u) { return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
 
     // Route FanCode by what the browser can actually do:
