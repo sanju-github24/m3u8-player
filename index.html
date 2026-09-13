@@ -2935,18 +2935,11 @@
          hand a .mpd to a native player that cannot read one. */
       const isDash = ch.drm || /\.mpd(\?|$)/i.test(ch.url);
       if (isDash) {
-        /* Say so before playing rather than after failing. These answer 403 to
-           any browser request — the headers their CDN wants are ones a page is
-           not allowed to set — so without the proxy there is nothing to see
-           and no error worth showing. */
-        if (needsProxy(ch.url) && !LOCAL_PROXY) {
-          errMsg.innerHTML = `“${ch.name}” is a Star Sports / Jio Hotstar stream. `
-            + `Its CDN requires headers a browser cannot send, so it needs the local proxy: `
-            + `run <code>node fancode-local-proxy.js</code> and open this page with `
-            + `<code>?lp=http://localhost:8787/proxy</code>.`;
-          err.style.display = 'flex';
-          return;
-        }
+        /* Straight through with its key. The proxy default handles the headers
+           these need; what it cannot do is change where the request comes
+           from, and some Hotstar hosts answer only to an Indian address —
+           live09p (the Bigg Boss 24/7 feeds) and the out/v1 paths among them.
+           Those are the ones worth pointing at a local proxy with ?lp=. */
         return loadVideo(ch.url, ch.name, false, ch.drm || null);
       }
 
@@ -3594,7 +3587,19 @@
     // Optional LOCAL CORS proxy for DESKTOP FanCode playback (see fancode-local-proxy.js).
     // Run that script on your machine, then set this — via ?lp=http://localhost:8787/proxy
     // (persisted), or localStorage 'fc_local_proxy'. Empty = mobile-only native path.
-    let LOCAL_PROXY = '';
+    /* A proxy that is already running, so nothing has to be started by hand.
+
+       These Hotstar streams need a User-Agent, Referer, Origin and cookie that
+       a browser will not let a page set cross-origin, so the request has to be
+       made server-side by something. The site's own backend already proxies
+       streams and now derives those headers from the target URL, which means
+       Star Sports and the Bigg Boss feeds play with nothing running locally.
+
+       ?lp= or a saved fc_local_proxy still wins: FanCode additionally blocks
+       datacenter IPs, so it genuinely needs a proxy on a home connection, and
+       that override is how you point at one. */
+    const REMOTE_PROXY = 'https://movies1-backend.onrender.com/api/live-stream-proxy';
+    let LOCAL_PROXY = REMOTE_PROXY;
     try {
       const _lp = new URLSearchParams(location.search).get('lp');
       if (_lp !== null) {
@@ -3602,7 +3607,7 @@
         if (!_lp || _lp === 'off') { localStorage.removeItem('fc_local_proxy'); }
         else { localStorage.setItem('fc_local_proxy', _lp); }
       }
-      LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
+      LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || REMOTE_PROXY;
     } catch { }
     function viaLocalProxy(url) { return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
 
