@@ -1,0 +1,8 @@
+{
+  "name": "m3u8-player",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "undici": "^6.21.0"
+  }
+}

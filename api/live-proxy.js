@@ -1,41 +1,93 @@
-/* A stream proxy that runs in Mumbai.
+/* A stream proxy that runs in Mumbai, and borrows an Indian address when
+ * Mumbai is not enough.
  *
- * The live sport CDNs refuse requests from outside India, and the Cloudflare
- * worker cannot help: Cloudflare picks the colo nearest the viewer, which for
- * this project has meant Singapore, and Singapore is refused like everywhere
- * else. Measured against four CDN hosts:
+ * Measured against four CDN hosts from five hosting providers:
  *
  *     Indian ISP / residential     FanCode 200   SonyLiv 200   Hotstar 200
  *     Indian datacenter (any)      FanCode 200   SonyLiv 403   Hotstar 403
  *     outside India (any)          FanCode 403   SonyLiv 403   Hotstar 403
  *
- * So this fixes FanCode and nothing else — that block is purely geographic,
- * and Vercel's bom1 region is in India. SonyLiv and Hotstar additionally
- * refuse datacenter networks, and no hosted proxy of any kind gets past that;
- * they need a residential address, which means a proxy on a home connection.
- * Tested on five providers (DigitalOcean, Google Cloud, Oracle, Azure and
- * one more) with no exceptions.
+ * Two different blocks, so two different answers. FanCode's is geographic
+ * alone, and this function being pinned to bom1 clears it — see vercel.json,
+ * without which nothing here works. SonyLiv and Hotstar additionally refuse
+ * hosted networks, which no cloud region anywhere can help with, so for those
+ * the request is forwarded through a public proxy on an Indian consumer or
+ * campus network. Those proxies are strangers' machines: fine for a public
+ * stream signed with a token that expires in hours, and not a thing to send
+ * anything private through.
  *
- * The region is pinned in vercel.json. Deployed anywhere else this file is
- * useless, so check that first if FanCode starts returning 403.
- *
- *   GET /api/live-proxy?url=<encoded>[&cookie=][&ref=][&ua=]
+ *   GET /api/live-proxy?url=<encoded>[&cookie=][&ref=][&ua=][&via=host:port]
  */
+import { ProxyAgent } from 'undici';
 
 const DEFAULT_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
-/* Only these hosts, so the function cannot be used as an open relay for
-   anything on the internet. Add a suffix here to cover another CDN. */
-const ALLOWED = [
-  'fancode.com',
-  'akamaized.net',
+/* Only these hosts, so this cannot be used as an open relay for anything on
+   the internet. It is a public URL on a domain you own. */
+const ALLOWED = ['fancode.com', 'akamaized.net', 'hotstar.com', 'jio.com'];
+
+/* Hosts that want an address no datacenter has. Everything else is served
+   straight from Mumbai, which is faster and does not depend on a stranger. */
+const NEEDS_RESIDENTIAL = [
+  'sonydaimenew.akamaized.net',
+  'live09p.hotstar.com',
   'hotstar.com',
-  'jio.com',
 ];
 
-function allowed(hostname) {
-  return ALLOWED.some(s => hostname === s || hostname.endsWith('.' + s));
+const PROXY_LIST =
+  'https://raw.githubusercontent.com/databay-labs/free-proxy-list/master/by-country/in/http.txt';
+
+const allowed = (h) => ALLOWED.some(s => h === s || h.endsWith('.' + s));
+const needsResidential = (h) => NEEDS_RESIDENTIAL.some(s => h === s || h.endsWith('.' + s));
+
+// ── the proxy pool ───────────────────────────────────────────
+/* Kept on the module, which on a warm instance survives between requests.
+   A cold start pays for the list again; that is one small fetch. */
+let pool = { list: [], at: 0 };
+let known = new Map();          // hostname -> proxy that last worked for it
+
+async function proxyList() {
+  if (pool.list.length && Date.now() - pool.at < 15 * 60_000) return pool.list;
+  try {
+    const r = await fetch(PROXY_LIST, { cache: 'no-store' });
+    const txt = await r.text();
+    const list = txt.split('\n').map(l => l.trim())
+      .filter(l => /^\d{1,3}(\.\d{1,3}){3}:\d{2,5}$/.test(l));
+    if (list.length) pool = { list, at: Date.now() };
+  } catch { /* keep whatever we had */ }
+  return pool.list;
+}
+
+function get(url, headers, proxy, ms) {
+  const opts = { headers, signal: AbortSignal.timeout(ms) };
+  if (proxy) opts.dispatcher = new ProxyAgent({ uri: `http://${proxy}`, connectTimeout: ms });
+  return fetch(url, opts);
+}
+
+/* Find a proxy that this particular host accepts.
+ *
+ * Most entries on a public list are dead, so they are raced in batches rather
+ * than tried one after another — serially this would exhaust the function's
+ * time long before finding the one that works. The winner is remembered per
+ * host, because what SonyLiv accepts and what Hotstar accepts need not match. */
+async function findProxy(url, headers, hostname) {
+  const list = await proxyList();
+  if (!list.length) return null;
+
+  const remembered = known.get(hostname);
+  const ordered = remembered ? [remembered, ...list.filter(p => p !== remembered)] : list;
+
+  for (let i = 0; i < Math.min(ordered.length, 48); i += 8) {
+    const batch = ordered.slice(i, i + 8);
+    const hit = await Promise.any(batch.map(async (p) => {
+      const r = await get(url, headers, p, 7000);
+      if (!r.ok) throw new Error(String(r.status));
+      return { proxy: p, res: r };
+    })).catch(() => null);
+    if (hit) { known.set(hostname, hit.proxy); return hit; }
+  }
+  return null;
 }
 
 function cors(res) {
@@ -48,7 +100,7 @@ export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  const { url: target, cookie = '', ref = '', ua = '' } = req.query;
+  const { url: target, cookie = '', ref = '', ua = '', via = '' } = req.query;
   if (!target) return res.status(400).send('Missing ?url=');
 
   let targetUrl;
@@ -58,25 +110,41 @@ export default async function handler(req, res) {
   let refOrigin = targetUrl.origin;
   if (ref) { try { refOrigin = new URL(ref).origin; } catch { /* keep the target's */ } }
 
-  let upstream;
+  const headers = {
+    'User-Agent': ua || DEFAULT_UA,
+    'Referer': ref || targetUrl.origin + '/',
+    'Origin': refOrigin,
+    'Accept': '*/*',
+    ...(cookie ? { Cookie: cookie } : {}),
+  };
+
+  let upstream, usedProxy = '';
   try {
-    upstream = await fetch(targetUrl.toString(), {
-      headers: {
-        'User-Agent': ua || DEFAULT_UA,
-        'Referer': ref || targetUrl.origin + '/',
-        'Origin': refOrigin,
-        'Accept': '*/*',
-        ...(cookie ? { Cookie: cookie } : {}),
-      },
-    });
+    if (via) {
+      /* A playlist names the proxy that fetched it, so its segments go the
+         same way instead of each one searching the pool again. */
+      usedProxy = via;
+      upstream = await get(targetUrl.toString(), headers, via, 15000);
+      if (!upstream.ok && needsResidential(targetUrl.hostname)) {
+        const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
+        if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
+      }
+    } else if (needsResidential(targetUrl.hostname)) {
+      const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
+      if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
+      else upstream = await get(targetUrl.toString(), headers, null, 15000);
+    } else {
+      upstream = await get(targetUrl.toString(), headers, null, 15000);
+    }
   } catch (e) {
     return res.status(502).send('Upstream failed: ' + e.message);
   }
 
+  if (usedProxy) res.setHeader('X-Proxy-Via', usedProxy);
+
   /* A refusal is not a playlist, whatever the path says. Rewriting an HTML
-     error page as one turns each of its lines into a proxy URL, and the
-     player then gets a 200-looking manifest of nonsense instead of the
-     reason it failed. */
+     error page as one turns each of its lines into a proxy URL, and the player
+     then gets a 200-looking manifest of nonsense instead of the reason. */
   if (!upstream.ok) {
     const body = await upstream.text();
     res.setHeader('X-Proxy-Upstream', String(upstream.status));
@@ -93,12 +161,13 @@ export default async function handler(req, res) {
     const extras =
       (cookie ? '&cookie=' + encodeURIComponent(cookie) : '') +
       (ref ? '&ref=' + encodeURIComponent(ref) : '') +
-      (ua ? '&ua=' + encodeURIComponent(ua) : '');
+      (ua ? '&ua=' + encodeURIComponent(ua) : '') +
+      (usedProxy ? '&via=' + encodeURIComponent(usedProxy) : '');
 
     /* A child with no query of its own inherits the parent's. FanCode and
-       SonyLiv both sign in the query with an acl covering the whole folder,
-       and resolving a relative reference drops it — so without this the
-       master plays and every variant comes back 403. */
+       SonyLiv sign in the query with an acl covering the folder, and resolving
+       a relative reference drops it — without this the master plays and every
+       variant comes back 403. */
     const parentQuery = targetUrl.search;
     const toAbs = (r) => {
       const u = new URL(r, targetUrl);
@@ -122,6 +191,5 @@ export default async function handler(req, res) {
   // Segments and keys: hand the bytes back with CORS added.
   res.setHeader('Content-Type', ct || 'application/octet-stream');
   res.setHeader('Cache-Control', upstream.headers.get('cache-control') || 'no-cache');
-  const buf = Buffer.from(await upstream.arrayBuffer());
-  return res.status(200).send(buf);
+  return res.status(200).send(Buffer.from(await upstream.arrayBuffer()));
 }

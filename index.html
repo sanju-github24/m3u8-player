@@ -3077,14 +3077,23 @@
          CORS probe first, unlike playIptv: probing the bare URL from the
          browser cannot succeed (no cookie, no referer) and would report a
          running stream as offline. */
-      const via = viaWorker(f.url, { cookie: BB_TOKEN, ref: BB_REFERER, ua: BB_UA });
-      try {
-        const r = await fetch(via, { signal: AbortSignal.timeout(12000) });
-        if (r.ok) return loadVideo(via, title);
-        bbBlocked(f.lang, r.status);
-      } catch {
-        bbBlocked(f.lang, 0);
+      const q = 'url=' + encodeURIComponent(f.url)
+        + '&cookie=' + encodeURIComponent(BB_TOKEN)
+        + '&ref=' + encodeURIComponent(BB_REFERER)
+        + '&ua=' + encodeURIComponent(BB_UA);
+      const tries = [];
+      if (IN_PROXY) tries.push(IN_PROXY + '?' + q);
+      tries.push(viaWorker(f.url, { cookie: BB_TOKEN, ref: BB_REFERER, ua: BB_UA }));
+
+      let last = 0;
+      for (const via of tries) {
+        try {
+          const r = await fetch(via, { signal: AbortSignal.timeout(45000) });
+          if (r.ok) return loadVideo(via, title);
+          last = r.status;
+        } catch { last = 0; }
       }
+      bbBlocked(f.lang, last);
     }
 
     /* Says what actually happened, rather than "stream offline" — the stream
@@ -3094,8 +3103,9 @@
         `Hotstar refused the proxy for <b>Bigg Boss ${lang}</b>`
         + (status ? ` (${status})` : '')
         + `. The feed is live. Hotstar wants an Indian address that is not a `
-        + `hosted server, so no worker or cloud function can fetch it — only a `
-        + `home connection.<br><br>`
+        + `hosted server, so this went out through a public proxy and none of those `
+        + `answered either — they come and go.<br><br>`
+        + `Try again in a moment, or for something that does not depend on strangers: `
         + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
       err.style.display = 'flex';
@@ -3253,22 +3263,31 @@
       // Local proxy first where there is one — see the note in playBiggBoss.
       if (LOCAL_PROXY) return loadVideo(viaLocalProxy(m.url), m.name);
 
-      const via = viaWorker(m.url);
-      try {
-        const r = await fetch(via, { signal: AbortSignal.timeout(12000) });
-        if (r.ok) return loadVideo(via, m.name);
-        sonyBlocked(m.name, r.status);
-      } catch {
-        sonyBlocked(m.name, 0);
+      /* Then our own function, which forwards through an Indian consumer
+         network for the hosts that insist on one. It searches a public proxy
+         list on the way, so allow it longer than a plain fetch. */
+      const tries = [];
+      if (IN_PROXY) tries.push(IN_PROXY + '?url=' + encodeURIComponent(m.url));
+      tries.push(viaWorker(m.url));
+
+      let last = 0;
+      for (const via of tries) {
+        try {
+          const r = await fetch(via, { signal: AbortSignal.timeout(45000) });
+          if (r.ok) return loadVideo(via, m.name);
+          last = r.status;
+        } catch { last = 0; }
       }
+      sonyBlocked(m.name, last);
     }
 
     function sonyBlocked(name, status) {
       errMsg.innerHTML =
         `SonyLiv refused the proxy for <b>${name}</b>` + (status ? ` (${status})` : '')
         + `. The match is live and the link is signed. SonyLiv wants an Indian `
-        + `address that is not a hosted server, so no worker or cloud function `
-        + `can fetch it — only a home connection.<br><br>`
+        + `address that is not a hosted server, so this went out through a public `
+        + `proxy and none of those answered either — they come and go.<br><br>`
+        + `Try again in a moment, or for something that does not depend on strangers: `
         + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
       err.style.display = 'flex';
