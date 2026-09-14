@@ -2559,8 +2559,24 @@
      * Key fix: removed `url.includes('playlist')` — far too broad and incorrectly
      * routes many MP4 URLs (e.g. YouTube-style) into the HLS path.
      */
-    function detectUrlType(url) {
+    function detectUrlType(url, depth = 0) {
       if (!url) return 'mp4';
+
+      /* A proxied URL describes its target in ?url=, and its own path says
+         nothing — ours is /api/live-proxy for a playlist, a segment and a key
+         alike. Stripping the query, as the extension checks below do, left
+         every proxied stream looking like none of the known types, so an HLS
+         playlist went to a plain <video> element and came back "unsupported
+         format". Classify what is being fetched, not what is fetching it.
+
+         Unwrapped once: a target that is itself a proxy URL is a mistake, not
+         a case to support, and recursing on one would not end. */
+      if (depth === 0) {
+        try {
+          const inner = new URL(url, location.href).searchParams.get('url');
+          if (inner) return detectUrlType(inner, 1);
+        } catch { /* not an absolute or parseable URL — fall through */ }
+      }
 
       // Strip query string for extension checks only
       const clean = url.split('?')[0].toLowerCase();
