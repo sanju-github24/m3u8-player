@@ -389,23 +389,32 @@ async function handleSonyFeed() {
     const parsed  = JSON.parse(text);
     const matches = parsed.matches || [];
 
-    /* Only the fixtures that are on air and have a stream. The feed also
-       carries promos for things weeks away, with no URL — a card that cannot
-       play is worse than no card. */
-    const live = matches
-      .filter(m => m.isLive && (m.video_url || m.pub_url || m.dai_url))
-      .map(m => ({
-        id:       String(m.contentId || ''),
-        name:     m.match_name || m.event_name || 'Live',
-        event:    m.event_name || '',
-        category: m.event_category || 'Sports',
-        channel:  m.broadcast_channel || '',
-        lang:     m.audioLanguageName || '',
-        logo:     m.src || '',
-        url:      m.video_url || m.pub_url || m.dai_url,
-      }));
+    const shape = (m) => ({
+      id:       String(m.contentId || ''),
+      name:     cleanName(m.match_name || m.event_name || 'Live'),
+      event:    m.event_name || '',
+      category: m.event_category || 'Sports',
+      channel:  m.broadcast_channel || '',
+      lang:     m.audioLanguageName || '',
+      poster:   m.src || '',
+      logo:     m.src || '',
+      start:    m.startTime || '',
+      url:      m.video_url || m.pub_url || m.dai_url || '',
+    });
 
-    return json(live, 200, {
+    /* On air with a stream, and everything else the feed knows about.
+       Upcoming rows carry no URL — they are promos — so they are listed but
+       never made to look playable. */
+    const live = matches.filter(m => m.isLive && (m.video_url || m.pub_url || m.dai_url)).map(shape);
+    const upcoming = matches.filter(m => !m.isLive).map(shape).map(m => ({
+      ...m,
+      // The feed prefixes these "Upcoming - "; the badge already says so.
+      name:  m.name.replace(/^upcoming\s*[-–]\s*/i, ''),
+      event: m.event.replace(/^upcoming\s*[-–]\s*/i, ''),
+      url:   '',
+    }));
+
+    return json({ live, upcoming }, 200, {
       'X-Feed-Source': 'sonyliv.json',
       'X-Feed-Updated': String(parsed['last update time'] || ''),
     });
@@ -447,8 +456,20 @@ async function handleFancodeFeed() {
         .map(normalizeFancode)
         .filter(m => m && m.url);
 
-      if (!live.length) { errors.push('no live fixtures'); continue; }
-      return json(live, 200, {
+      /* Anything not on air yet. Its URL is dropped even where the feed has
+         one: it is not signed for a match that has not started, and offering
+         it would only produce a 403 nobody can explain. */
+      const upcoming = matches
+        .filter(m => {
+          const st = String(m.status || '').toUpperCase();
+          return st && st !== 'LIVE' && st !== 'COMPLETED' && st !== 'ENDED';
+        })
+        .map(normalizeFancode)
+        .filter(Boolean)
+        .map(m => ({ ...m, url: '' }));
+
+      if (!live.length && !upcoming.length) { errors.push('no fixtures'); continue; }
+      return json({ live, upcoming }, 200, {
         'X-Feed-Source': 'fancode',
         'X-Feed-Updated': String(parsed['last update time'] || parsed.last_updated || ''),
       });
@@ -469,20 +490,27 @@ function normalizeFancode(m) {
     const best = ['1080p5', '1080p', '720p', '540p', '480p', '360p', '240p'].find(q => auto[q]);
     url = best ? auto[best] : (typeof auto === 'string' ? auto : '');
   }
-  if (!url) return null;
-
   const teams = [m.team_1, m.team_2].filter(Boolean).join(' vs ');
+  const art = m.src || m.image || (m.image_cdn && (m.image_cdn.LOGO || m.image_cdn.APP)) || '';
   return {
     id:       String(m.match_id || m.id || ''),
-    name:     m.match_name || teams || m.title || m.short_name || 'Live',
+    name:     cleanName(m.match_name || teams || m.title || m.short_name || 'Live'),
     event:    m.event_name || m.title || '',
     category: m.event_category || m.category || 'Sports',
     lang:     m.language || '',
     start:    m.startTime || m.startDate || '',
-    logo:     m.src || m.image || (m.image_cdn && (m.image_cdn.LOGO || m.image_cdn.APP)) || '',
+    status:   String(m.status || '').toUpperCase(),
+    poster:   art,
+    logo:     art,
     ua:       m['user-agent'] || '',
     url,
   };
+}
+
+/* Feed titles carry the language in brackets and stray whitespace, which look
+   wrong on a card next to a language badge saying the same thing. */
+function cleanName(n) {
+  return String(n || '').replace(/\s*\[[^\]]*\]\s*$/, '').replace(/\s+/g, ' ').trim();
 }
 
 /* ────────────────────────────────────────────────────────────

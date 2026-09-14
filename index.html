@@ -3043,6 +3043,7 @@
         grid.appendChild(card);
       });
       _bbRendered = true;
+      linkBar('bbTab', 'bb', 'Bigg Boss');
     }
 
     /* The local proxy reads the headers it should send off the target's own
@@ -3112,12 +3113,77 @@
     }
 
     // ══════════════════════════════════════════════════════════
+    // TAB LINKS
+    // ══════════════════════════════════════════════════════════
+    /* A tab is addressable: ?tab=sony opens the SonyLiv list, and &id=… plays
+       one fixture from it. Unlike a bundle URL this holds no stream details,
+       so it does not rot when the tokens behind it are rotated — it names
+       what to show and the feed is read fresh on arrival. */
+    const TAB_KEYS = { live: 'live', sony: 'sony', fc: 'fc', bb: 'bb', iptv: 'iptv' };
+
+    /* Puts a copy-link control under a tab's list. Built rather than written
+       into the markup five times, so every tab gets the same thing. */
+    function linkBar(containerId, tabKey, label) {
+      const host = $(containerId);
+      if (!host || host.querySelector('.tab-link-bar')) return;
+      const bar = document.createElement('div');
+      bar.className = 'tab-link-bar';
+      bar.style.cssText = 'display:flex;gap:8px;align-items:center;justify-content:center;'
+        + 'padding:8px 6px;font-size:.72rem;color:rgba(255,255,255,.4)';
+      const btn = document.createElement('button');
+      btn.textContent = '🔗 Copy link to ' + label;
+      btn.style.cssText = 'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);'
+        + 'color:rgba(255,255,255,.75);border-radius:8px;padding:6px 12px;cursor:pointer;'
+        + "font-size:.72rem;font-family:'Inter',sans-serif";
+      btn.onclick = () => {
+        const url = tabLink(tabKey);
+        navigator.clipboard.writeText(url)
+          .then(() => { btn.textContent = '✅ Copied'; setTimeout(() => { btn.textContent = '🔗 Copy link to ' + label; }, 1800); })
+          .catch(() => showToast(url, 6000));
+      };
+      bar.appendChild(btn);
+      host.appendChild(bar);
+    }
+
+    function tabLink(tabKey, id) {
+      const base = location.origin + location.pathname;
+      return base + '?tab=' + encodeURIComponent(tabKey)
+        + (id ? '&id=' + encodeURIComponent(id) : '');
+    }
+
+    /* Wait for the tab's list, then play the item named. Each loader is
+       idempotent, so this is safe whether or not the tab was already open. */
+    async function openTabItem(tabKey, id) {
+      if (tabKey === 'sony') {
+        await loadSony();
+        const m = (_sonyList || []).find(x => String(x.id) === String(id));
+        if (m) return playSony(m);
+      } else if (tabKey === 'fc') {
+        await loadFc();
+        const m = (_fcList || []).find(x => String(x.id) === String(id));
+        if (m) return playFc(m);
+      } else if (tabKey === 'bb') {
+        renderBiggBoss();
+        const i = BIGBOSS_FEEDS.findIndex(f => f.lang.toLowerCase() === String(id).toLowerCase());
+        if (i >= 0) return playBiggBoss(i);
+      } else if (tabKey === 'live') {
+        const map = await getChMap();
+        const ch = map[id];
+        if (ch) {
+          _playingChannelId = ch.id; _playingChannelLogo = ch.logo || null;
+          return loadVideo(ch.url, ch.name, false, { keyId: ch.keyId, key: ch.key, cookie: ch.cookie });
+        }
+      }
+      showToast('That item is no longer listed — showing the tab instead', 3500);
+    }
+
+    // ══════════════════════════════════════════════════════════
     // FANCODE LIVE (own tab)
     // ══════════════════════════════════════════════════════════
     /* The worker reads the fixtures feed and returns only what is on air with
        a playable URL. FanCode's edge is the one this player's local proxy was
        written for: no CORS, and datacenter addresses turned away. */
-    let _fcLoaded = false;
+    let _fcLoaded = false, _fcList = null;
 
     async function loadFc(force) {
       if (_fcLoaded && !force) return;
@@ -3127,8 +3193,10 @@
       try {
         const r = await fetch(NEW_JSON_URL + '?feed=fancode&_=' + Date.now());
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        const list = await r.json();
-        if (!Array.isArray(list) || !list.length) throw new Error('no live fixtures');
+        const body = await r.json();
+        // The feed grew an `upcoming` list; older shapes were a bare array.
+        const list = Array.isArray(body) ? body : (body.live || []);
+        if (!list.length) throw new Error('no live fixtures');
         renderFc(list, r.headers.get('X-Feed-Updated'));
         _fcLoaded = true;
       } catch (e) {
@@ -3139,6 +3207,7 @@
     }
 
     function renderFc(list, updated) {
+      _fcList = list;
       const grid = $('fcGrid');
       grid.innerHTML = '';
       list.forEach((m) => {
@@ -3157,6 +3226,7 @@
       $('fcGrid').style.display = 'grid';
       $('fcNote').textContent = (list.length + ' live now')
         + (updated ? ' · feed updated ' + updated : '');
+      linkBar('fcTab', 'fc', 'FanCode');
     }
 
     async function playFc(m) {
@@ -3214,7 +3284,7 @@
        Signed in the query (?hdnea=, acl=/*) and needing no headers at all — a
        bare request returns 200. What it does not send is CORS, so the browser
        cannot fetch it directly and something has to stand in the middle. */
-    let _sonyLoaded = false;
+    let _sonyLoaded = false, _sonyList = null;
 
     async function loadSony(force) {
       if (_sonyLoaded && !force) return;
@@ -3224,8 +3294,10 @@
       try {
         const r = await fetch(NEW_JSON_URL + '?feed=sonyliv&_=' + Date.now());
         if (!r.ok) throw new Error('HTTP ' + r.status);
-        const list = await r.json();
-        if (!Array.isArray(list) || !list.length) throw new Error('no live fixtures');
+        const body = await r.json();
+        // The feed grew an `upcoming` list; older shapes were a bare array.
+        const list = Array.isArray(body) ? body : (body.live || []);
+        if (!list.length) throw new Error('no live fixtures');
         renderSony(list, r.headers.get('X-Feed-Updated'));
         _sonyLoaded = true;
       } catch (e) {
@@ -3236,6 +3308,7 @@
     }
 
     function renderSony(list, updated) {
+      _sonyList = list;
       const grid = $('sonyGrid');
       grid.innerHTML = '';
       list.forEach((m) => {
@@ -3254,6 +3327,7 @@
       $('sonyGrid').style.display = 'grid';
       $('sonyNote').textContent = (list.length + ' live now')
         + (updated ? ' · feed updated ' + updated : '');
+      linkBar('sonyTab', 'sony', 'SonyLiv');
     }
 
     async function playSony(m) {
@@ -3330,6 +3404,7 @@
     }
 
     function renderChannelGrid() {
+      linkBar('liveTvTab', 'live', 'Live TV');
       const grid = $('chGrid');
       grid.innerHTML = '';
       channelsData.forEach((ch, i) => {
@@ -4167,6 +4242,18 @@
 
       const bundleRaw = q.get('bundle');
       if (bundleRaw) { await handleBundleParam(bundleRaw); return; }
+
+      /* ?tab=live|sony|fc|bb opens the player on that list, so each tab has a
+         link of its own to hand out — the same idea as a bundle URL, minus
+         having to pin down which channels are in it. ?id= picks one out. */
+      const tab = q.get('tab');
+      if (tab && TAB_KEYS[tab]) {
+        LS.style.display = 'flex';
+        switchTab(TAB_KEYS[tab]);
+        const wanted = q.get('id');
+        if (wanted) await openTabItem(TAB_KEYS[tab], wanted);
+        return;
+      }
 
       const directUrl = q.get('url');
       const directTitle = q.get('title');
