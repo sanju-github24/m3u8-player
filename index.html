@@ -3973,6 +3973,11 @@
           request.uris = request.uris.map(uri => {
             if (uri.startsWith(P.base)) return uri;      // already ours
             if (!/^https?:/i.test(uri)) return uri;       // blob:, data:
+            /* Anything already on our own origin is a resolution that went
+               wrong upstream, not a stream URL — wrapping it would ask the
+               proxy to fetch the proxy. The manifest's BaseURL is what stops
+               this arising; this is the guard for when it does. */
+            try { if (new URL(uri).origin === location.origin) return uri; } catch { /* not parseable */ }
             return P.base + '?url=' + encodeURIComponent(uri)
               + (P.cookie ? '&cookie=' + encodeURIComponent(P.cookie) : '')
               + (P.ref ? '&ref=' + encodeURIComponent(P.ref) : '')
