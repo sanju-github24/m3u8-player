@@ -2176,7 +2176,7 @@
       <div id="sonyTab" style="display:none">
         <div id="sonyLoading" class="ch-loading"><div class="mini-spin"></div>Loading live matches…</div>
         <div id="sonyErr" class="ch-err" style="display:none">
-          ⚠ Could not load SonyLiv fixtures. <a onclick="loadSony(true);return false">Retry</a>
+          ⚠ Nothing scheduled on SonyLiv right now. <a onclick="loadSony(true);return false">Retry</a>
         </div>
         <div id="sonyGrid" class="ch-grid" style="display:none"></div>
         <div id="sonyNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
@@ -2186,7 +2186,7 @@
       <div id="fcTab" style="display:none">
         <div id="fcLoading" class="ch-loading"><div class="mini-spin"></div>Loading live matches…</div>
         <div id="fcErr" class="ch-err" style="display:none">
-          ⚠ Could not load FanCode fixtures. <a onclick="loadFc(true);return false">Retry</a>
+          ⚠ Nothing scheduled on FanCode right now. <a onclick="loadFc(true);return false">Retry</a>
         </div>
         <div id="fcGrid" class="ch-grid" style="display:none"></div>
         <div id="fcNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
@@ -3145,6 +3145,33 @@
       host.appendChild(bar);
     }
 
+    /* One fixture, live or not.
+       An upcoming fixture is not signed until it starts, so it gets no click
+       — a link that can only 403 explains nothing to whoever pressed it. */
+    function fixtureCard(m, live, onPlay) {
+      const card = document.createElement('div');
+      card.className = 'ch-card';
+      const when = (m.start || '').trim();
+      card.innerHTML = `
+      <img class="ch-logo" src="${m.poster || m.logo || ''}" alt="${m.name}"
+        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
+        onerror="this.style.display='none'">
+      <span class="ch-name">${m.name}</span>
+      <span class="ch-tag">${live ? '🔴' : '🕒'} ${live ? m.category : (when || 'Upcoming')}${m.lang ? ' · ' + m.lang : ''}</span>`;
+      if (onPlay) card.onclick = onPlay;
+      else { card.style.opacity = '.55'; card.style.cursor = 'default'; }
+      return card;
+    }
+
+    function fixtureNote(liveCount, soonCount, updated) {
+      const bits = [];
+      if (liveCount) bits.push(liveCount + ' live now');
+      if (soonCount) bits.push(soonCount + ' upcoming');
+      if (!bits.length) bits.push('nothing scheduled');
+      if (updated) bits.push('feed updated ' + updated);
+      return bits.join(' · ');
+    }
+
     function tabLink(tabKey, id) {
       const base = location.origin + location.pathname;
       return base + '?tab=' + encodeURIComponent(tabKey)
@@ -3195,9 +3222,10 @@
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const body = await r.json();
         // The feed grew an `upcoming` list; older shapes were a bare array.
-        const list = Array.isArray(body) ? body : (body.live || []);
-        if (!list.length) throw new Error('no live fixtures');
-        renderFc(list, r.headers.get('X-Feed-Updated'));
+        const live = Array.isArray(body) ? body : (body.live || []);
+        const soon = Array.isArray(body) ? [] : (body.upcoming || []);
+        if (!live.length && !soon.length) throw new Error('nothing scheduled');
+        renderFc(live, soon, r.headers.get('X-Feed-Updated'));
         _fcLoaded = true;
       } catch (e) {
         $('fcLoading').style.display = 'none';
@@ -3206,26 +3234,15 @@
       }
     }
 
-    function renderFc(list, updated) {
+    function renderFc(list, soon, updated) {
       _fcList = list;
       const grid = $('fcGrid');
       grid.innerHTML = '';
-      list.forEach((m) => {
-        const card = document.createElement('div');
-        card.className = 'ch-card';
-        card.innerHTML = `
-      <img class="ch-logo" src="${m.logo}" alt="${m.name}"
-        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
-        onerror="this.style.display='none'">
-      <span class="ch-name">${m.name}</span>
-      <span class="ch-tag">🔴 ${m.category}${m.lang ? ' · ' + m.lang : ''}</span>`;
-        card.onclick = () => playFc(m);
-        grid.appendChild(card);
-      });
+      list.forEach(m => grid.appendChild(fixtureCard(m, true, () => playFc(m))));
+      soon.forEach(m => grid.appendChild(fixtureCard(m, false, null)));
       $('fcLoading').style.display = 'none';
       $('fcGrid').style.display = 'grid';
-      $('fcNote').textContent = (list.length + ' live now')
-        + (updated ? ' · feed updated ' + updated : '');
+      $('fcNote').textContent = fixtureNote(list.length, soon.length, updated);
       linkBar('fcTab', 'fc', 'FanCode');
     }
 
@@ -3296,9 +3313,10 @@
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const body = await r.json();
         // The feed grew an `upcoming` list; older shapes were a bare array.
-        const list = Array.isArray(body) ? body : (body.live || []);
-        if (!list.length) throw new Error('no live fixtures');
-        renderSony(list, r.headers.get('X-Feed-Updated'));
+        const live = Array.isArray(body) ? body : (body.live || []);
+        const soon = Array.isArray(body) ? [] : (body.upcoming || []);
+        if (!live.length && !soon.length) throw new Error('nothing scheduled');
+        renderSony(live, soon, r.headers.get('X-Feed-Updated'));
         _sonyLoaded = true;
       } catch (e) {
         $('sonyLoading').style.display = 'none';
@@ -3307,26 +3325,15 @@
       }
     }
 
-    function renderSony(list, updated) {
+    function renderSony(list, soon, updated) {
       _sonyList = list;
       const grid = $('sonyGrid');
       grid.innerHTML = '';
-      list.forEach((m) => {
-        const card = document.createElement('div');
-        card.className = 'ch-card';
-        card.innerHTML = `
-      <img class="ch-logo" src="${m.logo}" alt="${m.name}"
-        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
-        onerror="this.style.display='none'">
-      <span class="ch-name">${m.name}</span>
-      <span class="ch-tag">🔴 ${m.category}${m.lang ? ' · ' + m.lang : ''}</span>`;
-        card.onclick = () => playSony(m);
-        grid.appendChild(card);
-      });
+      list.forEach(m => grid.appendChild(fixtureCard(m, true, () => playSony(m))));
+      soon.forEach(m => grid.appendChild(fixtureCard(m, false, null)));
       $('sonyLoading').style.display = 'none';
       $('sonyGrid').style.display = 'grid';
-      $('sonyNote').textContent = (list.length + ' live now')
-        + (updated ? ' · feed updated ' + updated : '');
+      $('sonyNote').textContent = fixtureNote(list.length, soon.length, updated);
       linkBar('sonyTab', 'sony', 'SonyLiv');
     }
 
