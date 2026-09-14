@@ -3209,6 +3209,25 @@
        what to show and the feed is read fresh on arrival. */
     const TAB_KEYS = { live: 'live', sony: 'sony', fc: 'fc', bb: 'bb', iptv: 'iptv' };
 
+    /* Solo: this window exists to play one thing.
+     *
+     * Embedded in a page of its own, the launcher behind the video is not a
+     * useful place to end up — a viewer who came to watch one match should not
+     * be left looking at a URL box and a channel list belonging to a different
+     * site. So in solo mode anything that would show the launcher closes the
+     * window instead, by telling whoever framed it. */
+    const SOLO = new URLSearchParams(location.search).get('solo') === '1';
+    const FRAMED = window.self !== window.top;
+
+    function showLauncher() {
+      if (SOLO) {
+        destroyPlayers();
+        if (FRAMED) { try { window.parent.postMessage({ type: 'anchor:close' }, '*'); } catch { /* cross-origin */ } }
+        return;
+      }
+      LS.style.display = 'flex';
+    }
+
     /* Puts a copy-link control under a tab's list. Built rather than written
        into the markup five times, so every tab gets the same thing. */
     function linkBar(containerId, tabKey, label) {
@@ -3555,7 +3574,7 @@
 
         if (decoded.ids && decoded.ids.length > 0) {
           showToast('⏳ Loading bundle…', 3000);
-          LS.style.display = 'flex';
+          showLauncher();
           let map;
           try { map = await getChMap(); }
           catch (e) { throw new Error('Could not fetch channel feed: ' + e.message); }
@@ -3572,7 +3591,7 @@
 
         if (decoded.channels && decoded.channels.length > 0) {
           showToast('⏳ Loading bundle…', 2000);
-          LS.style.display = 'flex';
+          showLauncher();
           let map = {};
           try { map = await getChMap(); } catch { }
 
@@ -3616,7 +3635,7 @@
       $('chUpdated').innerHTML = `📦 Bundle: <b>${bundle.title || 'Channels'}</b> — ${channelsData.length} channels`;
       $('chUpdated').style.display = 'block';
       $('tabLive').textContent = `📺 ${bundle.title || 'Bundle'}`;
-      LS.style.display = 'flex';
+      showLauncher();
     }
 
     // ══════════════════════════════════════════════════════════
@@ -4330,7 +4349,7 @@
       endHostSession();
       if (SROLE === 'guest') { clearInterval(_pollT); clearInterval(_guestPingT); }
       SROLE = null; SID = null;
-      LS.style.display = 'flex';
+      showLauncher();
       vid.pause();
       isLiveStream = false;
       liveBadge.style.display = 'none';
@@ -4369,7 +4388,8 @@
          having to pin down which channels are in it. ?id= picks one out. */
       const tab = q.get('tab');
       if (tab && TAB_KEYS[tab]) {
-        LS.style.display = 'flex';
+        // Solo shows the spinner, not the list it would otherwise sit behind.
+        if (SOLO) { spin.classList.add('on'); } else { LS.style.display = 'flex'; }
         switchTab(TAB_KEYS[tab]);
         const wanted = q.get('id');
         if (wanted) await openTabItem(TAB_KEYS[tab], wanted);
