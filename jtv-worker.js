@@ -46,6 +46,9 @@ export default {
     if (reqUrl.searchParams.get('feed') === 'fancode') {
       return handleFancodeFeed();
     }
+    if (reqUrl.searchParams.get('feed') === 'willow') {
+      return handleWillowFeed();
+    }
     return handleFeed(env);
   },
 
@@ -511,6 +514,67 @@ function normalizeFancode(m) {
    wrong on a card next to a language badge saying the same thing. */
 function cleanName(n) {
   return String(n || '').replace(/\s*\[[^\]]*\]\s*$/, '').replace(/\s+/g, ' ').trim();
+}
+
+// ────────────────────────────────────────────────────────────
+// 5. WILLOW CRICKET SCHEDULE
+// ────────────────────────────────────────────────────────────
+/* Cricket on Willow, as a schedule rather than a source of streams.
+ *
+ * The feed carries no stream URLs — every fixture's is empty — so nothing
+ * here plays and nothing pretends to. What it does carry is what is coming
+ * up, when, and the artwork for it, which is exactly what a listings page
+ * wants and what this site had no source for: the other feeds only know
+ * about their own few hours.
+ *
+ * Each fixture keeps its Amazon page as a link, so a viewer who wants to
+ * watch one has somewhere to go. */
+const WILLOW_JSON =
+  'https://raw.githubusercontent.com/sportlive18/Willow-Cricbuzz-Prime-Video-Sport-Live-Event-Auto-Updated-Playlist/refs/heads/main/willow.json';
+
+async function handleWillowFeed() {
+  try {
+    const res  = await fetchFresh(WILLOW_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
+    const text = await res.text();
+    if (!res.ok || text.trim().startsWith('<')) {
+      return json({ error: 'willow_feed', detail: `HTTP ${res.status}` }, 502);
+    }
+
+    const parsed = JSON.parse(text);
+    const rows = parsed.Matches || [];
+
+    const shape = (m) => {
+      /* "European T20 Premier League 2026 - 26th Match - A vs B" — the league
+         and the fixture, run together. Split so a card can show the fixture
+         and put the league underneath, rather than truncating the lot. */
+      const bits = String(m.title || '').split(' - ');
+      const name  = bits.length > 1 ? bits[bits.length - 1].trim() : (m.title || '');
+      const event = bits.length > 1 ? bits.slice(0, -1).join(' · ').trim() : '';
+      return {
+        id:       String(m.match_id || ''),
+        name:     name || 'Cricket',
+        event,
+        category: 'Cricket',
+        lang:     '',
+        start:    m.time || '',
+        poster:   m.cover_image || '',
+        logo:     m.cover_image || '',
+        // Where to watch it. Nothing here plays, so this is the only action.
+        link:     m.match_url || '',
+        url:      '',
+      };
+    };
+
+    const live = rows.filter(m => String(m.status || '').toUpperCase() === 'LIVE').map(shape);
+    const upcoming = rows.filter(m => String(m.status || '').toUpperCase() !== 'LIVE').map(shape);
+
+    return json({ live, upcoming }, 200, {
+      'X-Feed-Source': 'willow.json',
+      'X-Feed-Updated': String((parsed.HeaderInfo || {}).LastUpdate || ''),
+    });
+  } catch (e) {
+    return json({ error: 'willow_feed', detail: e.message }, 502);
+  }
 }
 
 /* ────────────────────────────────────────────────────────────
