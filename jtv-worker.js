@@ -82,6 +82,33 @@ function fetchFresh(url, headers) {
   return fetch(bust, { headers, cache: 'no-store' });
 }
 
+/* Our own copy of each feed, refreshed on a schedule and checked for shape
+   before it is written — see .github/workflows/mirror-feeds.yml.
+ 
+   Every playlist here belongs to someone else's repository. That is a fine
+   source and a poor dependency: renamed, emptied or simply down, and the site
+   finds out when a viewer does. The mirror is tried first so an upstream
+   having a bad day costs nothing, and the upstream is tried second so the
+   mirror falling behind costs nothing either. */
+const MIRROR = 'https://raw.githubusercontent.com/sanju-github24/m3u8-player/refs/heads/main/feeds/';
+
+async function fetchMirrored(file, upstream, headers) {
+  let last = null;
+  for (const url of [MIRROR + file, upstream]) {
+    try {
+      const res = await fetchFresh(url, headers);
+      last = res;
+      if (!res.ok) continue;
+      /* Read here so a body that is an error page, not a feed, moves on to
+         the next source rather than being handed back as a success. */
+      const text = await res.clone().text();
+      if (!text || text.trim().startsWith('<')) continue;
+      return res;
+    } catch { /* try the next */ }
+  }
+  return last || fetchFresh(upstream, headers);
+}
+
 const BROWSERISH = {
   'accept':             '*/*',
   'accept-language':    'en-GB,en;q=0.6',
@@ -99,6 +126,7 @@ const BROWSERISH = {
 };
 
 const SOURCES = [
+  ['mirror',   MIRROR + 'jtv.json', { 'accept': 'application/json', 'user-agent': 'player.html/1.0' }],
   ['jtv.json', JTV_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' }],
   ['jtv-plus', JTV_PLUS, BROWSERISH],
 ];
@@ -389,7 +417,7 @@ const SONY_JSON = 'https://raw.githubusercontent.com/sportlive18/Sonyliv-Playlis
 
 async function handleSonyFeed() {
   try {
-    const res  = await fetchFresh(SONY_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
+    const res  = await fetchMirrored('sonyliv.json', SONY_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
     const text = await res.text();
     if (!res.ok || text.trim().startsWith('<')) {
       return json({ error: 'sony_feed', detail: `HTTP ${res.status}` }, 502);
@@ -444,6 +472,7 @@ async function handleSonyFeed() {
    Normalizing both means swapping the source later is one line, not a rewrite
    of the player. */
 const FANCODE_SOURCES = [
+  MIRROR + 'fancode.json',
   'https://raw.githubusercontent.com/sportlive18/Fancode-New-Auto-Update/refs/heads/main/fancode.json',
   'https://raw.githubusercontent.com/doctor-8trange/zyphx8/refs/heads/main/data/fancode.json',
 ];
@@ -540,7 +569,7 @@ const WILLOW_JSON =
 
 async function handleWillowFeed() {
   try {
-    const res  = await fetchFresh(WILLOW_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
+    const res  = await fetchMirrored('willow.json', WILLOW_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
     const text = await res.text();
     if (!res.ok || text.trim().startsWith('<')) {
       return json({ error: 'willow_feed', detail: `HTTP ${res.status}` }, 502);
@@ -601,7 +630,7 @@ const HOTSTAR_M3U =
 
 async function handleHotstarFeed() {
   try {
-    const res  = await fetchFresh(HOTSTAR_M3U, { 'accept': 'text/plain', 'user-agent': 'player.html/1.0' });
+    const res  = await fetchMirrored('hotstar.m3u', HOTSTAR_M3U, { 'accept': 'text/plain', 'user-agent': 'player.html/1.0' });
     const text = await res.text();
     if (!res.ok || !text.includes('#EXTM3U')) {
       return json({ error: 'hotstar_feed', detail: `HTTP ${res.status}` }, 502);
@@ -723,7 +752,7 @@ function primeServers(streamUrl) {
 
 async function handlePrimeFeed() {
   try {
-    const res  = await fetchFresh(PRIME_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
+    const res  = await fetchMirrored('primesport.json', PRIME_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
     const text = await res.text();
     if (!res.ok || text.trim().startsWith('<')) {
       return json({ error: 'prime_feed', detail: `HTTP ${res.status}` }, 502);

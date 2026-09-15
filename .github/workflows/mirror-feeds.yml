@@ -1,0 +1,50 @@
+# Keeps our own copy of the playlists the worker reads.
+#
+# They live in other people's repositories. That is fine as a source and poor
+# as a dependency: if one goes away, is renamed, or is changed in a way that
+# breaks the shape, the site finds out when a viewer does.
+#
+# So every half hour each feed is fetched, checked for shape, and committed
+# here only if it passes. A feed that fails validation is not written, which
+# leaves the last good copy in place — stale beats broken, and the worker
+# falls back to the upstream anyway.
+#
+# The tokens inside these files are already public in the feeds they come
+# from, and expire in hours. Nothing secret is being copied here.
+
+name: Mirror feeds
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:        # so it can be run by hand after a failure
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-feeds
+  cancel-in-progress: true
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch and validate
+        run: |
+          mkdir -p feeds
+          node .github/scripts/mirror.mjs
+
+      - name: Commit what changed
+        run: |
+          git config user.name  "feed-mirror"
+          git config user.email "actions@github.com"
+          git add feeds
+          if git diff --cached --quiet; then
+            echo "no feed changed"
+          else
+            git commit -m "Mirror feeds $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
