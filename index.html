@@ -3216,6 +3216,10 @@
       err.style.display = 'flex';
     }
 
+    /* 'playing' rather than 'canplay': the first says frames are going up,
+       the second only that they could. */
+    vid.addEventListener('playing', announcePlaying);
+
     // ══════════════════════════════════════════════════════════
     // TAB LINKS
     // ══════════════════════════════════════════════════════════
@@ -3234,6 +3238,34 @@
      * window instead, by telling whoever framed it. */
     const SOLO = new URLSearchParams(location.search).get('solo') === '1';
     const FRAMED = window.self !== window.top;
+
+    /* Framed to play one thing, this player should never be seen.
+     *
+     * Its top bar, launcher and share controls belong to another site, and a
+     * viewer on AnchorHD watching a match has no use for them — they only
+     * appear for a moment while the feed resolves, which is long enough to
+     * read as someone else's page flashing up inside the one you are on.
+     * Hidden outright, and the page behind the video is black. */
+    if (SOLO) {
+      const s = document.createElement('style');
+      s.textContent =
+        '#topBar{display:none!important}' +
+        '#LS{display:none!important}' +
+        '#shareBtn{display:none!important}' +
+        '#sessionBadge{display:none!important}' +
+        '#bundleToggle{display:none!important}' +
+        '#backBtn{display:none!important}' +
+        'html,body{background:#000!important}';
+      document.head.appendChild(s);
+    }
+
+    /* The host page covers this frame until the picture is actually up, so it
+       needs telling. Fired on the video itself rather than on load(), because
+       a manifest arriving is not the same as something to look at. */
+    function announcePlaying() {
+      if (!SOLO || !FRAMED) return;
+      try { window.parent.postMessage({ type: 'anchor:playing' }, '*'); } catch { /* cross-origin */ }
+    }
 
     function showLauncher() {
       if (SOLO) {
