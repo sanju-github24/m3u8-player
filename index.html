@@ -2122,6 +2122,8 @@
         <button class="ls-tab" id="tabBB" onclick="switchTab('bb')">🎭 Hotstar</button>
         <button class="ls-tab" id="tabSony" onclick="switchTab('sony')">🏏 SonyLiv</button>
         <button class="ls-tab" id="tabFc" onclick="switchTab('fc')">⚽ FanCode</button>
+        <button class="ls-tab" id="tabWillow" onclick="switchTab('willow')">🏏 Willow</button>
+        <button class="ls-tab" id="tabPrime" onclick="switchTab('prime')">🎬 Prime</button>
         <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
@@ -2191,6 +2193,31 @@
         </div>
         <div id="fcGrid" class="ch-grid" style="display:none"></div>
         <div id="fcNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
+      </div>
+
+      <!-- Willow Cricket's live fixtures, read through the worker. Every
+           fixture is DASH under ClearKey; the worker splits the key pair and
+           orders the CDN list so the player only walks it. -->
+      <div id="willowTab" style="display:none">
+        <div id="willowLoading" class="ch-loading"><div class="mini-spin"></div>Loading live cricket…</div>
+        <div id="willowErr" class="ch-err" style="display:none">
+          ⚠ Nothing scheduled on Willow right now. <a onclick="loadWillow(true);return false">Retry</a>
+        </div>
+        <div id="willowGrid" class="ch-grid" style="display:none"></div>
+        <div id="willowNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
+      </div>
+
+      <!-- Prime Video's free live sport, read through the worker. Every entry
+           is DASH under ClearKey, so they go to Shaka with the key pair the
+           feed carries. Most hosts need the proxy; the CloudFront exception
+           is measured, not assumed. -->
+      <div id="primeTab" style="display:none">
+        <div id="primeLoading" class="ch-loading"><div class="mini-spin"></div>Loading live sport…</div>
+        <div id="primeErr" class="ch-err" style="display:none">
+          ⚠ Nothing on Prime right now. <a onclick="loadPrime(true);return false">Retry</a>
+        </div>
+        <div id="primeGrid" class="ch-grid" style="display:none"></div>
+        <div id="primeNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
       </div>
 
       <!-- iptv-org's public playlist. ~10,000 channels, so nothing is rendered
@@ -2801,17 +2828,23 @@
       $('tabBB').classList.toggle('on', t === 'bb');
       $('tabSony').classList.toggle('on', t === 'sony');
       $('tabFc').classList.toggle('on', t === 'fc');
+      $('tabWillow').classList.toggle('on', t === 'willow');
+      $('tabPrime').classList.toggle('on', t === 'prime');
       $('tabIptv').classList.toggle('on', t === 'iptv');
       $('customTab').style.display = t === 'custom' ? 'flex' : 'none';
       $('liveTvTab').style.display = t === 'live' ? 'flex' : 'none';
       $('bbTab').style.display = t === 'bb' ? 'flex' : 'none';
       $('sonyTab').style.display = t === 'sony' ? 'flex' : 'none';
       $('fcTab').style.display = t === 'fc' ? 'flex' : 'none';
+      $('willowTab').style.display = t === 'willow' ? 'flex' : 'none';
+      $('primeTab').style.display = t === 'prime' ? 'flex' : 'none';
       $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
       if (t === 'live' && !channelsLoaded) fetchChannels();
       if (t === 'bb') renderBiggBoss();
       if (t === 'sony') loadSony();
       if (t === 'fc') loadFc();
+      if (t === 'willow') loadWillow();
+      if (t === 'prime') loadPrime();
       if (t === 'iptv') loadIptv();
     }
 
@@ -3281,7 +3314,7 @@
        one fixture from it. Unlike a bundle URL this holds no stream details,
        so it does not rot when the tokens behind it are rotated — it names
        what to show and the feed is read fresh on arrival. */
-    const TAB_KEYS = { live: 'live', sony: 'sony', fc: 'fc', bb: 'bb', iptv: 'iptv' };
+    const TAB_KEYS = { live: 'live', sony: 'sony', fc: 'fc', bb: 'bb', iptv: 'iptv', willow: 'willow', prime: 'prime' };
 
     /* Solo: this window exists to play one thing.
      *
@@ -3374,6 +3407,13 @@
         const channels = await fetchHotstarPlaylist();
         const ch = channels.find(c => c.id === id);
         if (ch) return playHotstarChannel(ch);
+      } else if (tabKey === 'willow') {
+        await loadWillow();
+        const m = (_willowList || []).find(x => String(x.id) === String(id));
+        if (m) return playWillow(m.id);
+      } else if (tabKey === 'prime') {
+        await loadPrime();
+        if (_primeList && _primeList.some(x => x.id === id)) return playPrime(id);
       } else if (tabKey === 'live') {
         const map = await getChMap();
         const ch = map[id];
@@ -3553,6 +3593,184 @@
         + `Run <code>node fancode-local-proxy.js</code> on your own machine, then set `
         + `<code>localStorage.fc_local_proxy = 'http://localhost:8787/proxy'</code> and reload.`;
       err.style.display = 'flex';
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // WILLOW CRICKET (own tab)
+    // ══════════════════════════════════════════════════════════
+    /* Read through the worker, which parses the feed, splits the ClearKey pair
+       and orders the CDN list. The player only walks `servers` and hands the
+       first reachable one to Shaka — the same shape Prime uses.
+
+       The URL the worker puts first is the one CloudFront host a browser can
+       reach directly (dash-ott); everything else has to go through the proxy. */
+    let _willowLoaded = false, _willowList = null;
+
+    async function loadWillow(force) {
+      if (_willowLoaded && !force) return;
+      $('willowLoading').style.display = 'flex';
+      $('willowErr').style.display = 'none';
+      $('willowGrid').style.display = 'none';
+      try {
+        const r = await fetch(NEW_JSON_URL + '?feed=willow&_=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const body = await r.json();
+        const live = body.live || [];
+        const soon = body.upcoming || [];
+        if (!live.length && !soon.length) throw new Error('nothing scheduled');
+        _willowList = [...live, ...soon];
+        renderWillow(live, soon, r.headers.get('X-Feed-Updated'));
+        _willowLoaded = true;
+      } catch (e) {
+        $('willowLoading').style.display = 'none';
+        $('willowErr').style.display = 'block';
+        console.error('loadWillow:', e);
+      }
+    }
+
+    function renderWillow(live, soon, updated) {
+      const grid = $('willowGrid');
+      grid.innerHTML = '';
+      [...live, ...soon].forEach(m => {
+        const playable = !!m.url;
+        const card = document.createElement('div');
+        card.className = 'ch-card';
+        card.innerHTML = `
+      <img class="ch-logo" src="${m.poster || ''}" alt="${m.name}"
+        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
+        onerror="this.style.display='none'">
+      <span class="ch-name">${m.name}</span>
+      <span class="ch-tag">${playable ? '🔴 ' + (m.event || 'Live now') : '🕒 ' + (m.start || 'Upcoming')}</span>`;
+        if (playable) {
+          card.onclick = () => playWillow(m.id);
+        } else if (m.link) {
+          card.onclick = () => window.open(m.link, '_blank', 'noopener');
+        } else {
+          card.style.opacity = '.55';
+          card.style.cursor = 'default';
+        }
+        grid.appendChild(card);
+      });
+      $('willowLoading').style.display = 'none';
+      $('willowGrid').style.display = 'grid';
+      $('willowNote').textContent = (live.length + ' live')
+        + (soon.length ? ' · ' + soon.length + ' upcoming' : '')
+        + (updated ? ' · feed updated ' + updated : '');
+      linkBar('willowTab', 'willow', 'Willow');
+    }
+
+    async function playWillow(id) {
+      const m = (_willowList || []).find(x => x.id === id);
+      if (!m || !m.url) return;
+      _playingChannelId = null;
+      _playingChannelLogo = m.poster || null;
+      const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
+      /* The worker ordered the servers so the direct one comes first. That one
+         plays without a detour; everything else goes through the worker's
+         proxy, which sends each CDN its own origin back — the only Origin they
+         accept. */
+      const isDirect = !!(m.servers && m.servers[0] && m.servers[0].url === m.url);
+      if (isDirect) return loadVideo(m.url, m.name, false, drm);
+      const base = LOCAL_PROXY || IN_PROXY || NEW_JSON_URL;
+      return loadVideo(m.url, m.name, false, { ...drm, proxy: { base } });
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // PRIME VIDEO FREE SPORTS (own tab)
+    // ══════════════════════════════════════════════════════════
+    /* Amazon's free live sport. The worker reads the fixtures feed on every
+       request and hands back only what is on air with a stream.
+
+       Every one of these is DASH under ClearKey, so they go to Shaka with the
+       key pair the feed carries — the same road the Hotstar DASH channels take.
+
+       Only dash-ott.bia-cf.live.pv-cdn.net answers a browser. The worker's
+       comment on this is measured, not assumed: ss-ott sends 400 to any request
+       carrying a foreign Origin, and a page always puts one on. So a URL on
+       that host is never treated as direct — it goes through the proxy, which
+       forwards with no Origin at all. */
+    const PRIME_DIRECT_HOSTS = ['dash-ott.bia-cf.live.pv-cdn.net'];
+
+    function primeDirect(url) {
+      try {
+        const h = new URL(url).hostname;
+        return PRIME_DIRECT_HOSTS.some(d => h === d || h.endsWith('.' + d));
+      } catch { return false; }
+    }
+
+    let _primeLoaded = false, _primeList = null;
+
+    async function loadPrime(force) {
+      if (_primeLoaded && !force) return;
+      $('primeLoading').style.display = 'flex';
+      $('primeErr').style.display = 'none';
+      $('primeGrid').style.display = 'none';
+      try {
+        const r = await fetch(NEW_JSON_URL + '?feed=prime&_=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const body = await r.json();
+        const live = body.live || [];
+        const soon = body.upcoming || [];
+        if (!live.length && !soon.length) throw new Error('nothing on');
+        _primeList = [...live, ...soon];
+        renderPrime(live, soon, r.headers.get('X-Feed-Updated'));
+        _primeLoaded = true;
+      } catch (e) {
+        $('primeLoading').style.display = 'none';
+        $('primeErr').style.display = 'block';
+        console.error('loadPrime:', e);
+      }
+    }
+
+    function renderPrime(live, soon, updated) {
+      const grid = $('primeGrid');
+      grid.innerHTML = '';
+      [...live, ...soon].forEach((m) => {
+        const playable = !!m.url;
+        const card = document.createElement('div');
+        card.className = 'ch-card';
+        card.innerHTML = `
+      <img class="ch-logo" src="${m.poster || ''}" alt="${m.name}"
+        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
+        onerror="this.style.display='none'">
+      <span class="ch-name">${m.name}</span>
+      <span class="ch-tag">${playable ? '🔴 ' + (m.event || 'Live now') : '🗓 ' + (m.start || 'Scheduled')}</span>`;
+        if (playable) {
+          card.onclick = () => playPrime(m.id);
+        } else if (m.link) {
+          card.onclick = () => window.open(m.link, '_blank', 'noopener');
+        } else {
+          card.style.opacity = '.55';
+          card.style.cursor = 'default';
+        }
+        grid.appendChild(card);
+      });
+      $('primeLoading').style.display = 'none';
+      $('primeGrid').style.display = 'grid';
+      $('primeNote').textContent = (live.length + ' live')
+        + (soon.length ? ' · ' + soon.length + ' upcoming' : '')
+        + (updated ? ' · feed updated ' + updated : '');
+      linkBar('primeTab', 'prime', 'Prime');
+    }
+
+    async function playPrime(id) {
+      const m = (_primeList || []).find(x => x.id === id);
+      if (!m || !m.url) return;
+
+      _playingChannelId = null;
+      _playingChannelLogo = m.poster || null;
+
+      const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
+
+      if (primeDirect(m.url)) {
+        return loadVideo(m.url, m.name, false, drm);
+      }
+
+      /* No ref or ua on the proxy here, deliberately. The worker sends the
+         target its own origin back when it is given no referer to derive one
+         from, and that is the only Origin these CDNs accept. */
+      const base = LOCAL_PROXY || IN_PROXY || NEW_JSON_URL;
+      return loadVideo(m.url, m.name, false, { ...drm, proxy: { base } });
     }
 
     // ══════════════════════════════════════════════════════════
