@@ -8,7 +8,7 @@
        no-referrer makes the browser send NO Referer, so segment/manifest
        requests return 200 (this is what makes native HLS play on iOS Safari). -->
   <meta name="referrer" content="no-referrer" />
-  <title>StreamX Player</title>
+  <title>Sportlink</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
   <style>
@@ -2111,7 +2111,7 @@
 
   <div id="LS">
     <div style="text-align:center">
-      <div class="ls-logo">Stream<b>X</b></div>
+      <div class="ls-logo">Sport<b>link</b></div>
       <div class="ls-sub">HLS · MPEG-DASH · ClearKey DRM · Live TV<br>Paste a stream URL or pick a Live TV channel.
       </div>
     </div>
@@ -2195,9 +2195,9 @@
         <div id="fcNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
       </div>
 
-      <!-- Willow Cricket's live fixtures, read through the worker. Every
-           fixture is DASH under ClearKey; the worker splits the key pair and
-           orders the CDN list so the player only walks it. -->
+      <!-- Willow Cricket — read directly from the public event feed, no
+           worker. Every fixture is DASH under ClearKey. The Akamai URL plays
+           from a browser as-is and is tried first. -->
       <div id="willowTab" style="display:none">
         <div id="willowLoading" class="ch-loading"><div class="mini-spin"></div>Loading live cricket…</div>
         <div id="willowErr" class="ch-err" style="display:none">
@@ -2261,8 +2261,8 @@
       </div>
 
       <div>
-        <div class="sb-label">StreamX player URL</div>
-        <input class="sb-input" id="playerBaseUrl" placeholder="https://your-site.com/streamx.html" value="" />
+        <div class="sb-label">Sportlink player URL</div>
+        <input class="sb-input" id="playerBaseUrl" placeholder="https://your-site.com/sportlink.html" value="" />
       </div>
 
       <div>
@@ -3409,8 +3409,8 @@
         if (ch) return playHotstarChannel(ch);
       } else if (tabKey === 'willow') {
         await loadWillow();
-        const m = (_willowList || []).find(x => String(x.id) === String(id));
-        if (m) return playWillow(m.id);
+        const m = (_willowList || []).find(x => String(x.match_id) === String(id));
+        if (m) return playWillow(m.match_id);
       } else if (tabKey === 'prime') {
         await loadPrime();
         if (_primeList && _primeList.some(x => x.id === id)) return playPrime(id);
@@ -3598,12 +3598,61 @@
     // ══════════════════════════════════════════════════════════
     // WILLOW CRICKET (own tab)
     // ══════════════════════════════════════════════════════════
-    /* Read through the worker, which parses the feed, splits the ClearKey pair
-       and orders the CDN list. The player only walks `servers` and hands the
-       first reachable one to Shaka — the same shape Prime uses.
+    /* Willow reads directly, the way Sportlink does it — no worker, no proxy.
+     *
+     * The feed lists a map of CDN name → URL for each match. The "Akamai
+     * Server" entry plays from a browser as-is and is tried first. The rest
+     * follow in the order the feed ranks them, also bare: going through a
+     * proxy would only add a hop to something already working.
+     *
+     * Every stream is DASH under ClearKey. The feed writes the pair as one
+     * "keyId:key" string; split it and hand the pieces to Shaka. */
+    const WILLOW_FEED_URL =
+      'https://raw.githubusercontent.com/srhady/willow-event/refs/heads/main/live_sports.json';
 
-       The URL the worker puts first is the one CloudFront host a browser can
-       reach directly (dash-ott); everything else has to go through the proxy. */
+    /* Order a browser wants them in. Akamai first — it is the one that plays
+       from a page as-is. The rest follow; any the feed adds later still get
+       through, ordered last. */
+    const WILLOW_PREFERRED = [
+      'Akamai Server',
+      'Cloudfront Server 2',
+      'Cloudfront Server 1',
+      'Amazon Server',
+      'Fistly Server',
+    ];
+
+    /* Both commentary feeds, alpha first. Anything the feed lists under a name
+       not in WILLOW_PREFERRED still gets through, appended after. */
+    function willowServers(m) {
+      const out = [];
+      const seen = new Set();
+      for (const map of [m.stream_url_alpha || {}, m.stream_url_bravo || {}]) {
+        for (const name of WILLOW_PREFERRED) {
+          const url = map[name];
+          if (url && typeof url === 'string' && !seen.has(url)) {
+            seen.add(url);
+            out.push({ name, url });
+          }
+        }
+        for (const [name, url] of Object.entries(map)) {
+          if (url && typeof url === 'string' && !seen.has(url)) {
+            seen.add(url);
+            out.push({ name, url });
+          }
+        }
+      }
+      return out;
+    }
+
+    /* "keyId:key" from the feed's drm_key field. */
+    function willowDrm(m) {
+      const raw = (m.drm_key || '').trim();
+      if (!raw || !raw.includes(':')) return null;
+      const [keyId, key] = raw.split(':').map(s => s.trim());
+      if (!keyId || !key) return null;
+      return { keyId, key };
+    }
+
     let _willowLoaded = false, _willowList = null;
 
     async function loadWillow(force) {
@@ -3612,14 +3661,15 @@
       $('willowErr').style.display = 'none';
       $('willowGrid').style.display = 'none';
       try {
-        const r = await fetch(NEW_JSON_URL + '?feed=willow&_=' + Date.now());
+        const r = await fetch(WILLOW_FEED_URL + '?_=' + Date.now());
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const body = await r.json();
-        const live = body.live || [];
-        const soon = body.upcoming || [];
+        const matches = body.Matches || [];
+        const live = matches.filter(m => (m.status || '').toUpperCase() === 'LIVE');
+        const soon = matches.filter(m => (m.status || '').toUpperCase() !== 'LIVE');
         if (!live.length && !soon.length) throw new Error('nothing scheduled');
-        _willowList = [...live, ...soon];
-        renderWillow(live, soon, r.headers.get('X-Feed-Updated'));
+        _willowList = matches;
+        renderWillow(live, soon, body.HeaderInfo && body.HeaderInfo.LastUpdate);
         _willowLoaded = true;
       } catch (e) {
         $('willowLoading').style.display = 'none';
@@ -3632,23 +3682,18 @@
       const grid = $('willowGrid');
       grid.innerHTML = '';
       [...live, ...soon].forEach(m => {
-        const playable = !!m.url;
+        const playable = willowServers(m).length > 0;
         const card = document.createElement('div');
         card.className = 'ch-card';
+        const when = (m.time || '').trim();
         card.innerHTML = `
-      <img class="ch-logo" src="${m.poster || ''}" alt="${m.name}"
+      <img class="ch-logo" src="${m.cover_image || ''}" alt="${(m.title || '').replace(/"/g, '&quot;')}"
         style="width:100%;height:74px;object-fit:cover;border-radius:6px"
         onerror="this.style.display='none'">
-      <span class="ch-name">${m.name}</span>
-      <span class="ch-tag">${playable ? '🔴 ' + (m.event || 'Live now') : '🕒 ' + (m.start || 'Upcoming')}</span>`;
-        if (playable) {
-          card.onclick = () => playWillow(m.id);
-        } else if (m.link) {
-          card.onclick = () => window.open(m.link, '_blank', 'noopener');
-        } else {
-          card.style.opacity = '.55';
-          card.style.cursor = 'default';
-        }
+      <span class="ch-name">${m.title || 'Cricket'}</span>
+      <span class="ch-tag">${playable ? '🔴 ' : '🕒 '}${playable ? (m.is_free ? 'Free' : 'Live') : (when || 'Upcoming')}</span>`;
+        if (playable) card.onclick = () => playWillow(m.match_id);
+        else { card.style.opacity = '.55'; card.style.cursor = 'default'; }
         grid.appendChild(card);
       });
       $('willowLoading').style.display = 'none';
@@ -3660,19 +3705,20 @@
     }
 
     async function playWillow(id) {
-      const m = (_willowList || []).find(x => x.id === id);
-      if (!m || !m.url) return;
+      const m = (_willowList || []).find(x => x.match_id === id);
+      if (!m) return;
+      const servers = willowServers(m);
+      if (!servers.length) { showToast('No stream available for this match', 3000); return; }
+
       _playingChannelId = null;
-      _playingChannelLogo = m.poster || null;
-      const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
-      /* The worker ordered the servers so the direct one comes first. That one
-         plays without a detour; everything else goes through the worker's
-         proxy, which sends each CDN its own origin back — the only Origin they
-         accept. */
-      const isDirect = !!(m.servers && m.servers[0] && m.servers[0].url === m.url);
-      if (isDirect) return loadVideo(m.url, m.name, false, drm);
-      const base = LOCAL_PROXY || IN_PROXY || NEW_JSON_URL;
-      return loadVideo(m.url, m.name, false, { ...drm, proxy: { base } });
+      _playingChannelLogo = m.cover_image || null;
+
+      /* No proxy, no headers. Akamai plays from a browser as-is; the CloudFront
+         hosts behind it are tried next if it does not. `drm` carries only the
+         ClearKey pair — no `proxy` field means loadShaka registers no proxy
+         filter and lets Shaka fetch every segment bare. */
+      const drm = willowDrm(m);
+      return loadVideo(servers[0].url, m.title || 'Willow', false, drm);
     }
 
     // ══════════════════════════════════════════════════════════
@@ -5082,7 +5128,7 @@
       const finalUrl = `${base}?bundle=${encodeURIComponent(encoded)}`;
       _lastBundleUrl = finalUrl;
       $('bundleUrlText').textContent = finalUrl;
-      const snippet = `import StreamXPlayer from './StreamXPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
+      const snippet = `import SportlinkPlayer from './SportlinkPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <SportlinkPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
       $('embedSnippet').textContent = snippet;
       $('bundleResult').style.display = 'flex';
     }
