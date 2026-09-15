@@ -16,7 +16,11 @@ name: Mirror feeds
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    # Five minutes is the floor GitHub allows, and even that is a hint —
+    # scheduled runs are routinely delayed under load. It does not need to be
+    # tight: the worker reads the source first, so this copy is only ever
+    # consulted when the source is unreachable.
+    - cron: "*/5 * * * *"
   workflow_dispatch:        # so it can be run by hand after a failure
 
 permissions:

@@ -94,7 +94,19 @@ const MIRROR = 'https://raw.githubusercontent.com/sanju-github24/m3u8-player/ref
 
 async function fetchMirrored(file, upstream, headers) {
   let last = null;
-  for (const url of [MIRROR + file, upstream]) {
+  /* Upstream first, mirror second — and the order is the whole point.
+   
+     These playlists carry tokens that expire in hours. Read from the mirror
+     first, a copy half an hour old hands back a dead token while the source
+     has a live one, and every channel signed by it goes dark: the mirror would
+     be causing the outage it exists to prevent.
+   
+     Asked in this order it cannot. Freshness always comes from the source, and
+     the copy is consulted only when the source cannot be reached at all —
+     which is what it was for. It also means the mirror being slightly behind
+     costs nothing, so how often it refreshes stops being a question worth
+     asking. */
+  for (const url of [upstream, MIRROR + file]) {
     try {
       const res = await fetchFresh(url, headers);
       last = res;
@@ -126,8 +138,10 @@ const BROWSERISH = {
 };
 
 const SOURCES = [
-  ['mirror',   MIRROR + 'jtv.json', { 'accept': 'application/json', 'user-agent': 'player.html/1.0' }],
   ['jtv.json', JTV_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' }],
+  // Last, for the same reason as fetchMirrored: a stale token beats nothing,
+  // and beats nothing else.
+  ['mirror',   MIRROR + 'jtv.json', { 'accept': 'application/json', 'user-agent': 'player.html/1.0' }],
   ['jtv-plus', JTV_PLUS, BROWSERISH],
 ];
 
@@ -472,9 +486,9 @@ async function handleSonyFeed() {
    Normalizing both means swapping the source later is one line, not a rewrite
    of the player. */
 const FANCODE_SOURCES = [
-  MIRROR + 'fancode.json',
   'https://raw.githubusercontent.com/sportlive18/Fancode-New-Auto-Update/refs/heads/main/fancode.json',
   'https://raw.githubusercontent.com/doctor-8trange/zyphx8/refs/heads/main/data/fancode.json',
+  MIRROR + 'fancode.json',
 ];
 
 async function handleFancodeFeed() {
