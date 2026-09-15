@@ -2122,6 +2122,7 @@
         <button class="ls-tab" id="tabBB" onclick="switchTab('bb')">🎭 Hotstar</button>
         <button class="ls-tab" id="tabSony" onclick="switchTab('sony')">🏏 SonyLiv</button>
         <button class="ls-tab" id="tabFc" onclick="switchTab('fc')">⚽ FanCode</button>
+        <button class="ls-tab" id="tabWillow" onclick="switchTab('willow')">🗓 Willow</button>
         <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
@@ -2190,6 +2191,18 @@
         </div>
         <div id="fcGrid" class="ch-grid" style="display:none"></div>
         <div id="fcNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
+      </div>
+
+      <!-- Willow's cricket schedule. A listing, not a source: its feed carries
+           no streams at all, so these cards say when a fixture is on and link
+           to where it can be watched. -->
+      <div id="willowTab" style="display:none">
+        <div id="willowLoading" class="ch-loading"><div class="mini-spin"></div>Loading schedule…</div>
+        <div id="willowErr" class="ch-err" style="display:none">
+          ⚠ Could not load the Willow schedule. <a onclick="loadWillow(true);return false">Retry</a>
+        </div>
+        <div id="willowGrid" class="ch-grid" style="display:none"></div>
+        <div id="willowNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
       </div>
 
       <!-- iptv-org's public playlist. ~10,000 channels, so nothing is rendered
@@ -2800,17 +2813,20 @@
       $('tabBB').classList.toggle('on', t === 'bb');
       $('tabSony').classList.toggle('on', t === 'sony');
       $('tabFc').classList.toggle('on', t === 'fc');
+      $('tabWillow').classList.toggle('on', t === 'willow');
       $('tabIptv').classList.toggle('on', t === 'iptv');
       $('customTab').style.display = t === 'custom' ? 'flex' : 'none';
       $('liveTvTab').style.display = t === 'live' ? 'flex' : 'none';
       $('bbTab').style.display = t === 'bb' ? 'flex' : 'none';
       $('sonyTab').style.display = t === 'sony' ? 'flex' : 'none';
       $('fcTab').style.display = t === 'fc' ? 'flex' : 'none';
+      $('willowTab').style.display = t === 'willow' ? 'flex' : 'none';
       $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
       if (t === 'live' && !channelsLoaded) fetchChannels();
       if (t === 'bb') renderBiggBoss();
       if (t === 'sony') loadSony();
       if (t === 'fc') loadFc();
+      if (t === 'willow') loadWillow();
       if (t === 'iptv') loadIptv();
     }
 
@@ -3227,7 +3243,7 @@
        one fixture from it. Unlike a bundle URL this holds no stream details,
        so it does not rot when the tokens behind it are rotated — it names
        what to show and the feed is read fresh on arrival. */
-    const TAB_KEYS = { live: 'live', sony: 'sony', fc: 'fc', bb: 'bb', iptv: 'iptv' };
+    const TAB_KEYS = { live: 'live', sony: 'sony', fc: 'fc', bb: 'bb', willow: 'willow', iptv: 'iptv' };
 
     /* Solo: this window exists to play one thing.
      *
@@ -3347,6 +3363,9 @@
       } else if (tabKey === 'bb') {
         renderBiggBoss();
         if (HOTSTAR_CHANNELS.some(c => c.id === id)) return playHotstar(id);
+      } else if (tabKey === 'willow') {
+        await loadWillow();
+        return;   // a schedule has nothing to start
       } else if (tabKey === 'live') {
         const map = await getChMap();
         const ch = map[id];
@@ -3356,6 +3375,65 @@
         }
       }
       showToast('That item is no longer listed — showing the tab instead', 3500);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // WILLOW CRICKET (schedule)
+    // ══════════════════════════════════════════════════════════
+    /* What cricket is on this week. The feed behind it carries no streams —
+       every one of its stream fields is empty — so nothing here plays and
+       nothing pretends to; each card opens the page where its fixture can be
+       watched. It earns a tab because the other feeds know only their own few
+       hours, and this is the only thing that can say what is on Thursday. */
+    let _willowLoaded = false;
+
+    async function loadWillow(force) {
+      if (_willowLoaded && !force) return;
+      $('willowLoading').style.display = 'flex';
+      $('willowErr').style.display = 'none';
+      $('willowGrid').style.display = 'none';
+      try {
+        const r = await fetch(NEW_JSON_URL + '?feed=willow&_=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const body = await r.json();
+        const live = body.live || [];
+        const soon = body.upcoming || [];
+        if (!live.length && !soon.length) throw new Error('nothing scheduled');
+        renderWillow(live, soon, r.headers.get('X-Feed-Updated'));
+        _willowLoaded = true;
+      } catch (e) {
+        $('willowLoading').style.display = 'none';
+        $('willowErr').style.display = 'block';
+        console.error('loadWillow:', e);
+      }
+    }
+
+    function renderWillow(live, soon, updated) {
+      const grid = $('willowGrid');
+      grid.innerHTML = '';
+      [...live, ...soon].forEach((m) => {
+        const card = document.createElement('div');
+        card.className = 'ch-card';
+        card.innerHTML = `
+      <img class="ch-logo" src="${m.poster || ''}" alt="${m.name}"
+        style="width:100%;height:74px;object-fit:cover;border-radius:6px"
+        onerror="this.style.display='none'">
+      <span class="ch-name">${m.name}</span>
+      <span class="ch-tag">🗓 ${m.start || 'Scheduled'}</span>`;
+        if (m.link) {
+          card.onclick = () => window.open(m.link, '_blank', 'noopener');
+        } else {
+          card.style.opacity = '.55';
+          card.style.cursor = 'default';
+        }
+        grid.appendChild(card);
+      });
+      $('willowLoading').style.display = 'none';
+      $('willowGrid').style.display = 'grid';
+      $('willowNote').textContent = ((live.length + soon.length) + ' fixtures')
+        + (updated ? ' · feed updated ' + updated : '')
+        + ' · opens where it can be watched';
+      linkBar('willowTab', 'willow', 'Willow');
     }
 
     // ══════════════════════════════════════════════════════════
