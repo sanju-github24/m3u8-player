@@ -3166,8 +3166,41 @@
         });
       });
 
+      if (hotstarTokenExpired()) {
+        const warn = document.createElement('div');
+        warn.style.cssText = 'grid-column:1/-1;margin:2px 0 6px;padding:10px 12px;border-radius:10px;'
+          + 'background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);'
+          + 'color:#fbbf24;font-size:.72rem;line-height:1.5';
+        warn.innerHTML = `⚠ The shared Hotstar token expired ${hotstarExpiryNote()}, `
+          + `so none of these will start until it is replaced.`;
+        grid.prepend(warn);
+      }
+
       _bbRendered = true;
       linkBar('bbTab', 'bb', 'Hotstar');
+    }
+
+    /* When the shared token stops being accepted.
+     *
+     * All thirty-four channels here are signed by the one hdntl, so they do
+     * not fail one at a time — the whole tab goes at once, and every channel
+     * then answers with the same opaque CDN error. Reading the expiry out of
+     * the token turns that into something a person can act on, and does it
+     * before a request rather than after a denial. */
+    function hotstarTokenExpiry() {
+      const m = /exp=(\d+)/.exec(BB_TOKEN || '');
+      return m ? Number(m[1]) : 0;
+    }
+    function hotstarTokenExpired() {
+      const exp = hotstarTokenExpiry();
+      return exp > 0 && exp * 1000 < Date.now();
+    }
+    function hotstarExpiryNote() {
+      const exp = hotstarTokenExpiry();
+      if (!exp) return '';
+      const mins = Math.round((Date.now() - exp * 1000) / 60000);
+      const hrs = Math.floor(mins / 60);
+      return hrs >= 1 ? `${hrs}h ${mins % 60}m ago` : `${mins}m ago`;
     }
 
     /* The unlock, in the shape the proxy takes. */
@@ -3194,6 +3227,18 @@
     async function playHotstar(id) {
       const ch = HOTSTAR_CHANNELS.find(c => c.id === id);
       if (!ch) return;
+
+      if (hotstarTokenExpired()) {
+        errMsg.innerHTML =
+          `<b>${ch.name}</b> cannot start: the Hotstar token expired `
+          + `${hotstarExpiryNote()}.<br><br>`
+          + `Every channel on this tab is signed by the same one, so they are all `
+          + `out together — this is not a fault with this channel. A fresh playlist `
+          + `carries a new token; replace <code>BB_TOKEN</code> and they all return.`;
+        err.style.display = 'flex';
+        announceError();
+        return;
+      }
       _playingChannelId = null;
       _playingChannelLogo = ch.logo || null;
 
