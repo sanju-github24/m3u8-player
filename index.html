@@ -2161,13 +2161,14 @@
         <div id="chGrid" class="ch-grid" style="display:none"></div>
       </div>
 
-      <!-- Hotstar's channels. Separate from Live TV because they come from
-           Hotstar rather than JioTV and need a different unlock: one shared
-           hdntl token, sent as a cookie by the proxy. See HOTSTAR_CHANNELS. -->
+      <!-- Hotstar's channels, loaded from the public M3U playlist.
+           The playlist carries tvg-logo, group-title, request headers, and
+           ClearKey license keys for DASH entries. HLS entries play via the
+           proxy; DASH entries go to Shaka with the embedded ClearKey. -->
       <div id="bbTab" style="display:none">
         <div id="bbGrid" class="ch-grid"></div>
         <div id="bbNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px">
-          Bigg Boss in six languages, plus Star Sports and the Star/Colors channels.
+          Live Hotstar channels — automatically updated from the playlist.
         </div>
       </div>
 
@@ -3004,127 +3005,168 @@
     }
 
     // ══════════════════════════════════════════════════════════
-    // BIGG BOSS 24/7 (own tab)
+    // HOTSTAR — dynamic M3U playlist (replaces hardcoded list)
     // ══════════════════════════════════════════════════════════
-    /* Six language feeds of the same house, straight off Hotstar rather than
-       JioTV, which is why they sit apart from Live TV.
+    /* Hotstar's channels are served from a public M3U playlist, refreshed
+       upstream. Each entry carries tvg-logo, group-title, request headers
+       (User-Agent, Referer, Origin, Cookie) and — for DASH entries — an
+       embedded ClearKey. HLS entries play through the proxy; DASH entries
+       go through Shaka with the embedded ClearKey. */
+    const HOTSTAR_PLAYLIST_URL =
+      'https://raw.githubusercontent.com/sportlive18/jio-tv-auto-update-playlist/refs/heads/main/hotstar.m3u';
 
-       They will not play the way a Live TV channel does. Hotstar's live09p
-       edge answers 403 unless Cookie, Referer and Origin all arrive together
-       — measured: any one or two of the three is still a 403. All three are
-       forbidden header names, meaning a browser refuses to set them on a
-       cross-origin request no matter what you ask hls.js to do. So every
-       request goes through the worker, which is under no such rule and puts
-       the trio on the playlist and on each segment.
+    let _hotstarChannels = null;
+    let _hotstarLoaded = false;
 
-       The hdntl token is shared by all six (acl=/*, so it signs any path) and
-       lasts hours, not the minutes a FanCode one does. When it dies every
-       feed here dies at once and the fix is a new token — see BB_TOKEN. */
+    /**
+     * Parse an IPTV-style M3U playlist and return an array of channel objects
+     * compatible with the player's expectations:
+     *   { id, name, group, logo, url, keyId, key, ua, ref, origin, cookie, isDash }
+     *
+     * Handles:
+     *   #EXTINF:-1 tvg-name="..." tvg-logo="..." group-title="...",Name
+     *   #EXTVLCOPT:http-user-agent=...
+     *   #EXTVLCOPT:http-referrer=...
+     *   #EXTVLCOPT:http-extra-headers=Origin: ...
+     *   #EXTVLCOPT:http-cookie=...
+     *   #EXTHTTP:{...json...}
+     *   #KODIPROP:inputstream.adaptive.manifest_type=mpd
+     *   #KODIPROP:inputstream.adaptive.license_key=<keyId>:<key>
+     */
+    function parseHotstarM3U(text) {
+      const out = [];
+      const lines = text.split(/\r?\n/);
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line.startsWith('#EXTINF')) continue;
+
+        const attr = (k) => (new RegExp(k + '="([^"]*)"').exec(line) || [, ''])[1];
+        const lastQuote = line.lastIndexOf('"');
+        const nameComma = line.indexOf(',', lastQuote > -1 ? lastQuote : line.indexOf(':'));
+        const name = (nameComma > -1 ? line.slice(nameComma + 1) : '').trim();
+        if (!name) continue;
+
+        const logo = attr('tvg-logo');
+        const group = attr('group-title') || 'Hotstar';
+
+        const opts = {
+          ua: '', ref: '', origin: '', cookie: '',
+          keyId: '', key: '', isDash: false,
+        };
+        let url = '';
+
+        for (let j = i + 1; j < lines.length; j++) {
+          const n = lines[j].trim();
+          if (!n) continue;
+
+          if (n.startsWith('#EXTVLCOPT:http-user-agent=')) {
+            opts.ua = n.slice('#EXTVLCOPT:http-user-agent='.length).trim();
+          } else if (n.startsWith('#EXTVLCOPT:http-referrer=')) {
+            opts.ref = n.slice('#EXTVLCOPT:http-referrer='.length).trim();
+          } else if (n.startsWith('#EXTVLCOPT:http-extra-headers=Origin:')) {
+            opts.origin = n.slice('#EXTVLCOPT:http-extra-headers=Origin:'.length).trim();
+          } else if (n.startsWith('#EXTVLCOPT:http-cookie=')) {
+            opts.cookie = n.slice('#EXTVLCOPT:http-cookie='.length).trim();
+          } else if (n.startsWith('#KODIPROP:inputstream.adaptive.manifest_type=')) {
+            if (n.toLowerCase().includes('mpd')) opts.isDash = true;
+          } else if (n.startsWith('#KODIPROP:inputstream.adaptive.license_key=')) {
+            const kv = n.slice('#KODIPROP:inputstream.adaptive.license_key='.length).trim();
+            const parts = kv.split(':');
+            if (parts.length === 2) {
+              opts.keyId = parts[0].trim();
+              opts.key = parts[1].trim();
+            }
+          } else if (n.startsWith('#EXTHTTP:')) {
+            try {
+              const h = JSON.parse(n.slice('#EXTHTTP:'.length));
+              if (!opts.cookie && h.Cookie) opts.cookie = h.Cookie;
+              if (!opts.ua && h['User-Agent']) opts.ua = h['User-Agent'];
+              if (!opts.ref && h.Referer) opts.ref = h.Referer;
+              if (!opts.origin && h.Origin) opts.origin = h.Origin;
+            } catch { /* not JSON — ignore */ }
+          } else if (/^https?:\/\//i.test(n)) {
+            url = n;
+            i = j;
+            break;
+          }
+        }
+
+        if (!url) continue;
+
+        out.push({
+          id: 'hs_' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+          name,
+          group,
+          logo,
+          url,
+          keyId: opts.keyId,
+          key: opts.key,
+          ua: opts.ua || 'Virat Kohli',
+          ref: opts.ref || 'https://www.hotstar.com/',
+          origin: opts.origin || 'https://www.hotstar.com',
+          cookie: opts.cookie || '',
+          isDash: opts.isDash || /\.mpd(\?|$)/i.test(url),
+        });
+      }
+      return out;
+    }
+
+    /** Fetch and cache the Hotstar playlist. */
+    async function fetchHotstarPlaylist(force) {
+      if (_hotstarLoaded && !force) return _hotstarChannels;
+      try {
+        const r = await fetch(HOTSTAR_PLAYLIST_URL + '?_=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const text = await r.text();
+        _hotstarChannels = parseHotstarM3U(text);
+        _hotstarLoaded = true;
+        console.log(`[Hotstar] Loaded ${_hotstarChannels.length} channels from playlist`);
+        return _hotstarChannels;
+      } catch (e) {
+        console.warn('Hotstar playlist fetch failed:', e);
+        _hotstarChannels = [];
+        return [];
+      }
+    }
+
+    /* Legacy fallback: kept so any code path that still references the hardcoded
+       list does not crash. It is no longer used for rendering. */
     const BB_TOKEN = 'hdntl=exp=1789430022~acl=%2f*~id=719b69af3ea7a21a9b490bd9fe3a0b02~data=hdntl~hmac=28f0c0ad37eafdafb821ae9fba885c1abc6d3e14deb5011ab1b9a40fbfee9cf6';
     const BB_REFERER = 'https://www.hotstar.com/';
     const BB_UA = 'Virat Kohli';
     const BB_LOGO = 'https://img10.hotstar.com/image/upload/sources/r1/cms/prod/2305/1788708712305-h.jpg';
-
-    /* Everything Hotstar, in one list.
-     *
-     * Three kinds live here and they play differently. The Bigg Boss feeds and
-     * the two 24/7 channels are plain HLS. The rest are DASH under ClearKey,
-     * so they carry a keyId and key and go to Shaka instead of hls.js.
-     *
-     * All of them share one hdntl token and all of them expire together —
-     * about a day. When every channel here dies at once, that is why: replace
-     * BB_TOKEN and nothing else. */
-    const HOTSTAR_CHANNELS = [
-      { id: "bb-hindi", name: "Bigg Boss 24/7 — Hindi", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-hin-2026/93e0d4ee03b34575bbf8f8a55824de63/index_6.m3u8" },
-      { id: "bb-bangla", name: "Bigg Boss 24/7 — Bangla", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-ben-2026/d8b1f4b4b6ad493d845fb9669712ee6e/index_6.m3u8" },
-      { id: "bb-kannada", name: "Bigg Boss 24/7 — Kannada", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-kan-2026/511768cd9dab414aa551e9d15da2202b/index_6.m3u8" },
-      { id: "bb-malayalam", name: "Bigg Boss 24/7 — Malayalam", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-mal-2026/28fdd2300bf04a60ac3c3318ff009886/index_6.m3u8" },
-      { id: "bb-telugu", name: "Bigg Boss 24/7 — Telugu", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tel-2026/f129670ca03b4bb988c841f9bbdce777/index_6.m3u8" },
-      { id: "bb-tamil", name: "Bigg Boss 24/7 — Tamil", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tam-2026/0e8f0050df134b708ab297477fbf0e86/index_6.m3u8" },
-      { id: "tata-ipl-live-tv", name: "TATA IPL Live TV", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/out/v1/llg-tv-mum/1540072843_hindi_5e0a66fc/gec-india_hls_unencrypted/master-ap-1080-4.m3u8" },
-      { id: "savdhaan-india-crime-24-7", name: "Savdhaan India: Crime 24/7", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/out/v1/llg-tv-mum/1540077800_hindi_7537fdaa/gec-india_hls_unencrypted/master-ap-1080-4.m3u8" },
-      { id: "star-sports-khel", name: "Star Sports Khel Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540073624/4a56d383d1074f3d908a7f9b7a3321f1/index.mpd", keyId: "c57bd6cb156c47c1bf86a6c4171d0000", key: "e75d26242c9944aeb91e055d0f29ee4b" },
-      { id: "star-sports-1", name: "Star Sports 1 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068247/9a6e7c30f9194cc1a6a6250cedb115fb/index.mpd", keyId: "e85897bf6e594d698b7c82646c8e0000", key: "d2dda31234ae40538843e871cd4dcc2a" },
-      { id: "star-sports-2", name: "Star Sports 2 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068250/1d0752e2f605404886fec4ab49cc3350/index.mpd", keyId: "14d0c8ee09944c32bafea44a987d0000", key: "74d35f4034b14854bd3ca83dd3aa2fb1" },
-      { id: "star-sports-1-hindi", name: "Star Sports 1 Hindi Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068295/5a4eb3ac6e424eef8a30962d2232f80f/index.mpd", keyId: "b9f1cb8a1361457bbd8097f8c2590000", key: "1960274b7ba344cb899eba2e80916774" },
-      { id: "star-sports-2-hindi", name: "Star Sports 2 Hindi Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068298/9f99e1af0bdc465b8a3015e3a1a689d8/index.mpd", keyId: "effcadcbcc634296a6cf65e231f10000", key: "569c794c69ea496e9ad1887f557ea4dc" },
-      { id: "star-sports-1-tamil", name: "Star Sports 1 Tamil Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068334/3468fd902b12418598cabe63585e7efe/index.mpd", keyId: "01cc63d414394296bb3e6cfaffee0000", key: "c1fba587fc8b4218ade5ace1e62e5aaf" },
-      { id: "star-sports-2-tamil", name: "Star Sports 2 Tamil Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068337/9e957d4aa8054fdfa75a02de6c38e8d0/index.mpd", keyId: "8cecd7ec1ee04eecb49ddbdc8c420000", key: "499ea72b59f14337a0acb057cd9dffc0" },
-      { id: "star-sports-1-telugu", name: "Star Sports 1 Telugu Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068280/e8c0ed405e544793a1f827c477839581/index.mpd", keyId: "4634b32328f242e3be51c3e06cde0000", key: "42e90ab215bf4a438b55851b5e0f50dc" },
-      { id: "star-sports-2-telugu", name: "Star Sports 2 Telugu Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068283/9fdb797729344658957bd7382590c557/index.mpd", keyId: "4de245d511444b37a263c1d86ce70000", key: "b326780ffb3d4dcf8d30fbc0f3008a22" },
-      { id: "star-sports-1-kannada", name: "Star Sports 1 Kannada Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068322/6409ab04235d4a0886656913f360c0a7/index.mpd", keyId: "eb2f9710abf44bb1bcf51400ccc00000", key: "5f29f372823346e78934431f2a924065" },
-      { id: "star-sports-2-kannada", name: "Star Sports 2 Kannada Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068325/822fe9161d924f25a8f14d9a4e6f1b34/index.mpd", keyId: "ae315fa52d544372a525f8b947a50000", key: "8224183f754244c09664e825535aea4e" },
-      { id: "star-sports-3", name: "Star Sports 3 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068301/c776132a964441e1b929b2c0451222af/index.mpd", keyId: "f718ac1c70414b7ead6ebffa05fa0000", key: "7b3a3cb3eda946de88aa44bbaaa179bb" },
-      { id: "star-sports-select-1", name: "Star Sports Select 1 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068723/bf078703201f419b89e87fedda08b8f1/index.mpd", keyId: "ae3b1efc6eee47fa90e0360b16ad0000", key: "3c8be3ec7a4e4ab6994725420d95f971" },
-      { id: "star-sports-select-2", name: "Star Sports Select 2 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068726/07582d46912e46cbb5f802923a0257d1/index.mpd", keyId: "9bced3f4d794419e99012ad6c1090000", key: "c4c7f22fc71445c28ea15cb3fdb1b3be" },
-      { id: "star-plus", name: "Star Plus Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068289/6479fde4af2c441087fba8aa8a6b7b65/index.mpd", keyId: "f7bbfeaf9f7f4cada833072e21ed0000", key: "d67f3522fb5a4b1d96daba62990a214e" },
-      { id: "star-jalsha", name: "Star Jalsha Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068265/c4602383aada4e3fb92f0f0740187c66/index.mpd", keyId: "2042ab988f5e4d95b03f9a01933c0000", key: "3873b7044900428cb019fee9d14fd14a" },
-      { id: "star-maa", name: "Star Maa Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068277/f9eb70f10233442f82a6e3c4e8b2df70/index.mpd", keyId: "3a6865c2eb484c57806a76e2719b0000", key: "97c95a3bbfd344d9a16d96bad4f42ad7" },
-      { id: "star-pravah", name: "Star Pravah Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068310/f72c707651fa4b55a913511378ee7d09/index.mpd", keyId: "f7efc99766e643e687b1a228ae000000", key: "6d45b6ab1b2840be943c8a99e8a0a0e5" },
-      { id: "star-vijay", name: "Star Vijay Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068331/e2defeea709d42799aee76fe0d59bbe8/index.mpd", keyId: "3d16a12b7fe0423d87e00c231d710000", key: "f6aeb5898e5c4d8bab629a9de8befa12" },
-      { id: "vijay-super", name: "Vijay Super Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068340/fcf299d934c2434b812dbf26d16355e8/index.mpd", keyId: "08e4a1c2f55d4ed4878110a640920000", key: "23dc3107bf284a0dbd93b1dc9f142459" },
-      { id: "star-suvarna", name: "Star Suvarna Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068319/ae448c47ad3e4f2c9059f6fcfe4fbdc9/index.mpd", keyId: "d33b34f86a214120a3850f04a11e0000", key: "36245c3005ce4f94a6d927d435508019" },
-      { id: "asianet", name: "Asianet Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068259/16bbee01f356442bb4ec4d6b021c20e2/index.mpd", keyId: "31a5c9e538e0462b9424921dd21d0000", key: "117c7548f5574b638411c138fd3e2ed6" },
-      { id: "asianet-plus", name: "Asianet Plus Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068714/d1405aea010f40739f1521c6c5b48fc0/index.mpd", keyId: "bfe3e4a7670e416d85261d002c3a0000", key: "25955bb289a94ef5978ffa689eea066d" },
-      { id: "colors", name: "Colors Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068292/51e8ee3bc81a4d4cbd1cfde7f4748fc2/index.mpd", keyId: "f762f7bf6bf04c999f861cc3dafe0000", key: "25ec2364467f40b09fc1e9a7c1e72058" },
-      { id: "colors-kannada", name: "Colors Kannada Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068316/2933e227fb43430cad08b7778ec85e41/index.mpd", keyId: "2427721df70c4992b6e2cf7d2abf0000", key: "fb1d4dc6142344278550d82972ae003b" },
-      { id: "colors-bangla", name: "Colors Bangla Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068268/f1fd9ca8ce4f41ddb1e53cf019864c0f/index.mpd", keyId: "4221bf5c8de94ff792982ee906a20000", key: "d53a4b3ab73f454c8b7a4e7b7454fd97" },
-    ];
+    const HOTSTAR_CHANNELS = [];   // deprecated — replaced by M3U
 
     /* The worker doubles as the HLS proxy — same endpoint as the channel feed,
        told apart by the ?url= parameter. */
-    function viaWorker(url, { cookie = '', ref = '', ua = '' } = {}) {
+    function viaWorker(url, { cookie = '', ref = '', ua = '', origin = '' } = {}) {
       return NEW_JSON_URL + '?url=' + encodeURIComponent(url)
         + (cookie ? '&cookie=' + encodeURIComponent(cookie) : '')
         + (ref ? '&ref=' + encodeURIComponent(ref) : '')
-        + (ua ? '&ua=' + encodeURIComponent(ua) : '');
+        + (ua ? '&ua=' + encodeURIComponent(ua) : '')
+        + (origin ? '&origin=' + encodeURIComponent(origin) : '');
     }
 
     let _bbRendered = false;
 
-    function renderBiggBoss() {
-      if (_bbRendered) return;
+    async function renderBiggBoss() {
       const grid = $('bbGrid');
+      grid.innerHTML = '<div class="ch-loading"><div class="mini-spin"></div>Loading Hotstar channels…</div>';
+
+      const channels = await fetchHotstarPlaylist();
+      if (!channels.length) {
+        grid.innerHTML = '<div class="ch-err">⚠ Could not load Hotstar playlist. '
+          + '<a onclick="renderBiggBoss();return false">Retry</a></div>';
+        return;
+      }
+
       grid.innerHTML = '';
 
-      /* Grouped, because one flat list of thirty-odd channels buries the six
-         anyone came for. */
+      // Group channels by group-title so one flat list of thirty-odd entries
+      // doesn't bury the six anyone came for.
       const groups = [];
-      HOTSTAR_CHANNELS.forEach(ch => {
+      channels.forEach(ch => {
         let g = groups.find(x => x.name === ch.group);
         if (!g) { g = { name: ch.group, items: [] }; groups.push(g); }
         g.items.push(ch);
@@ -3141,11 +3183,11 @@
           const card = document.createElement('div');
           card.className = 'ch-card';
           card.innerHTML = `
-      <img class="ch-logo" src="${ch.logo || ''}" alt="${ch.name}"
-        onerror="this.style.display='none'">
-      <span class="ch-name">${ch.name}</span>
-      <span class="ch-tag">${ch.key ? '🔑 HD' : '🔴 24/7'}</span>`;
-          card.onclick = () => playHotstar(ch.id);
+        <img class="ch-logo" src="${ch.logo || ''}" alt="${ch.name}"
+          onerror="this.style.display='none'">
+        <span class="ch-name">${ch.name}</span>
+        <span class="ch-tag">${ch.key ? '🔑 HD' : '🔴 Live'}</span>`;
+          card.onclick = () => playHotstarChannel(ch);
           grid.appendChild(card);
         });
       });
@@ -3154,55 +3196,71 @@
       linkBar('bbTab', 'bb', 'Hotstar');
     }
 
-    /* The unlock, in the shape the proxy takes. */
-    function hotstarProxy() {
-      return { base: IN_PROXY, cookie: BB_TOKEN, ref: BB_REFERER, ua: BB_UA };
-    }
+    /* Play a Hotstar channel from the parsed M3U.
+       HLS → routed through the proxy (worker or local) which injects the
+             Cookie / Referer / Origin / User-Agent triplet Hotstar's edge
+             demands. All four must arrive together or the edge 403s.
+       DASH → handed to Shaka with the embedded ClearKey, and every request
+             routed through the proxy via the request filter in loadShaka. */
+    async function playHotstarChannel(ch) {
+      if (!ch || !ch.url) return;
 
-    function hotstarVia(base, url) {
-      return base + '?url=' + encodeURIComponent(url)
-        + '&cookie=' + encodeURIComponent(BB_TOKEN)
-        + '&ref=' + encodeURIComponent(BB_REFERER)
-        + '&ua=' + encodeURIComponent(BB_UA);
-    }
-
-    /* The local proxy reads its headers off the target's own query string. */
-    function hotstarTarget(url) {
-      return url + (url.includes('?') ? '&' : '?')
-        + 'cookie=' + encodeURIComponent(BB_TOKEN)
-        + '&referer=' + encodeURIComponent(BB_REFERER)
-        + '&origin=' + encodeURIComponent('https://www.hotstar.com')
-        + '&user-agent=' + encodeURIComponent(BB_UA);
-    }
-
-    async function playHotstar(id) {
-      const ch = HOTSTAR_CHANNELS.find(c => c.id === id);
-      if (!ch) return;
-      _playingChannelId = null;
+      _playingChannelId = ch.id;
       _playingChannelLogo = ch.logo || null;
 
-      const isDash = /\.mpd(\?|$)/i.test(ch.url);
-      const drm = ch.key ? { keyId: ch.keyId, key: ch.key } : null;
-
-      /* DASH cannot go through a playlist-rewriting proxy the way HLS does —
-         a .mpd is never rewritten — so Shaka is handed the real URL plus a
-         proxy to route each request through. See loadShaka. */
-      const base = LOCAL_PROXY || IN_PROXY;
-      if (!base) { bbBlocked(ch.name, 0); return; }
+      const isDash = ch.isDash || /\.mpd(\?|$)/i.test(ch.url);
 
       if (isDash) {
-        return loadVideo(ch.url, ch.name, false,
-          { ...(drm || {}), proxy: { base, cookie: BB_TOKEN, ref: BB_REFERER, ua: BB_UA } });
+        const base = LOCAL_PROXY || IN_PROXY;
+        if (!base) { bbBlocked(ch.name, 0); return; }
+        const drm = ch.key ? { keyId: ch.keyId, key: ch.key } : null;
+        return loadVideo(ch.url, ch.name, false, {
+          ...(drm || {}),
+          proxy: { base, cookie: ch.cookie, ref: ch.ref, ua: ch.ua },
+        });
       }
 
-      const via = LOCAL_PROXY
-        ? viaLocalProxy(hotstarTarget(ch.url))
-        : hotstarVia(IN_PROXY, ch.url);
+      // HLS
+      if (LOCAL_PROXY) {
+        // Local proxy injects headers itself off the target's query string.
+        const target = ch.url + (ch.url.includes('?') ? '&' : '?')
+          + 'cookie=' + encodeURIComponent(ch.cookie)
+          + '&referer=' + encodeURIComponent(ch.ref)
+          + '&origin=' + encodeURIComponent(ch.origin)
+          + '&user-agent=' + encodeURIComponent(ch.ua);
+        return loadVideo(viaLocalProxy(target), ch.name);
+      }
+
+      if (IN_PROXY) {
+        const via = IN_PROXY + '?url=' + encodeURIComponent(ch.url)
+          + '&cookie=' + encodeURIComponent(ch.cookie)
+          + '&ref=' + encodeURIComponent(ch.ref)
+          + '&origin=' + encodeURIComponent(ch.origin)
+          + '&ua=' + encodeURIComponent(ch.ua);
+        try {
+          const r = await fetch(via, { signal: AbortSignal.timeout(45000) });
+          if (r.ok) return loadVideo(via, ch.name);
+          bbBlocked(ch.name, r.status);
+        } catch { bbBlocked(ch.name, 0); }
+        return;
+      }
+
+      // Fall back to the worker (uses the same ?url= interface).
+      const via = viaWorker(ch.url, { cookie: ch.cookie, ref: ch.ref, ua: ch.ua, origin: ch.origin });
       try {
         const r = await fetch(via, { signal: AbortSignal.timeout(45000) });
         if (r.ok) return loadVideo(via, ch.name);
         bbBlocked(ch.name, r.status);
       } catch { bbBlocked(ch.name, 0); }
+    }
+
+    /* Compatibility shim: keep playHotstar(id) working for any caller that
+       still uses channel id lookup. */
+    async function playHotstar(id) {
+      const channels = await fetchHotstarPlaylist();
+      const ch = channels.find(c => c.id === id);
+      if (!ch) { showToast('Channel not found in playlist', 3000); return; }
+      return playHotstarChannel(ch);
     }
 
     function bbBlocked(name, status) {
@@ -3313,8 +3371,9 @@
         const m = (_fcList || []).find(x => String(x.id) === String(id));
         if (m) return playFc(m);
       } else if (tabKey === 'bb') {
-        renderBiggBoss();
-        if (HOTSTAR_CHANNELS.some(c => c.id === id)) return playHotstar(id);
+        const channels = await fetchHotstarPlaylist();
+        const ch = channels.find(c => c.id === id);
+        if (ch) return playHotstarChannel(ch);
       } else if (tabKey === 'live') {
         const map = await getChMap();
         const ch = map[id];
@@ -4091,9 +4150,6 @@
 
     // ══════════════════════════════════════════════════════════
     // HLS
-    // ══════════════════════════════════════════════════════════
-    // ══════════════════════════════════════════════════════════
-    // HLS — UPDATED FOR MASTER MANIFEST CROSS-ORIGIN RECOVERY
     // ══════════════════════════════════════════════════════════
     // Hosts best played with Shaka + native fallback instead of hls.js (e.g. FanCode).
     // This mirrors the reference player that plays these reliably: Shaka.load(url),
