@@ -2814,7 +2814,12 @@
     let hideT = null, drag = false, toastT = null;
     let isLiveStream = false;
     let _edgeCache = 0, _edgeTS = 0, _jumping = false;
-    const LIVE_THRESH = 12, DELAY_SHOW = 6;
+    /* Measured against the true edge, a stream sitting exactly where its
+       engine wants it is still several seconds back — about eight for HLS,
+       a little less for DASH. Calling that "behind" would light GO LIVE on a
+       stream doing nothing wrong, so the mark sits above it. Anything past
+       DELAY_SHOW is worth printing, because by then it is a real gap. */
+    const LIVE_THRESH = 15, DELAY_SHOW = 10;
     let _lastUrl = null, _lastTitle = null, _lastDrm = null;
     // Show / episode metadata (drives the pause overlay + episodes panel)
     let META = { title: '', rating: '', year: '', dur: '', desc: '', poster: '', showTitle: '', eps: [], epIndex: 0 };
@@ -3381,7 +3386,7 @@
 
     /* Tabs that show our own lists. Custom URL is not one: someone pasting a
        link of their own is not using anything this gate is protecting. */
-    const GATED_TABS = new Set(['live', 'bb', 'sony', 'fc', 'willow', 'prime', 'iptv']);
+    const GATED_TABS = new Set(['live', 'bb', 'sony', 'fc', 'willow', 'iptv']);
 
     function gateToken() {
       try {
@@ -4248,24 +4253,44 @@
       if (hlsInst) return hlsInst.levels && hlsInst.levels.length > 0 && vid.duration === Infinity;
       return vid.duration === Infinity || vid.duration > 86400;
     }
+    /* Where live actually is.
+     
+       This used to answer with hls.js's liveSyncPosition, which is not the
+       edge — it is the spot hls.js aims to sit at, a few segments behind it.
+       Measuring the delay against that compares where we are with where we
+       meant to be, so it read about zero however far back we really were, and
+       the badge said LIVE while a minute of the match had already happened.
+       The end of the seekable range is the honest answer, and both engines
+       report it. */
     function getLiveEdge() {
-      if (shakaInst) {
-        const now = Date.now();
-        if (now - _edgeTS > 2000) { const sk = vid.seekable; if (sk && sk.length > 0) { _edgeCache = sk.end(sk.length - 1); _edgeTS = now; } }
-        return _edgeCache || 0;
+      const now = Date.now();
+      if (now - _edgeTS > 1000) {
+        const sk = vid.seekable;
+        if (sk && sk.length > 0) { _edgeCache = sk.end(sk.length - 1); _edgeTS = now; }
       }
-      if (hlsInst && hlsInst.liveSyncPosition) return hlsInst.liveSyncPosition;
+      if (_edgeCache) return _edgeCache;
       const sk = vid.seekable;
       if (sk && sk.length > 0) return sk.end(sk.length - 1);
-      return vid.duration || 0;
+      return vid.duration === Infinity ? 0 : (vid.duration || 0);
     }
+
+    /* Where to land when someone asks to go live. Not the edge itself — the
+       last segment is still being written, and seeking onto it stalls. hls.js
+       already holds a view on how much room it needs; for DASH, three seconds
+       is about one segment. */
+    function getSyncTarget() {
+      if (hlsInst && hlsInst.liveSyncPosition) return hlsInst.liveSyncPosition;
+      const e = getLiveEdge();
+      return e > 4 ? e - 3 : e;
+    }
+
     function getLiveDelay() { const e = getLiveEdge(); return e ? Math.max(0, e - vid.currentTime) : 0 }
 
     function jumpToLive() {
       if (!isLiveStream || _jumping) return;
       _jumping = true;
-      const edge = getLiveEdge();
-      if (edge > 2) vid.currentTime = edge - 1;
+      const target = getSyncTarget();
+      if (target > 1) vid.currentTime = target;
       vid.playbackRate = 1;
       if (vid.paused) vid.play().catch(() => { });
       showToast('▶ Jumped to live');
@@ -4449,6 +4474,25 @@
       }
       shakaInst.configure(cfg);
 
+      /* A DASH manifest asks to be played a fixed distance behind the edge —
+         suggestedPresentationDelay — and these set it to most of a minute.
+         Shaka honours it, so seekable.end is already that far back and the
+         seek below, which looks like it lands two seconds behind live, really
+         lands a minute behind it.
+       
+         Ignoring it moves seekable.end up to the real edge and leaves the
+         distance to us. Applied on its own so that a build of Shaka without
+         these keys logs a warning and carries on, rather than taking the whole
+         configuration down with it. */
+      try {
+        shakaInst.configure({
+          manifest: {
+            defaultPresentationDelay: 6,
+            dash: { ignoreSuggestedPresentationDelay: true },
+          },
+        });
+      } catch (e) { console.warn('live-edge config not applied:', e.message); }
+
       /* DASH through a proxy needs every request rewritten, not just the
          manifest. Shaka resolves a segment against the manifest's own URL, and
          that URL is the proxy's — so left alone it asks the proxy for a path
@@ -4507,7 +4551,13 @@
         if (live) {
           isLiveStream = true;
           const sk = vid.seekable;
-          if (sk && sk.length > 0) { const edge = sk.end(sk.length - 1); _edgeCache = edge; _edgeTS = Date.now(); vid.currentTime = Math.max(0, edge - 2); }
+          /* Far enough back to have something buffered, near enough to be
+             live. Two seconds left nothing in hand and stalled on the first
+             slow segment; the proxy in front of these adds a little. */
+          if (sk && sk.length > 0) {
+            const edge = sk.end(sk.length - 1); _edgeCache = edge; _edgeTS = Date.now();
+            vid.currentTime = Math.max(sk.start(0), edge - 4);
+          }
           updateLiveBadge(); showToast('🔴 Live — ' + title, 2000);
           const _ep = setInterval(() => {
             if (!shakaInst) { clearInterval(_ep); return }
@@ -4741,8 +4791,12 @@
         hlsInst = new Hls({
           enableWorker: true,
           lowLatencyMode: true,
-          liveSyncDurationCount: 3,
-          liveMaxLatencyDurationCount: 10,
+          /* Two segments back rather than three, and pulled forward sooner
+             when it drifts: at a four second target that is eight seconds
+             behind instead of twelve, and corrected at twenty-four rather
+             than left to reach forty. */
+          liveSyncDurationCount: 2,
+          liveMaxLatencyDurationCount: 6,
           maxBufferLength: 30,
           backBufferLength: 60,
 
