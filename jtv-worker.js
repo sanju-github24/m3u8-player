@@ -49,6 +49,9 @@ export default {
     if (reqUrl.searchParams.get('feed') === 'willow') {
       return handleWillowFeed();
     }
+    if (reqUrl.searchParams.get('feed') === 'hotstar') {
+      return handleHotstarFeed();
+    }
     return handleFeed(env);
   },
 
@@ -575,6 +578,99 @@ async function handleWillowFeed() {
   } catch (e) {
     return json({ error: 'willow_feed', detail: e.message }, 502);
   }
+}
+
+// ────────────────────────────────────────────────────────────
+// 6. HOTSTAR CHANNELS
+// ────────────────────────────────────────────────────────────
+/* The Hotstar line-up, re-scraped with a fresh token every run.
+ *
+ * These channels were a list written into the player, with the token on a
+ * line of its own. That token lasts about a day, and all of them are signed
+ * by the same one, so the whole tab went dark together and came back only
+ * when somebody pasted a new playlist. Reading the playlist here ends that:
+ * the token arrives with the channels, and a page load is all it takes.
+ *
+ * It is also four times the list — 126 channels against the 34 that were
+ * copied out by hand. */
+const HOTSTAR_M3U =
+  'https://raw.githubusercontent.com/sportlive18/jio-tv-auto-update-playlist/refs/heads/main/hotstar.m3u';
+
+async function handleHotstarFeed() {
+  try {
+    const res  = await fetchFresh(HOTSTAR_M3U, { 'accept': 'text/plain', 'user-agent': 'player.html/1.0' });
+    const text = await res.text();
+    if (!res.ok || !text.includes('#EXTM3U')) {
+      return json({ error: 'hotstar_feed', detail: `HTTP ${res.status}` }, 502);
+    }
+
+    /* Every channel carries the same token, so it is read once and returned
+       once rather than repeated 126 times down the wire. */
+    const tok = /hdntl=exp=\d+[^~\s"&]*(?:~[^~\s"&]+)*/.exec(text);
+    const token = tok ? tok[0] : '';
+
+    const channels = [];
+    const lines = text.split('\n');
+    let cur = null;
+
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line) continue;
+
+      if (line.startsWith('#EXTINF')) {
+        const name  = (line.split(',').slice(1).join(',') || '').trim();
+        const logo  = (/tvg-logo="([^"]*)"/.exec(line) || [, ''])[1];
+        const group = (/group-title="([^"]*)"/.exec(line) || [, ''])[1];
+        cur = { name, logo, group: group || 'Other', keyId: '', key: '' };
+        continue;
+      }
+
+      if (line.startsWith('#KODIPROP:inputstream.adaptive.license_key=')) {
+        const pair = line.split('license_key=')[1] || '';
+        const [kid, k] = pair.split(':');
+        if (cur && kid && k) { cur.keyId = kid.trim(); cur.key = k.trim(); }
+        continue;
+      }
+
+      if (line.startsWith('#')) continue;
+
+      if (cur) {
+        /* The playlist puts the headers in the URL's own query, for players
+           that read them from there. Ours passes them separately, and a
+           request carrying both would send the token twice — so the URL is
+           cut back to its path. */
+        const url = line.split('?')[0];
+        channels.push({
+          id: slugId(cur.name),
+          name: cur.name,
+          group: cur.group,
+          logo: cur.logo,
+          url,
+          keyId: cur.keyId,
+          key: cur.key,
+        });
+        cur = null;
+      }
+    }
+
+    if (!channels.length) return json({ error: 'hotstar_feed', detail: 'parsed 0 channels' }, 502);
+
+    return json({ token, channels }, 200, {
+      'X-Feed-Source': 'hotstar.m3u',
+      'X-Channel-Count': String(channels.length),
+    });
+  } catch (e) {
+    return json({ error: 'hotstar_feed', detail: e.message }, 502);
+  }
+}
+
+/* A stable id from a channel name, so a link to one survives the list being
+   rebuilt — the playlist has no ids of its own and its ordering is not fixed. */
+function slugId(name) {
+  return String(name || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'channel';
 }
 
 /* ────────────────────────────────────────────────────────────

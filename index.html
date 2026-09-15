@@ -3036,7 +3036,7 @@
        The hdntl token is shared by all six (acl=/*, so it signs any path) and
        lasts hours, not the minutes a FanCode one does. When it dies every
        feed here dies at once and the fix is a new token — see BB_TOKEN. */
-    const BB_TOKEN = 'hdntl=exp=1789530127~acl=%2f*~id=127456ecedb15a2f7264b7bc601de86e~data=hdntl~hmac=d0a0bdabfe9393f8ef61e84fe9b2918a7648b8e51cdc79518f0ab03993fe21dc';
+    let BB_TOKEN = 'hdntl=exp=1789530127~acl=%2f*~id=127456ecedb15a2f7264b7bc601de86e~data=hdntl~hmac=d0a0bdabfe9393f8ef61e84fe9b2918a7648b8e51cdc79518f0ab03993fe21dc';
     const BB_REFERER = 'https://www.hotstar.com/';
     const BB_UA = 'Virat Kohli';
     const BB_LOGO = 'https://img10.hotstar.com/image/upload/sources/r1/cms/prod/2305/1788708712305-h.jpg';
@@ -3050,7 +3050,7 @@
      * All of them share one hdntl token and all of them expire together —
      * about a day. When every channel here dies at once, that is why: replace
      * BB_TOKEN and nothing else. */
-    const HOTSTAR_CHANNELS = [
+    let HOTSTAR_CHANNELS = [
       { id: "bb-hindi", name: "Bigg Boss 24/7 — Hindi", group: "Bigg Boss", logo: BB_LOGO,
         url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-hin-2026/93e0d4ee03b34575bbf8f8a55824de63/index_6.m3u8" },
       { id: "bb-bangla", name: "Bigg Boss 24/7 — Bangla", group: "Bigg Boss", logo: BB_LOGO,
@@ -3130,10 +3130,53 @@
         + (ua ? '&ua=' + encodeURIComponent(ua) : '');
     }
 
-    let _bbRendered = false;
+    let _bbRendered = false, _bbLoaded = false;
 
-    function renderBiggBoss() {
+    /* The list and its token, from the playlist that is re-scraped with a
+       fresh one every run.
+     *
+     * Both used to be written into this file, and because every channel is
+     * signed by the same token, the whole tab went dark each time it expired
+     * and stayed dark until somebody pasted a new playlist in. Read here, a
+     * page load is the whole of it. The built-in list stays as a fallback,
+     * so an unreachable feed costs the newer channels rather than all of
+     * them. */
+    async function loadHotstar() {
+      if (_bbLoaded) return;
+      try {
+        const r = await fetch(NEW_JSON_URL + '?feed=hotstar&_=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const body = await r.json();
+        if (body.token && Array.isArray(body.channels) && body.channels.length) {
+          BB_TOKEN = body.token;
+          HOTSTAR_CHANNELS = body.channels;
+        }
+      } catch (e) {
+        console.warn('hotstar feed unavailable, using the built-in list:', e.message);
+      }
+      _bbLoaded = true;
+    }
+
+    /* The playlist has no ids, so they are made from channel names — which
+       means the six this site links to directly by a short name of their own
+       would stop resolving. Matched by what they are instead. */
+    const HOTSTAR_ALIASES = {
+      // "Bigboss" in the playlist, "Bigg Boss" everywhere else — hence bigg?.
+      'bb-hindi': /bigg?boss.*hindi/i, 'bb-bangla': /bigg?boss.*bangla/i,
+      'bb-kannada': /bigg?boss.*kannada/i, 'bb-malayalam': /bigg?boss.*malayalam/i,
+      'bb-telugu': /bigg?boss.*telugu/i, 'bb-tamil': /bigg?boss.*tamil/i,
+    };
+
+    function findHotstarChannel(id) {
+      const exact = HOTSTAR_CHANNELS.find(c => c.id === id);
+      if (exact) return exact;
+      const pat = HOTSTAR_ALIASES[id];
+      return pat ? HOTSTAR_CHANNELS.find(c => pat.test(c.name.replace(/\s+/g, ''))) : null;
+    }
+
+    async function renderBiggBoss() {
       if (_bbRendered) return;
+      await loadHotstar();
       const grid = $('bbGrid');
       grid.innerHTML = '';
 
@@ -3225,7 +3268,8 @@
     }
 
     async function playHotstar(id) {
-      const ch = HOTSTAR_CHANNELS.find(c => c.id === id);
+      await loadHotstar();
+      const ch = findHotstarChannel(id);
       if (!ch) return;
 
       if (hotstarTokenExpired()) {
@@ -3416,8 +3460,8 @@
         const m = (_fcList || []).find(x => String(x.id) === String(id));
         if (m) return playFc(m);
       } else if (tabKey === 'bb') {
-        renderBiggBoss();
-        if (HOTSTAR_CHANNELS.some(c => c.id === id)) return playHotstar(id);
+        await renderBiggBoss();
+        if (findHotstarChannel(id)) return playHotstar(id);
       } else if (tabKey === 'willow') {
         await loadWillow();
         return;   // a schedule has nothing to start
