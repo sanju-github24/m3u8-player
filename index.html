@@ -2127,6 +2127,19 @@
         <button class="ls-tab" id="tabIptv" onclick="switchTab('iptv')">🌍 IPTV</button>
       </div>
 
+      <!-- The gate. Hidden unless a tab is asked for and nothing has been
+           unlocked; the password is checked on the server, never here. -->
+      <div id="gateBox" style="display:none;flex-direction:column;gap:12px;padding:6px 2px">
+        <div style="font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85)">🔒 Enter the password to browse channels</div>
+        <div id="gateMsg" style="display:none;font-size:.74rem;color:#fca5a5"></div>
+        <input class="ls-in" id="gateIn" type="password" autocomplete="current-password"
+          placeholder="Password" />
+        <button class="ls-play" id="gateBtn">Unlock</button>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.35);text-align:center">
+          Stays unlocked on this device for 12 hours.
+        </div>
+      </div>
+
       <div id="customTab">
         <input class="ls-in" id="urlIn" placeholder="Paste HLS (.m3u8), DASH (.mpd), MP4, WebM URL…" />
         <input class="ls-in" id="titIn" placeholder="Title (optional)" style="padding:10px 16px;font-size:.85rem" />
@@ -2819,7 +2832,7 @@
     // ══════════════════════════════════════════════════════════
     // TABS
     // ══════════════════════════════════════════════════════════
-    function switchTab(t) {
+    async function switchTab(t) {
       $('tabCustom').classList.toggle('on', t === 'custom');
       $('tabLive').classList.toggle('on', t === 'live');
       $('tabBB').classList.toggle('on', t === 'bb');
@@ -2836,6 +2849,14 @@
       $('willowTab').style.display = t === 'willow' ? 'flex' : 'none';
       $('primeTab').style.display = t === 'prime' ? 'flex' : 'none';
       $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
+
+      /* The tab is highlighted either way — the gate is the panel underneath,
+         not a refusal to acknowledge the click. Nothing is fetched until it
+         passes, so a locked player never pulls a channel list at all. */
+      if (!(await gatePasses(t))) return;
+      showGate(false);
+      if (t === 'custom') $('customTab').style.display = 'flex';
+
       if (t === 'live' && !channelsLoaded) fetchChannels();
       if (t === 'bb') renderBiggBoss();
       if (t === 'sony') loadSony();
@@ -3342,6 +3363,107 @@
     vid.addEventListener('error', announceError);
 
     // ══════════════════════════════════════════════════════════
+    // GATE
+    // ══════════════════════════════════════════════════════════
+    /* A password on a static page is a sign, not a lock — whatever the page is
+       told to compare against can be read out of it. So nothing is compared
+       here: the attempt goes to /api/gate, which holds a PBKDF2 hash of the
+       password and returns a signed token if it matches. The password itself
+       never reaches this file in any form, encrypted or otherwise.
+     
+       What this stops is someone opening the player and browsing the channel
+       lists. It is not a wall around the streams: the feeds and the proxy are
+       their own endpoints and answer whoever asks. Gating those too is a
+       separate change, and a larger one, because this site's own pages embed
+       the player for every visitor. */
+    const GATE_URL = location.protocol.startsWith('http') ? location.origin + '/api/gate' : '';
+    const GATE_KEY = 'player_gate_token';
+
+    /* Tabs that show our own lists. Custom URL is not one: someone pasting a
+       link of their own is not using anything this gate is protecting. */
+    const GATED_TABS = new Set(['live', 'bb', 'sony', 'fc', 'willow', 'iptv']);
+
+    function gateToken() {
+      try {
+        const raw = localStorage.getItem(GATE_KEY);
+        if (!raw) return null;
+        const t = JSON.parse(raw);
+        // Checked here only to know when to ask again; the server decides.
+        return (t && t.exp && t.exp * 1000 > Date.now()) ? t : null;
+      } catch { return null; }
+    }
+
+    let _gateOpen = null;   // null = unknown, true = no password configured
+
+    /* Is the gate even switched on? An unconfigured deployment answers "open",
+       so shipping this file does not lock anyone out of their own player. */
+    async function gateIsOpen() {
+      if (_gateOpen !== null) return _gateOpen;
+      if (!GATE_URL) { _gateOpen = true; return true; }    // file://, nothing to ask
+      try {
+        const r = await fetch(GATE_URL + '?token=', { method: 'GET' });
+        const j = await r.json();
+        _gateOpen = !!j.open;
+      } catch { _gateOpen = false; }
+      return _gateOpen;
+    }
+
+    function showGate(show) {
+      $('gateBox').style.display = show ? 'flex' : 'none';
+      ['customTab','liveTvTab','bbTab','sonyTab','fcTab','willowTab','iptvTab'].forEach(id => {
+        if (show && $(id)) $(id).style.display = 'none';
+      });
+      if (show) setTimeout(() => $('gateIn').focus(), 50);
+    }
+
+    async function submitGate() {
+      const pw = $('gateIn').value;
+      const msg = $('gateMsg');
+      if (!pw) return;
+      $('gateBtn').disabled = true; $('gateBtn').textContent = 'Checking…';
+      msg.style.display = 'none';
+      try {
+        const r = await fetch(GATE_URL, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ password: pw }),
+        });
+        const j = await r.json();
+        if (j.ok && j.token) {
+          localStorage.setItem(GATE_KEY, JSON.stringify({ token: j.token, exp: j.exp }));
+          $('gateIn').value = '';
+          showGate(false);
+          if (_pendingTab) { const t = _pendingTab; _pendingTab = null; switchTab(t); }
+          return;
+        }
+        msg.textContent = j.error === 'wrong password' ? 'That password is not right.' : 'Could not check that right now.';
+        msg.style.display = 'block';
+      } catch {
+        msg.textContent = 'Could not reach the server.';
+        msg.style.display = 'block';
+      } finally {
+        $('gateBtn').disabled = false; $('gateBtn').textContent = 'Unlock';
+      }
+    }
+
+    let _pendingTab = null;
+
+    /* True when the tab may be shown. Asks once whether the gate is on at all,
+       so an open deployment never pauses. */
+    async function gatePasses(tab) {
+      /* A solo window exists to play one thing that was already chosen
+         elsewhere. Asking its viewer for a password would put a prompt inside
+         someone else's page for a list they are never shown. */
+      if (SOLO) return true;
+      if (!GATED_TABS.has(tab)) return true;
+      if (gateToken()) return true;
+      if (await gateIsOpen()) return true;
+      _pendingTab = tab;
+      showGate(true);
+      return false;
+    }
+
+    // ══════════════════════════════════════════════════════════
     // TAB LINKS
     // ══════════════════════════════════════════════════════════
     /* A tab is addressable: ?tab=sony opens the SonyLiv list, and &id=… plays
@@ -3405,6 +3527,13 @@
       }
       LS.style.display = 'flex';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('gateBtn');
+      const inp = document.getElementById('gateIn');
+      if (btn) btn.addEventListener('click', submitGate);
+      if (inp) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitGate(); });
+    });
 
     /* Puts a copy-link control under a tab's list. Built rather than written
        into the markup five times, so every tab gets the same thing. */
