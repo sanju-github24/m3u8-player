@@ -3235,6 +3235,7 @@
     /* 'playing' rather than 'canplay': the first says frames are going up,
        the second only that they could. */
     vid.addEventListener('playing', announcePlaying);
+    vid.addEventListener('error', announceError);
 
     // ══════════════════════════════════════════════════════════
     // TAB LINKS
@@ -3277,11 +3278,20 @@
 
     /* The host page covers this frame until the picture is actually up, so it
        needs telling. Fired on the video itself rather than on load(), because
-       a manifest arriving is not the same as something to look at. */
-    function announcePlaying() {
-      if (!SOLO || !FRAMED) return;
-      try { window.parent.postMessage({ type: 'anchor:playing' }, '*'); } catch { /* cross-origin */ }
+       a manifest arriving is not the same as something to look at.
+
+       Not gated on solo: a frame is covered whoever framed it, and gating this
+       left the cover up for good on any window opened without it.
+
+       Failure is announced too. A cover that only lifts on success hides the
+       reason when there is none, which is the one moment the message behind it
+       is worth reading. */
+    function announce(type) {
+      if (!FRAMED) return;
+      try { window.parent.postMessage({ type }, '*'); } catch { /* cross-origin */ }
     }
+    function announcePlaying() { announce('anchor:playing'); }
+    function announceError()   { announce('anchor:error'); }
 
     function showLauncher() {
       if (SOLO) {
@@ -4146,6 +4156,7 @@
         spin.classList.remove('on');
         const msg = `Error ${ec.code}${ec.data && ec.data[0] ? ' — ' + String(ec.data[0]).slice(0, 80) : ''}`;
         errMsg.textContent = msg; err.style.display = 'flex'; showToast('⚠ ' + msg, 3000);
+        announceError();
       });
       shakaInst.addEventListener('streaming', () => {
         if (shakaInst.isLive()) {
