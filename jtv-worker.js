@@ -52,6 +52,9 @@ export default {
     if (reqUrl.searchParams.get('feed') === 'hotstar') {
       return handleHotstarFeed();
     }
+    if (reqUrl.searchParams.get('feed') === 'prime') {
+      return handlePrimeFeed();
+    }
     return handleFeed(env);
   },
 
@@ -671,6 +674,106 @@ function slugId(name) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'channel';
+}
+
+// ────────────────────────────────────────────────────────────
+// 7. PRIME VIDEO FREE SPORTS
+// ────────────────────────────────────────────────────────────
+/* Amazon's free live sport, from the same publisher as the Willow schedule —
+ * but where that one only links out, these rows carry a stream and a key, so
+ * they actually play.
+ *
+ * Two things about them decide the shape below.
+ *
+ * Every stream is DASH under ClearKey. The feed writes the pair as one
+ * "keyId:key" string; the player wants them apart, so they are split here
+ * rather than in five places there.
+ *
+ * And the CDNs will not take an Origin header from anywhere but themselves.
+ * Measured: the same manifest answers 200 to a request with no Origin and 400
+ * to one sent from a page — which is every request a browser makes. Only
+ * dash-ott.bia-cf.live.pv-cdn.net accepts a foreign Origin, so that one is put
+ * first as the single URL a browser could fetch unaided; the rest follow in
+ * `servers` for the player to fall back through, each of which has to go
+ * through this worker's proxy (which sends the target its own origin back).
+ */
+const PRIME_JSON =
+  'https://raw.githubusercontent.com/sportlive18/Willow-Cricbuzz-Prime-Video-Sport-Live-Event-Auto-Updated-Playlist/refs/heads/main/primesport.json';
+
+/* Most-usable first. Names come from the feed verbatim; anything it adds later
+   that is not listed here still gets through, just ordered last. */
+const PRIME_SERVER_ORDER = [
+  'Cloudfront Server 1',   // the only host that answers a browser directly
+  'Amazon Server',
+  'Fastly Server',
+  'Cloudfront Server 2',
+  'Original Server',
+];
+
+function primeServers(streamUrl) {
+  const entries = Object.entries(streamUrl || {}).filter(([, u]) => typeof u === 'string' && u);
+  const rank = (name) => {
+    const i = PRIME_SERVER_ORDER.indexOf(name);
+    return i === -1 ? PRIME_SERVER_ORDER.length : i;
+  };
+  return entries
+    .sort((a, b) => rank(a[0]) - rank(b[0]))
+    .map(([name, url]) => ({ name, url }));
+}
+
+async function handlePrimeFeed() {
+  try {
+    const res  = await fetchFresh(PRIME_JSON, { 'accept': 'application/json', 'user-agent': 'player.html/1.0' });
+    const text = await res.text();
+    if (!res.ok || text.trim().startsWith('<')) {
+      return json({ error: 'prime_feed', detail: `HTTP ${res.status}` }, 502);
+    }
+
+    const parsed = JSON.parse(text);
+    const rows = parsed.Matches || [];
+
+    const shape = (m) => {
+      /* "Cricket Highlights-ETPL 2026: Flames vs Guardians - 26th Match" — the
+         competition and the fixture in one line. Split on the last colon so a
+         card can show the fixture and put the competition under it. */
+      const title = String(m.title || '').trim();
+      const cut   = title.lastIndexOf(':');
+      const name  = cut > 0 ? title.slice(cut + 1).trim() : title;
+      const event = cut > 0 ? title.slice(0, cut).trim() : '';
+
+      const [keyId = '', key = ''] = String(m.drm_key || '').split(':');
+      const servers = primeServers(m.stream_url);
+
+      return {
+        id:       String(m.match_id || ''),
+        name:     name || 'Live',
+        event,
+        category: 'Sports',
+        lang:     '',
+        start:    m.time || '',
+        poster:   m.cover_image || '',
+        logo:     m.cover_image || '',
+        // Amazon's own page, so a viewer always has somewhere to go.
+        link:     m.match_url || '',
+        url:      servers[0] ? servers[0].url : '',
+        servers,
+        keyId:    keyId.trim(),
+        key:      key.trim(),
+      };
+    };
+
+    const isLive = (m) => String(m.status || '').toUpperCase() === 'LIVE';
+    // A row with no stream is a listing, not a source — same rule as SonyLiv's.
+    const live = rows.filter(m => isLive(m)).map(shape).filter(m => m.url);
+    const upcoming = rows.filter(m => !isLive(m)).map(shape).map(m => ({ ...m, url: '', servers: [] }));
+
+    return json({ live, upcoming }, 200, {
+      'X-Feed-Source': 'primesport.json',
+      'X-Feed-Updated': String((parsed.HeaderInfo || {}).LastUpdate || ''),
+    });
+  } catch (e) {
+    return json({ error: 'prime_feed', detail: e.message }, 502);
+  }
 }
 
 /* ────────────────────────────────────────────────────────────
