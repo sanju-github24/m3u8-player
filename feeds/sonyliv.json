@@ -1,8 +1,34 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "17:07:11 17-09-2026",
+    "last update time": "22:10:08 17-09-2026",
     "matches": [
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090542648_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023495/1788531414631688_UEL2627_MD1_OFI_Crete_vs_Hoffenheim_4sep_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Europa League 2026-27",
+            "match_name": "OFI Crete vs Hoffenheim -  MD1 - 17 Sep 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2018458/Footlive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2018458/Footlive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2018458/Footlive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090542649_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023495/1788532203409688_UEL2627_MD1_Levski_Sofia_vs_Salzburg_4sep_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Europa League 2026-27",
+            "match_name": "Levski Sofia vs Salzburg - MD1 - 17 Sep 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2022319/Footlive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2022319/Footlive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2022319/Footlive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b"
+        },
         {
             "event_category": "Golf",
             "isLive": true,
@@ -12,9 +38,9 @@
             "audioLanguageName": "ENG",
             "event_name": "DP World Tour",
             "match_name": "BMW PGA Championship - Day 1 - 17 Sep 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789688230~acl=/*~id=66021459382566260579881019098792~hmac=69ad5df82eecabb3eea2a33470e4b113b04d6d730d808942bb9c77f3166541db",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789688230~acl=/*~id=66021459382566260579881019098792~hmac=69ad5df82eecabb3eea2a33470e4b113b04d6d730d808942bb9c77f3166541db",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789688230~acl=/*~id=66021459382566260579881019098792~hmac=69ad5df82eecabb3eea2a33470e4b113b04d6d730d808942bb9c77f3166541db"
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789706407~acl=/*~id=33099148952248309940837949186218~hmac=8bab9307ca7853469d7bd553572297d8cddc194889eb1ece44f548373c0fe70b"
         },
         {
             "event_category": "Sports",
