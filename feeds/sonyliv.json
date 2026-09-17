@@ -1,20 +1,20 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "11:34:11 17-09-2026",
+    "last update time": "17:07:11 17-09-2026",
     "matches": [
         {
-            "event_category": "Sports",
+            "event_category": "Golf",
             "isLive": true,
-            "contentId": "1090541369_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024055/1789582327474840_AG26_QF_Pakistan_vs_Thailand_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
+            "contentId": "1090542526_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023421/1788419411300492_DP_World_Tour_BMW_PGA_CHAMPIONSHIP_day1_landscape_thumb.jpg",
+            "broadcast_channel": "LIV",
             "audioLanguageName": "ENG",
-            "event_name": "20th Asian Games Aichi-Nagoya 2026",
-            "match_name": "Pakistan Women vs Thailand Women - QF 2 - 17 Sep 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2094587/criclive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789668251~acl=/*~id=82482822282050237211844125197314~hmac=9e19274fe25a9181f647f38597833d9f0aaf06cb31df5979c994913bbd31c476",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2094587/criclive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789668251~acl=/*~id=82482822282050237211844125197314~hmac=9e19274fe25a9181f647f38597833d9f0aaf06cb31df5979c994913bbd31c476",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2094587/criclive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789668251~acl=/*~id=82482822282050237211844125197314~hmac=9e19274fe25a9181f647f38597833d9f0aaf06cb31df5979c994913bbd31c476"
+            "event_name": "DP World Tour",
+            "match_name": "BMW PGA Championship - Day 1 - 17 Sep 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789688230~acl=/*~id=66021459382566260579881019098792~hmac=69ad5df82eecabb3eea2a33470e4b113b04d6d730d808942bb9c77f3166541db",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789688230~acl=/*~id=66021459382566260579881019098792~hmac=69ad5df82eecabb3eea2a33470e4b113b04d6d730d808942bb9c77f3166541db",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2005444/Golf_BMW1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789688230~acl=/*~id=66021459382566260579881019098792~hmac=69ad5df82eecabb3eea2a33470e4b113b04d6d730d808942bb9c77f3166541db"
         },
         {
             "event_category": "Sports",
@@ -35,6 +35,15 @@
             "event_name": "Upcoming - 20th Asian Games Aichi-Nagoya 2026"
         },
         {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090541822,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024068/1789622595285332_ENGvsSL26_2t20i_Promo_tonight_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Sri Lanka Tour of England 2026"
+        },
+        {
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090542429,
@@ -42,15 +51,6 @@
             "broadcast_channel": "LIV",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India vs Brazil"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090541822,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023648/178884793163422_Eng_vs_SL_landscape.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Sri Lanka Tour of England 2026"
         },
         {
             "event_category": "Football",
@@ -77,7 +77,7 @@
             "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023974/1789458782998232_ASIAN_GAME_2026_GOB_Landscape_Thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - 20th Asian Games Aichi-Nagoya 2026"
+            "event_name": "Upcoming - Har Baar Bharat - 20th Asian Games Aichi-Nagoya 2026"
         },
         {
             "event_category": "Cricket",
@@ -95,7 +95,7 @@
             "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000022077/1786464482593563_AG26_promo_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - 20th Asian Games Aichi-Nagoya 2026"
+            "event_name": "Upcoming - India vs Pakistan - 20th Asian Games Aichi-Nagoya 2026"
         },
         {
             "event_category": "Cricket",
