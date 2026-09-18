@@ -71,12 +71,13 @@ function get(url, headers, proxy, ms) {
  * than tried one after another — serially this would exhaust the function's
  * time long before finding the one that works. The winner is remembered per
  * host, because what SonyLiv accepts and what Hotstar accepts need not match. */
-async function findProxy(url, headers, hostname) {
+async function findProxy(url, headers, hostname, skip = '') {
   const list = await proxyList();
   if (!list.length) return null;
 
   const remembered = known.get(hostname);
-  const ordered = remembered ? [remembered, ...list.filter(p => p !== remembered)] : list;
+  const rest = list.filter(p => p !== remembered && p !== skip);
+  const ordered = remembered && remembered !== skip ? [remembered, ...rest] : rest;
 
   for (let i = 0; i < Math.min(ordered.length, 48); i += 8) {
     const batch = ordered.slice(i, i + 8);
@@ -122,12 +123,20 @@ export default async function handler(req, res) {
   try {
     if (via) {
       /* A playlist names the proxy that fetched it, so its segments go the
-         same way instead of each one searching the pool again. */
-      usedProxy = via;
-      upstream = await get(targetUrl.toString(), headers, via, 15000);
-      if (!upstream.ok && needsResidential(targetUrl.hostname)) {
-        const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
+         same way instead of each one searching the pool again. Public proxies
+         die mid-stream, though, so a pinned one that throws or refuses is
+         dropped and the pool is searched again rather than failing the
+         segment — the player only sees a slower fetch, not an error. */
+      /* If a later request already replaced a dead pin, go the way that works. */
+      const pinned = known.get(targetUrl.hostname) || via;
+      usedProxy = pinned;
+      try { upstream = await get(targetUrl.toString(), headers, pinned, 8000); }
+      catch { upstream = null; }
+      if (!upstream || !upstream.ok) {
+        if (known.get(targetUrl.hostname) === pinned) known.delete(targetUrl.hostname);
+        const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname, pinned);
         if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
+        else if (!upstream) { upstream = await get(targetUrl.toString(), headers, null, 15000); usedProxy = ''; }
       }
     } else if (needsResidential(targetUrl.hostname)) {
       const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
