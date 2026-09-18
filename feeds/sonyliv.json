@@ -1,29 +1,72 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "05:45:08 18-09-2026",
+    "last update time": "10:27:55 18-09-2026",
     "matches": [
         {
-            "event_category": "Sports",
+            "event_category": "Cricket",
             "isLive": true,
-            "contentId": "1090541370_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024067/178961947665553_Asain_games_26_QF_Sri-Lanka-vs-Malaysia_live_landscape_thumb.jpg",
+            "contentId": "1090541371_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024066/1789618725032669_Asain_games_26_QF_IND_vs_JPN_live_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "ENG",
             "event_name": "20th Asian Games Aichi-Nagoya 2026",
-            "match_name": "Sri Lanka vs Malaysia - Quarter-Final - 18 Sep 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120306/Criclive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789733707~acl=/*~id=15738134535837372942178010829194~hmac=80d499cc5c1486c4cbd433c673a558c7b92644fbabbd031a28fc89dabde57bb1",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120306/Criclive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789733707~acl=/*~id=15738134535837372942178010829194~hmac=80d499cc5c1486c4cbd433c673a558c7b92644fbabbd031a28fc89dabde57bb1",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120306/Criclive1709/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789733707~acl=/*~id=15738134535837372942178010829194~hmac=80d499cc5c1486c4cbd433c673a558c7b92644fbabbd031a28fc89dabde57bb1"
+            "match_name": "India Women vs Japan Women - Quarter-Final - 18 Sep 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2105080/cricodi1809/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2105080/cricodi1809/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2105080/cricodi1809/ENG/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd"
         },
         {
-            "event_category": "Sports",
-            "isLive": false,
-            "contentId": 1090542750,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024037/1789570942343146_Asian_Game_26__IND_vs_JPN_Today_Promo_landscape.jpg",
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090541371_HIN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024066/1789618725032669_Asain_games_26_QF_IND_vs_JPN_live_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - 20th Asian Games Aichi-Nagoya 2026 - India vs Japan"
+            "audioLanguageName": "ENG",
+            "event_name": "20th Asian Games Aichi-Nagoya 2026",
+            "match_name": "India Women vs Japan Women - Quarter-Final - 18 Sep 2026 [HIN]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2105079/cricodi1809/HIN/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2105079/cricodi1809/HIN/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2105079/cricodi1809/HIN/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090541371_TAM",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024066/1789618725032669_Asain_games_26_QF_IND_vs_JPN_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "20th Asian Games Aichi-Nagoya 2026",
+            "match_name": "India Women vs Japan Women - Quarter-Final - 18 Sep 2026 [TAM]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2094590/cricodi1809/TAM/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2094590/cricodi1809/TAM/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2094590/cricodi1809/TAM/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090541371_TEL",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024066/1789618725032669_Asain_games_26_QF_IND_vs_JPN_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "20th Asian Games Aichi-Nagoya 2026",
+            "match_name": "India Women vs Japan Women - Quarter-Final - 18 Sep 2026 [TEL]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2043696/cricodi1809/TEL/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2043696/cricodi1809/TEL/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2043696/cricodi1809/TEL/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090541371_KAN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024066/1789618725032669_Asain_games_26_QF_IND_vs_JPN_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "20th Asian Games Aichi-Nagoya 2026",
+            "match_name": "India Women vs Japan Women - Quarter-Final - 18 Sep 2026 [KAN]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2037143/cricodi1809/KAN/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2037143/cricodi1809/KAN/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2037143/cricodi1809/KAN/std_lrh-800300010.m3u8?hdnea=exp=1789750673~acl=/*~id=21323000842149419224634589904653~hmac=deb68f5ad02f06febeca7ca9bdfe23166bdfcf667f44f6e5b2a5c956fe574dfd"
         },
         {
             "event_category": "Sports",
@@ -125,15 +168,6 @@
             "event_name": "Upcoming - PV Sindhu - Badminton - 20th Asian Games Aichi-Nagoya 2026"
         },
         {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090542857,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024095/17896636843861_AG26_promo_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - Women's Cricket - 20th Asian Games Aichi-Nagoya 2026"
-        },
-        {
             "event_category": "Hockey",
             "isLive": false,
             "contentId": 1090542858,
@@ -159,6 +193,15 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Wrestling - 20th Asian Games Aichi-Nagoya 2026"
+        },
+        {
+            "event_category": "Weightlifting",
+            "isLive": false,
+            "contentId": 1090542860,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000024098/1789671092809908_AG26_weightlifting_dated_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - Weightlifting - 20th Asian Games Aichi-Nagoya 2026"
         }
     ]
 }
