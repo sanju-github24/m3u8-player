@@ -2130,10 +2130,10 @@
       <!-- The gate. Hidden unless a tab is asked for and nothing has been
            unlocked; the password is checked on the server, never here. -->
       <div id="gateBox" style="display:none;flex-direction:column;gap:12px;padding:6px 2px">
-        <div style="font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85)">🔒 Enter the password to browse channels</div>
+        <div style="font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85)">🔒 Enter the password to browse
+          channels</div>
         <div id="gateMsg" style="display:none;font-size:.74rem;color:#fca5a5"></div>
-        <input class="ls-in" id="gateIn" type="password" autocomplete="current-password"
-          placeholder="Password" />
+        <input class="ls-in" id="gateIn" type="password" autocomplete="current-password" placeholder="Password" />
         <button class="ls-play" id="gateBtn">Unlock</button>
         <div style="font-size:.68rem;color:rgba(255,255,255,.35);text-align:center">
           Stays unlocked on this device for 12 hours.
@@ -2189,7 +2189,9 @@
       <!-- SonyLiv's live fixtures, read through the worker. Rebuilt on every
            visit rather than cached: the list is whatever is on air now. -->
       <div id="sonyTab" style="display:none">
-        <div id="sonyLoading" class="ch-loading"><div class="mini-spin"></div>Loading live matches…</div>
+        <div id="sonyLoading" class="ch-loading">
+          <div class="mini-spin"></div>Loading live matches…
+        </div>
         <div id="sonyErr" class="ch-err" style="display:none">
           ⚠ Nothing scheduled on SonyLiv right now. <a onclick="loadSony(true);return false">Retry</a>
         </div>
@@ -2199,7 +2201,9 @@
 
       <!-- FanCode's live fixtures, read through the worker. -->
       <div id="fcTab" style="display:none">
-        <div id="fcLoading" class="ch-loading"><div class="mini-spin"></div>Loading live matches…</div>
+        <div id="fcLoading" class="ch-loading">
+          <div class="mini-spin"></div>Loading live matches…
+        </div>
         <div id="fcErr" class="ch-err" style="display:none">
           ⚠ Nothing scheduled on FanCode right now. <a onclick="loadFc(true);return false">Retry</a>
         </div>
@@ -2211,29 +2215,36 @@
            no streams at all, so these cards say when a fixture is on and link
            to where it can be watched. -->
       <div id="willowTab" style="display:none">
-        <div id="willowLoading" class="ch-loading"><div class="mini-spin"></div>Loading schedule…</div>
+        <div id="willowLoading" class="ch-loading">
+          <div class="mini-spin"></div>Loading schedule…
+        </div>
         <div id="willowErr" class="ch-err" style="display:none">
           ⚠ Could not load the Willow schedule. <a onclick="loadWillow(true);return false">Retry</a>
         </div>
         <div id="willowGrid" class="ch-grid" style="display:none"></div>
-        <div id="willowNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
+        <div id="willowNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px">
+        </div>
       </div>
 
       <!-- Amazon's free live sport. Unlike Willow next door, these rows carry a
            stream and a ClearKey pair, so they play here rather than linking out. -->
       <div id="primeTab" style="display:none">
-        <div id="primeLoading" class="ch-loading"><div class="mini-spin"></div>Loading Prime sport…</div>
+        <div id="primeLoading" class="ch-loading">
+          <div class="mini-spin"></div>Loading Prime sport…
+        </div>
         <div id="primeErr" class="ch-err" style="display:none">
           ⚠ Could not load the Prime feed. <a onclick="loadPrime(true);return false">Retry</a>
         </div>
         <div id="primeGrid" class="ch-grid" style="display:none"></div>
-        <div id="primeNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
+        <div id="primeNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px">
+        </div>
       </div>
 
       <!-- iptv-org's public playlist. ~10,000 channels, so nothing is rendered
            until you search: painting them all locks the browser for seconds. -->
       <div id="iptvTab" style="display:none">
-        <input class="ls-in" id="iptvSearch" placeholder="Search 10,000+ channels — try &quot;bbc&quot;, &quot;kannada&quot;, &quot;news&quot;…" />
+        <input class="ls-in" id="iptvSearch"
+          placeholder="Search 10,000+ channels — try &quot;bbc&quot;, &quot;kannada&quot;, &quot;news&quot;…" />
         <div id="iptvStatus" class="ch-loading" style="display:none">
           <div class="mini-spin"></div><span id="iptvStatusText">Loading playlist…</span>
         </div>
@@ -2658,15 +2669,16 @@
 
     let _chMap = null;
     let _chMapPromise = null;
+    let _chMapFetchedAt = 0;
 
     async function getChMap() {
-      if (_chMap) return _chMap;
+      if (_chMap && Date.now() - _chMapFetchedAt < 60_000) return _chMap;
       if (_chMapPromise) return _chMapPromise;
       _chMapPromise = (async () => {
         const map = {};
         const [r1, r2] = await Promise.allSettled([
-          fetch(OLD_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null),
-          fetch(NEW_JSON_URL + '?_=' + Date.now()).then(r => r.ok ? r.json() : null)
+          fetch(OLD_JSON_URL + '?_=' + Date.now(), { cache: 'no-store', signal: AbortSignal.timeout(15000) }).then(r => r.ok ? r.json() : null),
+          fetch(NEW_JSON_URL + '?_=' + Date.now(), { cache: 'no-store', signal: AbortSignal.timeout(15000) }).then(r => r.ok ? r.json() : null)
         ]);
         if (r1.status === 'fulfilled' && r1.value) {
           const raw = Array.isArray(r1.value) ? r1.value : (r1.value.channels || []);
@@ -2683,7 +2695,6 @@
           const raw = Array.isArray(r2.value) ? r2.value : (r2.value.channels || []);
           raw.forEach(ch => {
             let url = ch.channel_url || '';
-            if (url.includes('?')) url = url.split('?')[0];
             if (ch.channel_id) map[ch.channel_id] = {
               id: ch.channel_id, name: ch.channel_name || 'Channel',
               url, keyId: ch.keyId || '', key: ch.key || '',
@@ -2691,10 +2702,16 @@
             };
           });
         }
+        if (!Object.keys(map).length) throw new Error('No channels received');
         _chMap = map;
+        _chMapFetchedAt = Date.now();
         return map;
       })();
-      return _chMapPromise;
+      try {
+        return await _chMapPromise;
+      } finally {
+        _chMapPromise = null;
+      }
     }
 
     // ── FanCode live-matches feed ──────────────────────────────
@@ -3009,7 +3026,7 @@
         card.title = `${c.name}${c.group ? ' · ' + c.group : ''}`;
         card.innerHTML =
           (c.logo ? `<img class="ch-logo" src="${c.logo}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`
-                  : `<div class="ch-logo"></div>`) +
+            : `<div class="ch-logo"></div>`) +
           `<div class="ch-name">${c.name.replace(/[<>&]/g, '')}</div>` +
           (c.country ? `<div class="ch-tag">${c.country}</div>` : '');
         card.onclick = () => playIptv(c);
@@ -3036,8 +3053,10 @@
 
       try {
         // A CORS refusal throws here; a dead stream answers with a status.
-        const r = await fetch(ch.url, { method: 'GET', headers: { Range: 'bytes=0-64' },
-                                        signal: AbortSignal.timeout(9000) });
+        const r = await fetch(ch.url, {
+          method: 'GET', headers: { Range: 'bytes=0-64' },
+          signal: AbortSignal.timeout(9000)
+        });
         if (!r.ok) {
           errMsg.textContent = `“${ch.name}” answered ${r.status}. Public IPTV entries go offline often — try another.`;
           err.style.display = 'flex';
@@ -3053,7 +3072,7 @@
         errMsg.textContent = e.name === 'TimeoutError'
           ? `“${ch.name}” did not respond. It is probably offline or geo-blocked.`
           : `“${ch.name}” refused this browser (no CORS, offline, or geo-blocked). `
-            + `Safari can often play these natively.`;
+          + `Safari can often play these natively.`;
         err.style.display = 'flex';
         return;
       }
@@ -3092,74 +3111,142 @@
      * about a day. When every channel here dies at once, that is why: replace
      * BB_TOKEN and nothing else. */
     let HOTSTAR_CHANNELS = [
-      { id: "bb-hindi", name: "Bigg Boss 24/7 — Hindi", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-hin-2026/93e0d4ee03b34575bbf8f8a55824de63/index_6.m3u8" },
-      { id: "bb-bangla", name: "Bigg Boss 24/7 — Bangla", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-ben-2026/d8b1f4b4b6ad493d845fb9669712ee6e/index_6.m3u8" },
-      { id: "bb-kannada", name: "Bigg Boss 24/7 — Kannada", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-kan-2026/511768cd9dab414aa551e9d15da2202b/index_6.m3u8" },
-      { id: "bb-malayalam", name: "Bigg Boss 24/7 — Malayalam", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-mal-2026/28fdd2300bf04a60ac3c3318ff009886/index_6.m3u8" },
-      { id: "bb-telugu", name: "Bigg Boss 24/7 — Telugu", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tel-2026/f129670ca03b4bb988c841f9bbdce777/index_6.m3u8" },
-      { id: "bb-tamil", name: "Bigg Boss 24/7 — Tamil", group: "Bigg Boss", logo: BB_LOGO,
-        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tam-2026/0e8f0050df134b708ab297477fbf0e86/index_6.m3u8" },
-      { id: "tata-ipl-live-tv", name: "TATA IPL Live TV", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/out/v1/llg-tv-mum/1540072843_hindi_5e0a66fc/gec-india_hls_unencrypted/master-ap-1080-4.m3u8" },
-      { id: "savdhaan-india-crime-24-7", name: "Savdhaan India: Crime 24/7", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/out/v1/llg-tv-mum/1540077800_hindi_7537fdaa/gec-india_hls_unencrypted/master-ap-1080-4.m3u8" },
-      { id: "star-sports-khel", name: "Star Sports Khel Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540073624/4a56d383d1074f3d908a7f9b7a3321f1/index.mpd", keyId: "c57bd6cb156c47c1bf86a6c4171d0000", key: "e75d26242c9944aeb91e055d0f29ee4b" },
-      { id: "star-sports-1", name: "Star Sports 1 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068247/9a6e7c30f9194cc1a6a6250cedb115fb/index.mpd", keyId: "e85897bf6e594d698b7c82646c8e0000", key: "d2dda31234ae40538843e871cd4dcc2a" },
-      { id: "star-sports-2", name: "Star Sports 2 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068250/1d0752e2f605404886fec4ab49cc3350/index.mpd", keyId: "14d0c8ee09944c32bafea44a987d0000", key: "74d35f4034b14854bd3ca83dd3aa2fb1" },
-      { id: "star-sports-1-hindi", name: "Star Sports 1 Hindi Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068295/5a4eb3ac6e424eef8a30962d2232f80f/index.mpd", keyId: "b9f1cb8a1361457bbd8097f8c2590000", key: "1960274b7ba344cb899eba2e80916774" },
-      { id: "star-sports-2-hindi", name: "Star Sports 2 Hindi Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068298/9f99e1af0bdc465b8a3015e3a1a689d8/index.mpd", keyId: "effcadcbcc634296a6cf65e231f10000", key: "569c794c69ea496e9ad1887f557ea4dc" },
-      { id: "star-sports-1-tamil", name: "Star Sports 1 Tamil Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068334/3468fd902b12418598cabe63585e7efe/index.mpd", keyId: "01cc63d414394296bb3e6cfaffee0000", key: "c1fba587fc8b4218ade5ace1e62e5aaf" },
-      { id: "star-sports-2-tamil", name: "Star Sports 2 Tamil Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068337/9e957d4aa8054fdfa75a02de6c38e8d0/index.mpd", keyId: "8cecd7ec1ee04eecb49ddbdc8c420000", key: "499ea72b59f14337a0acb057cd9dffc0" },
-      { id: "star-sports-1-telugu", name: "Star Sports 1 Telugu Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068280/e8c0ed405e544793a1f827c477839581/index.mpd", keyId: "4634b32328f242e3be51c3e06cde0000", key: "42e90ab215bf4a438b55851b5e0f50dc" },
-      { id: "star-sports-2-telugu", name: "Star Sports 2 Telugu Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068283/9fdb797729344658957bd7382590c557/index.mpd", keyId: "4de245d511444b37a263c1d86ce70000", key: "b326780ffb3d4dcf8d30fbc0f3008a22" },
-      { id: "star-sports-1-kannada", name: "Star Sports 1 Kannada Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068322/6409ab04235d4a0886656913f360c0a7/index.mpd", keyId: "eb2f9710abf44bb1bcf51400ccc00000", key: "5f29f372823346e78934431f2a924065" },
-      { id: "star-sports-2-kannada", name: "Star Sports 2 Kannada Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068325/822fe9161d924f25a8f14d9a4e6f1b34/index.mpd", keyId: "ae315fa52d544372a525f8b947a50000", key: "8224183f754244c09664e825535aea4e" },
-      { id: "star-sports-3", name: "Star Sports 3 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068301/c776132a964441e1b929b2c0451222af/index.mpd", keyId: "f718ac1c70414b7ead6ebffa05fa0000", key: "7b3a3cb3eda946de88aa44bbaaa179bb" },
-      { id: "star-sports-select-1", name: "Star Sports Select 1 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068723/bf078703201f419b89e87fedda08b8f1/index.mpd", keyId: "ae3b1efc6eee47fa90e0360b16ad0000", key: "3c8be3ec7a4e4ab6994725420d95f971" },
-      { id: "star-sports-select-2", name: "Star Sports Select 2 Digital", group: "Sports", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068726/07582d46912e46cbb5f802923a0257d1/index.mpd", keyId: "9bced3f4d794419e99012ad6c1090000", key: "c4c7f22fc71445c28ea15cb3fdb1b3be" },
-      { id: "star-plus", name: "Star Plus Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068289/6479fde4af2c441087fba8aa8a6b7b65/index.mpd", keyId: "f7bbfeaf9f7f4cada833072e21ed0000", key: "d67f3522fb5a4b1d96daba62990a214e" },
-      { id: "star-jalsha", name: "Star Jalsha Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068265/c4602383aada4e3fb92f0f0740187c66/index.mpd", keyId: "2042ab988f5e4d95b03f9a01933c0000", key: "3873b7044900428cb019fee9d14fd14a" },
-      { id: "star-maa", name: "Star Maa Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068277/f9eb70f10233442f82a6e3c4e8b2df70/index.mpd", keyId: "3a6865c2eb484c57806a76e2719b0000", key: "97c95a3bbfd344d9a16d96bad4f42ad7" },
-      { id: "star-pravah", name: "Star Pravah Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068310/f72c707651fa4b55a913511378ee7d09/index.mpd", keyId: "f7efc99766e643e687b1a228ae000000", key: "6d45b6ab1b2840be943c8a99e8a0a0e5" },
-      { id: "star-vijay", name: "Star Vijay Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068331/e2defeea709d42799aee76fe0d59bbe8/index.mpd", keyId: "3d16a12b7fe0423d87e00c231d710000", key: "f6aeb5898e5c4d8bab629a9de8befa12" },
-      { id: "vijay-super", name: "Vijay Super Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068340/fcf299d934c2434b812dbf26d16355e8/index.mpd", keyId: "08e4a1c2f55d4ed4878110a640920000", key: "23dc3107bf284a0dbd93b1dc9f142459" },
-      { id: "star-suvarna", name: "Star Suvarna Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068319/ae448c47ad3e4f2c9059f6fcfe4fbdc9/index.mpd", keyId: "d33b34f86a214120a3850f04a11e0000", key: "36245c3005ce4f94a6d927d435508019" },
-      { id: "asianet", name: "Asianet Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068259/16bbee01f356442bb4ec4d6b021c20e2/index.mpd", keyId: "31a5c9e538e0462b9424921dd21d0000", key: "117c7548f5574b638411c138fd3e2ed6" },
-      { id: "asianet-plus", name: "Asianet Plus Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068714/d1405aea010f40739f1521c6c5b48fc0/index.mpd", keyId: "bfe3e4a7670e416d85261d002c3a0000", key: "25955bb289a94ef5978ffa689eea066d" },
-      { id: "colors", name: "Colors Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp2/gec-india-1540068292/51e8ee3bc81a4d4cbd1cfde7f4748fc2/index.mpd", keyId: "f762f7bf6bf04c999f861cc3dafe0000", key: "25ec2364467f40b09fc1e9a7c1e72058" },
-      { id: "colors-kannada", name: "Colors Kannada Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068316/2933e227fb43430cad08b7778ec85e41/index.mpd", keyId: "2427721df70c4992b6e2cf7d2abf0000", key: "fb1d4dc6142344278550d82972ae003b" },
-      { id: "colors-bangla", name: "Colors Bangla Digital", group: "Entertainment", logo: "",
-        url: "https://livetv.hotstar.com/mp1/gec-india-1540068268/f1fd9ca8ce4f41ddb1e53cf019864c0f/index.mpd", keyId: "4221bf5c8de94ff792982ee906a20000", key: "d53a4b3ab73f454c8b7a4e7b7454fd97" },
+      {
+        id: "bb-hindi", name: "Bigg Boss 24/7 — Hindi", group: "Bigg Boss", logo: BB_LOGO,
+        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-hin-2026/93e0d4ee03b34575bbf8f8a55824de63/index_6.m3u8"
+      },
+      {
+        id: "bb-bangla", name: "Bigg Boss 24/7 — Bangla", group: "Bigg Boss", logo: BB_LOGO,
+        url: "https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-ben-2026/d8b1f4b4b6ad493d845fb9669712ee6e/index_6.m3u8"
+      },
+      {
+        id: "bb-kannada", name: "Bigg Boss 24/7 — Kannada", group: "Bigg Boss", logo: BB_LOGO,
+        url: "https://live09p.hotstar.com/mp1/incagbsgallow-biggboss-kan-2026/511768cd9dab414aa551e9d15da2202b/index_6.m3u8"
+      },
+      {
+        id: "bb-malayalam", name: "Bigg Boss 24/7 — Malayalam", group: "Bigg Boss", logo: BB_LOGO,
+        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-mal-2026/28fdd2300bf04a60ac3c3318ff009886/index_6.m3u8"
+      },
+      {
+        id: "bb-telugu", name: "Bigg Boss 24/7 — Telugu", group: "Bigg Boss", logo: BB_LOGO,
+        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tel-2026/f129670ca03b4bb988c841f9bbdce777/index_6.m3u8"
+      },
+      {
+        id: "bb-tamil", name: "Bigg Boss 24/7 — Tamil", group: "Bigg Boss", logo: BB_LOGO,
+        url: "https://live09p.hotstar.com/mp2/incagbsgallow-biggboss-tam-2026/0e8f0050df134b708ab297477fbf0e86/index_6.m3u8"
+      },
+      {
+        id: "tata-ipl-live-tv", name: "TATA IPL Live TV", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/out/v1/llg-tv-mum/1540072843_hindi_5e0a66fc/gec-india_hls_unencrypted/master-ap-1080-4.m3u8"
+      },
+      {
+        id: "savdhaan-india-crime-24-7", name: "Savdhaan India: Crime 24/7", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/out/v1/llg-tv-mum/1540077800_hindi_7537fdaa/gec-india_hls_unencrypted/master-ap-1080-4.m3u8"
+      },
+      {
+        id: "star-sports-khel", name: "Star Sports Khel Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540073624/4a56d383d1074f3d908a7f9b7a3321f1/index.mpd", keyId: "c57bd6cb156c47c1bf86a6c4171d0000", key: "e75d26242c9944aeb91e055d0f29ee4b"
+      },
+      {
+        id: "star-sports-1", name: "Star Sports 1 Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068247/9a6e7c30f9194cc1a6a6250cedb115fb/index.mpd", keyId: "e85897bf6e594d698b7c82646c8e0000", key: "d2dda31234ae40538843e871cd4dcc2a"
+      },
+      {
+        id: "star-sports-2", name: "Star Sports 2 Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068250/1d0752e2f605404886fec4ab49cc3350/index.mpd", keyId: "14d0c8ee09944c32bafea44a987d0000", key: "74d35f4034b14854bd3ca83dd3aa2fb1"
+      },
+      {
+        id: "star-sports-1-hindi", name: "Star Sports 1 Hindi Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068295/5a4eb3ac6e424eef8a30962d2232f80f/index.mpd", keyId: "b9f1cb8a1361457bbd8097f8c2590000", key: "1960274b7ba344cb899eba2e80916774"
+      },
+      {
+        id: "star-sports-2-hindi", name: "Star Sports 2 Hindi Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068298/9f99e1af0bdc465b8a3015e3a1a689d8/index.mpd", keyId: "effcadcbcc634296a6cf65e231f10000", key: "569c794c69ea496e9ad1887f557ea4dc"
+      },
+      {
+        id: "star-sports-1-tamil", name: "Star Sports 1 Tamil Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068334/3468fd902b12418598cabe63585e7efe/index.mpd", keyId: "01cc63d414394296bb3e6cfaffee0000", key: "c1fba587fc8b4218ade5ace1e62e5aaf"
+      },
+      {
+        id: "star-sports-2-tamil", name: "Star Sports 2 Tamil Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068337/9e957d4aa8054fdfa75a02de6c38e8d0/index.mpd", keyId: "8cecd7ec1ee04eecb49ddbdc8c420000", key: "499ea72b59f14337a0acb057cd9dffc0"
+      },
+      {
+        id: "star-sports-1-telugu", name: "Star Sports 1 Telugu Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068280/e8c0ed405e544793a1f827c477839581/index.mpd", keyId: "4634b32328f242e3be51c3e06cde0000", key: "42e90ab215bf4a438b55851b5e0f50dc"
+      },
+      {
+        id: "star-sports-2-telugu", name: "Star Sports 2 Telugu Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068283/9fdb797729344658957bd7382590c557/index.mpd", keyId: "4de245d511444b37a263c1d86ce70000", key: "b326780ffb3d4dcf8d30fbc0f3008a22"
+      },
+      {
+        id: "star-sports-1-kannada", name: "Star Sports 1 Kannada Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068322/6409ab04235d4a0886656913f360c0a7/index.mpd", keyId: "eb2f9710abf44bb1bcf51400ccc00000", key: "5f29f372823346e78934431f2a924065"
+      },
+      {
+        id: "star-sports-2-kannada", name: "Star Sports 2 Kannada Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068325/822fe9161d924f25a8f14d9a4e6f1b34/index.mpd", keyId: "ae315fa52d544372a525f8b947a50000", key: "8224183f754244c09664e825535aea4e"
+      },
+      {
+        id: "star-sports-3", name: "Star Sports 3 Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068301/c776132a964441e1b929b2c0451222af/index.mpd", keyId: "f718ac1c70414b7ead6ebffa05fa0000", key: "7b3a3cb3eda946de88aa44bbaaa179bb"
+      },
+      {
+        id: "star-sports-select-1", name: "Star Sports Select 1 Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068723/bf078703201f419b89e87fedda08b8f1/index.mpd", keyId: "ae3b1efc6eee47fa90e0360b16ad0000", key: "3c8be3ec7a4e4ab6994725420d95f971"
+      },
+      {
+        id: "star-sports-select-2", name: "Star Sports Select 2 Digital", group: "Sports", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068726/07582d46912e46cbb5f802923a0257d1/index.mpd", keyId: "9bced3f4d794419e99012ad6c1090000", key: "c4c7f22fc71445c28ea15cb3fdb1b3be"
+      },
+      {
+        id: "star-plus", name: "Star Plus Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068289/6479fde4af2c441087fba8aa8a6b7b65/index.mpd", keyId: "f7bbfeaf9f7f4cada833072e21ed0000", key: "d67f3522fb5a4b1d96daba62990a214e"
+      },
+      {
+        id: "star-jalsha", name: "Star Jalsha Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068265/c4602383aada4e3fb92f0f0740187c66/index.mpd", keyId: "2042ab988f5e4d95b03f9a01933c0000", key: "3873b7044900428cb019fee9d14fd14a"
+      },
+      {
+        id: "star-maa", name: "Star Maa Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068277/f9eb70f10233442f82a6e3c4e8b2df70/index.mpd", keyId: "3a6865c2eb484c57806a76e2719b0000", key: "97c95a3bbfd344d9a16d96bad4f42ad7"
+      },
+      {
+        id: "star-pravah", name: "Star Pravah Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068310/f72c707651fa4b55a913511378ee7d09/index.mpd", keyId: "f7efc99766e643e687b1a228ae000000", key: "6d45b6ab1b2840be943c8a99e8a0a0e5"
+      },
+      {
+        id: "star-vijay", name: "Star Vijay Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068331/e2defeea709d42799aee76fe0d59bbe8/index.mpd", keyId: "3d16a12b7fe0423d87e00c231d710000", key: "f6aeb5898e5c4d8bab629a9de8befa12"
+      },
+      {
+        id: "vijay-super", name: "Vijay Super Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068340/fcf299d934c2434b812dbf26d16355e8/index.mpd", keyId: "08e4a1c2f55d4ed4878110a640920000", key: "23dc3107bf284a0dbd93b1dc9f142459"
+      },
+      {
+        id: "star-suvarna", name: "Star Suvarna Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068319/ae448c47ad3e4f2c9059f6fcfe4fbdc9/index.mpd", keyId: "d33b34f86a214120a3850f04a11e0000", key: "36245c3005ce4f94a6d927d435508019"
+      },
+      {
+        id: "asianet", name: "Asianet Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068259/16bbee01f356442bb4ec4d6b021c20e2/index.mpd", keyId: "31a5c9e538e0462b9424921dd21d0000", key: "117c7548f5574b638411c138fd3e2ed6"
+      },
+      {
+        id: "asianet-plus", name: "Asianet Plus Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068714/d1405aea010f40739f1521c6c5b48fc0/index.mpd", keyId: "bfe3e4a7670e416d85261d002c3a0000", key: "25955bb289a94ef5978ffa689eea066d"
+      },
+      {
+        id: "colors", name: "Colors Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp2/gec-india-1540068292/51e8ee3bc81a4d4cbd1cfde7f4748fc2/index.mpd", keyId: "f762f7bf6bf04c999f861cc3dafe0000", key: "25ec2364467f40b09fc1e9a7c1e72058"
+      },
+      {
+        id: "colors-kannada", name: "Colors Kannada Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068316/2933e227fb43430cad08b7778ec85e41/index.mpd", keyId: "2427721df70c4992b6e2cf7d2abf0000", key: "fb1d4dc6142344278550d82972ae003b"
+      },
+      {
+        id: "colors-bangla", name: "Colors Bangla Digital", group: "Entertainment", logo: "",
+        url: "https://livetv.hotstar.com/mp1/gec-india-1540068268/f1fd9ca8ce4f41ddb1e53cf019864c0f/index.mpd", keyId: "4221bf5c8de94ff792982ee906a20000", key: "d53a4b3ab73f454c8b7a4e7b7454fd97"
+      },
     ];
 
     /* The worker doubles as the HLS proxy — same endpoint as the channel feed,
@@ -3415,7 +3502,7 @@
 
     function showGate(show) {
       $('gateBox').style.display = show ? 'flex' : 'none';
-      ['customTab','liveTvTab','bbTab','sonyTab','fcTab','willowTab','iptvTab'].forEach(id => {
+      ['customTab', 'liveTvTab', 'bbTab', 'sonyTab', 'fcTab', 'willowTab', 'iptvTab'].forEach(id => {
         if (show && $(id)) $(id).style.display = 'none';
       });
       if (show) setTimeout(() => $('gateIn').focus(), 50);
@@ -3522,7 +3609,7 @@
       try { window.parent.postMessage({ type }, '*'); } catch { /* cross-origin */ }
     }
     function announcePlaying() { announce('anchor:playing'); }
-    function announceError()   { announce('anchor:error'); }
+    function announceError() { announce('anchor:error'); }
 
     function showLauncher() {
       if (SOLO) {
