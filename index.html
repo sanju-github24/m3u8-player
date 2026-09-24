@@ -3748,6 +3748,7 @@
       grid.innerHTML = '';
       _willowList.forEach((m) => {
         const playable = !!m.url;
+        const servers = Array.isArray(m.servers) ? m.servers.filter(s => s && s.url) : [];
         const card = document.createElement('div');
         card.className = 'ch-card';
         card.innerHTML = `
@@ -3757,10 +3758,28 @@
       <span class="ch-name">${m.name}</span>
       <span class="ch-tag">${playable ? '🔴 ' + (m.event || 'Live now') : '🗓 ' + (m.start || 'Scheduled')}</span>`;
         if (playable) {
-          card.onclick = () => playWillow(m.id);       // ← plays now, doesn't redirect
+          /* Multiple CDN servers (Alpha/Bravo) — show picker buttons */
+          if (servers.length > 1) {
+            const btnWrap = document.createElement('div');
+            btnWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;justify-content:center';
+            servers.forEach((srv, i) => {
+              const btn = document.createElement('button');
+              btn.textContent = srv.name || ('S' + (i + 1));
+              btn.style.cssText = 'font-size:.6rem;padding:2px 6px;border-radius:4px;' +
+                'border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);' +
+                'color:rgba(255,255,255,.75);cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap';
+              btn.onclick = (e) => { e.stopPropagation(); playWillowUrl(m, srv.url); };
+              btnWrap.appendChild(btn);
+            });
+            card.appendChild(btnWrap);
+            card.onclick = () => playWillowUrl(m, servers[0].url);
+          } else {
+            card.onclick = () => playWillow(m.id);
+          }
         } else {
+          /* Upcoming: dimmed, no link */
           card.style.opacity = '.55';
-          card.onclick = () => showToast('No stream is available for this fixture yet.', 4000);
+          card.style.cursor = 'default';
         }
         grid.appendChild(card);
       });
@@ -3778,12 +3797,23 @@
         announceError();
         return;
       }
+      playWillowUrl(m, m.url);
+    }
+
+    /* All Willow streams are DASH + ClearKey (Amazon CDN).
+       CRITICAL: pass drm.proxy — NOT viaWorker(url) directly.
+       drm.proxy makes Shaka's request filter rewrite EVERY request
+       (manifest + all segments) through the worker.
+       viaWorker would only proxy the manifest; segments go direct → CORS/403. */
+    function playWillowUrl(m, url) {
       _playingChannelId = null;
       _playingChannelLogo = m.poster || null;
       const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
-      if (primeDirect(m.url)) return loadVideo(m.url, m.name, false, drm);
+      if (primeDirect(url)) {
+        return loadVideo(url, m.name, false, drm);
+      }
       const base = LOCAL_PROXY || IN_PROXY || NEW_JSON_URL;
-      return loadVideo(m.url, m.name, false, { ...drm, proxy: { base } });
+      return loadVideo(url, m.name, false, { ...drm, proxy: { base } });
     }
 
     // ══════════════════════════════════════════════════════════
