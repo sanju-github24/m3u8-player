@@ -3748,7 +3748,6 @@
       grid.innerHTML = '';
       _willowList.forEach((m) => {
         const playable = !!m.url;
-        const servers = Array.isArray(m.servers) ? m.servers.filter(s => s && s.url) : [];
         const card = document.createElement('div');
         card.className = 'ch-card';
         card.innerHTML = `
@@ -3758,26 +3757,8 @@
       <span class="ch-name">${m.name}</span>
       <span class="ch-tag">${playable ? '🔴 ' + (m.event || 'Live now') : '🗓 ' + (m.start || 'Scheduled')}</span>`;
         if (playable) {
-          /* Multiple CDN servers (Alpha/Bravo) — show picker buttons */
-          if (servers.length > 1) {
-            const btnWrap = document.createElement('div');
-            btnWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;justify-content:center';
-            servers.forEach((srv, i) => {
-              const btn = document.createElement('button');
-              btn.textContent = srv.name || ('S' + (i + 1));
-              btn.style.cssText = 'font-size:.6rem;padding:2px 6px;border-radius:4px;' +
-                'border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);' +
-                'color:rgba(255,255,255,.75);cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap';
-              btn.onclick = (e) => { e.stopPropagation(); playWillowUrl(m, srv.url); };
-              btnWrap.appendChild(btn);
-            });
-            card.appendChild(btnWrap);
-            card.onclick = () => playWillowUrl(m, servers[0].url);
-          } else {
-            card.onclick = () => playWillow(m.id);
-          }
+          card.onclick = () => playWillow(m.id);       // ← plays now, doesn't redirect
         } else {
-          /* Upcoming: dimmed, no link */
           card.style.opacity = '.55';
           card.style.cursor = 'default';
         }
@@ -3797,23 +3778,20 @@
         announceError();
         return;
       }
-      playWillowUrl(m, m.url);
-    }
-
-    /* All Willow streams are DASH + ClearKey (Amazon CDN).
-       CRITICAL: pass drm.proxy — NOT viaWorker(url) directly.
-       drm.proxy makes Shaka's request filter rewrite EVERY request
-       (manifest + all segments) through the worker.
-       viaWorker would only proxy the manifest; segments go direct → CORS/403. */
-    function playWillowUrl(m, url) {
       _playingChannelId = null;
       _playingChannelLogo = m.poster || null;
       const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
-      if (primeDirect(url)) {
-        return loadVideo(url, m.name, false, drm);
+
+      // Prefer direct CORS-enabled CDN (e.g. Cloudfront on bia-cf.live.pv-cdn.net)
+      let streamUrl = m.url;
+      if (m.servers && m.servers.length) {
+        const direct = m.servers.find(s => primeDirect(s.url));
+        if (direct) streamUrl = direct.url;
       }
+
+      if (primeDirect(streamUrl)) return loadVideo(streamUrl, m.name, false, drm);
       const base = LOCAL_PROXY || IN_PROXY || NEW_JSON_URL;
-      return loadVideo(url, m.name, false, { ...drm, proxy: { base } });
+      return loadVideo(streamUrl, m.name, false, { ...drm, proxy: { base } });
     }
 
     // ══════════════════════════════════════════════════════════
@@ -3904,15 +3882,22 @@
 
       const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
 
-      if (primeDirect(m.url)) {
-        return loadVideo(m.url, m.name, false, drm);
+      // Prefer direct CORS-enabled CDN (e.g. Cloudfront on bia-cf.live.pv-cdn.net)
+      let streamUrl = m.url;
+      if (m.servers && m.servers.length) {
+        const direct = m.servers.find(s => primeDirect(s.url));
+        if (direct) streamUrl = direct.url;
+      }
+
+      if (primeDirect(streamUrl)) {
+        return loadVideo(streamUrl, m.name, false, drm);
       }
 
       /* No ref or ua on the proxy here, deliberately. The worker sends the
          target its own origin back when it is given no referer to derive one
          from, and that is the only Origin these CDNs accept. */
       const base = LOCAL_PROXY || IN_PROXY || NEW_JSON_URL;
-      return loadVideo(m.url, m.name, false, { ...drm, proxy: { base } });
+      return loadVideo(streamUrl, m.name, false, { ...drm, proxy: { base } });
     }
 
     // ══════════════════════════════════════════════════════════
@@ -4599,26 +4584,9 @@
         abr: { enabled: true },
       };
       if (drm && drm.keyId && drm.key) {
-        /* Amazon streams carry Widevine + PlayReady PSSH boxes in the MPD, but
-           the DRM keys are pre-extracted and supplied as a ClearKey pair.
-           Shaka must use org.w3.clearkey — if it tries Widevine/PlayReady it
-           contacts the Amazon license server (prls.atv-ps.amazon.com) which
-           returns 401, causing Error 1001.
-           
-           Setting clearKeys alone is not enough because Shaka still picks
-           Widevine when it sees a Widevine PSSH. We must also configure
-           drm.preferredKeySystems to put clearkey first so Shaka skips
-           Widevine/PlayReady entirely. */
-        const keyId = drm.keyId.toLowerCase().replace(/-/g, '');
-        const key   = drm.key.toLowerCase().replace(/-/g, '');
-        cfg.drm = {
-          clearKeys: { [keyId]: key },
-          preferredKeySystems: ['org.w3.clearkey'],
-          advanced: {
-            'com.widevine.alpha':    { serverCertificate: null },
-            'com.microsoft.playready': { videoRobustness: '' },
-          },
-        };
+        const kid = String(drm.keyId).replace(/-/g, '').toLowerCase().trim();
+        const key = String(drm.key).replace(/-/g, '').toLowerCase().trim();
+        cfg.drm = { clearKeys: { [kid]: key } };
         drmBadge.style.display = 'flex';
       }
       shakaInst.configure(cfg);
