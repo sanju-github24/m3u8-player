@@ -4599,7 +4599,26 @@
         abr: { enabled: true },
       };
       if (drm && drm.keyId && drm.key) {
-        cfg.drm = { clearKeys: { [drm.keyId.toLowerCase()]: drm.key.toLowerCase() } };
+        /* Amazon streams carry Widevine + PlayReady PSSH boxes in the MPD, but
+           the DRM keys are pre-extracted and supplied as a ClearKey pair.
+           Shaka must use org.w3.clearkey — if it tries Widevine/PlayReady it
+           contacts the Amazon license server (prls.atv-ps.amazon.com) which
+           returns 401, causing Error 1001.
+           
+           Setting clearKeys alone is not enough because Shaka still picks
+           Widevine when it sees a Widevine PSSH. We must also configure
+           drm.preferredKeySystems to put clearkey first so Shaka skips
+           Widevine/PlayReady entirely. */
+        const keyId = drm.keyId.toLowerCase().replace(/-/g, '');
+        const key   = drm.key.toLowerCase().replace(/-/g, '');
+        cfg.drm = {
+          clearKeys: { [keyId]: key },
+          preferredKeySystems: ['org.w3.clearkey'],
+          advanced: {
+            'com.widevine.alpha':    { serverCertificate: null },
+            'com.microsoft.playready': { videoRobustness: '' },
+          },
+        };
         drmBadge.style.display = 'flex';
       }
       shakaInst.configure(cfg);
@@ -4633,6 +4652,12 @@
       if (drm && drm.proxy) {
         const P = drm.proxy;
         shakaInst.getNetworkingEngine().registerRequestFilter((type, request) => {
+          /* License server requests must NOT be proxied — they need to go
+             direct (ClearKey handles them internally; Widevine/PlayReady
+             would reject a proxied request). */
+          const LICENSE = shaka.net.NetworkingEngine.RequestType.LICENSE;
+          if (type === LICENSE) return;
+
           request.uris = request.uris.map(uri => {
             if (uri.startsWith(P.base)) return uri;      // already ours
             if (!/^https?:/i.test(uri)) return uri;       // blob:, data:
