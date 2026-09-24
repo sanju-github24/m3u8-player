@@ -2211,9 +2211,7 @@
         <div id="fcNote" style="font-size:.7rem;color:rgba(255,255,255,.35);text-align:center;padding:12px 6px"></div>
       </div>
 
-      <!-- Willow's cricket schedule. A listing, not a source: its feed carries
-           no streams at all, so these cards say when a fixture is on and link
-           to where it can be watched. -->
+      <!-- Willow fixtures play here when the feed supplies a stream URL. -->
       <div id="willowTab" style="display:none">
         <div id="willowLoading" class="ch-loading">
           <div class="mini-spin"></div>Loading schedule…
@@ -3701,7 +3699,7 @@
       } else if (tabKey === 'willow') {
         await loadWillow();
         const m = (_willowList || []).find(x => String(x.id) === String(id));
-        if (m && m.url) return playWillow(m.id);
+        if (m) return playWillow(m.id);
       } else if (tabKey === 'prime') {
         await loadPrime();
         return;   // a schedule has nothing to start
@@ -3713,17 +3711,14 @@
           return loadVideo(ch.url, ch.name, false, { keyId: ch.keyId, key: ch.key, cookie: ch.cookie });
         }
       }
+      spin.classList.remove('on');
+      announceError();
       showToast('That item is no longer listed — showing the tab instead', 3500);
     }
 
     // ══════════════════════════════════════════════════════════
     // WILLOW CRICKET (schedule)
     // ══════════════════════════════════════════════════════════
-    /* What cricket is on this week. The feed behind it carries no streams —
-       every one of its stream fields is empty — so nothing here plays and
-       nothing pretends to; each card opens the page where its fixture can be
-       watched. It earns a tab because the other feeds know only their own few
-       hours, and this is the only thing that can say what is on Thursday. */
     let _willowLoaded = false, _willowList = null;
 
     async function loadWillow(force) {
@@ -3763,10 +3758,9 @@
       <span class="ch-tag">${playable ? '🔴 ' + (m.event || 'Live now') : '🗓 ' + (m.start || 'Scheduled')}</span>`;
         if (playable) {
           card.onclick = () => playWillow(m.id);       // ← plays now, doesn't redirect
-        } else if (m.link) {
-          card.onclick = () => window.open(m.link, '_blank', 'noopener');
         } else {
-          card.style.opacity = '.55'; card.style.cursor = 'default';
+          card.style.opacity = '.55';
+          card.onclick = () => showToast('No stream is available for this fixture yet.', 4000);
         }
         grid.appendChild(card);
       });
@@ -3777,8 +3771,13 @@
     }
 
     async function playWillow(id) {
-      const m = (_willowList || []).find(x => x.id === id);
-      if (!m || !m.url) return;
+      const m = (_willowList || []).find(x => String(x.id) === String(id));
+      if (!m || !m.url) {
+        spin.classList.remove('on');
+        showToast('No stream is available for this fixture yet.', 4000);
+        announceError();
+        return;
+      }
       _playingChannelId = null;
       _playingChannelLogo = m.poster || null;
       const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
