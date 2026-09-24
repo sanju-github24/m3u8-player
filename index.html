@@ -4654,6 +4654,11 @@
       }
       shakaInst.addEventListener('error', ev => {
         const ec = ev.detail;
+        // Ignore non-critical / recoverable errors (e.g. temporary buffer operations that Shaka automatically retries)
+        if (ec && ec.severity !== shaka.util.Error.Severity.CRITICAL) {
+          console.warn('Shaka non-critical warning:', ec);
+          return;
+        }
         spin.classList.remove('on');
         const msg = `Error ${ec.code}${ec.data && ec.data[0] ? ' — ' + String(ec.data[0]).slice(0, 80) : ''}`;
         errMsg.textContent = msg; err.style.display = 'flex'; showToast('⚠ ' + msg, 3000);
