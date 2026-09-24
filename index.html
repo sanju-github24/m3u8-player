@@ -3700,6 +3700,8 @@
         if (findHotstarChannel(id)) return playHotstar(id);
       } else if (tabKey === 'willow') {
         await loadWillow();
+        const m = (_willowList || []).find(x => String(x.id) === String(id));
+        if (m && m.url) return playWillow(m.id);
       } else if (tabKey === 'prime') {
         await loadPrime();
         return;   // a schedule has nothing to start
@@ -3722,7 +3724,7 @@
        nothing pretends to; each card opens the page where its fixture can be
        watched. It earns a tab because the other feeds know only their own few
        hours, and this is the only thing that can say what is on Thursday. */
-    let _willowLoaded = false;
+    let _willowLoaded = false, _willowList = null;
 
     async function loadWillow(force) {
       if (_willowLoaded && !force) return;
@@ -3746,9 +3748,11 @@
     }
 
     function renderWillow(live, soon, updated) {
+      _willowList = [...live, ...soon];
       const grid = $('willowGrid');
       grid.innerHTML = '';
-      [...live, ...soon].forEach((m) => {
+      _willowList.forEach((m) => {
+        const playable = !!m.url;
         const card = document.createElement('div');
         card.className = 'ch-card';
         card.innerHTML = `
@@ -3756,21 +3760,31 @@
         style="width:100%;height:74px;object-fit:cover;border-radius:6px"
         onerror="this.style.display='none'">
       <span class="ch-name">${m.name}</span>
-      <span class="ch-tag">🗓 ${m.start || 'Scheduled'}</span>`;
-        if (m.link) {
+      <span class="ch-tag">${playable ? '🔴 ' + (m.event || 'Live now') : '🗓 ' + (m.start || 'Scheduled')}</span>`;
+        if (playable) {
+          card.onclick = () => playWillow(m.id);       // ← plays now, doesn't redirect
+        } else if (m.link) {
           card.onclick = () => window.open(m.link, '_blank', 'noopener');
         } else {
-          card.style.opacity = '.55';
-          card.style.cursor = 'default';
+          card.style.opacity = '.55'; card.style.cursor = 'default';
         }
         grid.appendChild(card);
       });
       $('willowLoading').style.display = 'none';
       $('willowGrid').style.display = 'grid';
-      $('willowNote').textContent = ((live.length + soon.length) + ' fixtures')
-        + (updated ? ' · feed updated ' + updated : '')
-        + ' · opens where it can be watched';
+      $('willowNote').textContent = fixtureNote(live.length, soon.length, updated);
       linkBar('willowTab', 'willow', 'Willow');
+    }
+
+    async function playWillow(id) {
+      const m = (_willowList || []).find(x => x.id === id);
+      if (!m || !m.url) return;
+      _playingChannelId = null;
+      _playingChannelLogo = m.poster || null;
+      const drm = (m.keyId && m.key) ? { keyId: m.keyId, key: m.key } : {};
+      if (primeDirect(m.url)) return loadVideo(m.url, m.name, false, drm);
+      const base = LOCAL_PROXY || IN_PROXY || NEW_JSON_URL;
+      return loadVideo(m.url, m.name, false, { ...drm, proxy: { base } });
     }
 
     // ══════════════════════════════════════════════════════════
