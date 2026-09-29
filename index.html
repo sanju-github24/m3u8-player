@@ -782,7 +782,7 @@
       cursor: pointer;
       padding: 8px;
       border-radius: 8px;
-      font-size: #0.83rem;
+      font-size: 0.83rem;
       font-weight: 700;
       font-family: 'Inter', sans-serif;
       transition: background .15s
@@ -2170,26 +2170,34 @@
       <!-- TMDB / FilmU Stream Tab -->
       <div id="tmdbTab" style="display:none;flex-direction:column;gap:12px">
         <div style="display:flex;gap:8px">
-          <button id="tmdbTypeMovie" class="ls-demo on" style="flex:1;background:rgba(255,255,255,.18);font-weight:600;padding:8px" onclick="setTmdbType('movie')">🎬 Movie</button>
-          <button id="tmdbTypeTv" class="ls-demo" style="flex:1;background:rgba(255,255,255,.06);font-weight:600;padding:8px" onclick="setTmdbType('tv')">📺 TV Show</button>
+          <button id="tmdbTypeMovie" class="ls-demo on"
+            style="flex:1;background:rgba(255,255,255,.18);font-weight:600;padding:8px"
+            onclick="setTmdbType('movie')">🎬 Movie</button>
+          <button id="tmdbTypeTv" class="ls-demo"
+            style="flex:1;background:rgba(255,255,255,.06);font-weight:600;padding:8px" onclick="setTmdbType('tv')">📺
+            TV Show</button>
         </div>
         <input class="ls-in" id="tmdbIdIn" placeholder="TMDB ID, FilmU URL, or Title (e.g. 1726, 94997, Iron Man)" />
         <div id="tmdbTvFields" style="display:none;gap:8px">
           <div style="flex:1;display:flex;flex-direction:column;gap:4px">
             <span style="font-size:.72rem;color:rgba(255,255,255,.6);font-weight:600">SEASON</span>
-            <input class="ls-in" id="tmdbSeasonIn" type="number" min="1" value="1" placeholder="Season" style="padding:10px 14px;font-size:.85rem" />
+            <input class="ls-in" id="tmdbSeasonIn" type="number" min="1" value="1" placeholder="Season"
+              style="padding:10px 14px;font-size:.85rem" />
           </div>
           <div style="flex:1;display:flex;flex-direction:column;gap:4px">
             <span style="font-size:.72rem;color:rgba(255,255,255,.6);font-weight:600">EPISODE</span>
-            <input class="ls-in" id="tmdbEpisodeIn" type="number" min="1" value="1" placeholder="Episode" style="padding:10px 14px;font-size:.85rem" />
+            <input class="ls-in" id="tmdbEpisodeIn" type="number" min="1" value="1" placeholder="Episode"
+              style="padding:10px 14px;font-size:.85rem" />
           </div>
         </div>
         <button class="ls-play" id="tmdbPlayBtn" onclick="submitTmdbForm()">▶ Fetch & Play M3U8</button>
         <div class="ls-div">— Popular / Quick Play —</div>
         <div class="ls-demos" style="flex-wrap:wrap">
           <button class="ls-demo" onclick="quickPlayTmdb('1726','movie',1,1,'Iron Man')">🦸 Iron Man (1726)</button>
-          <button class="ls-demo" onclick="quickPlayTmdb('94997','tv',1,1,'House of the Dragon')">🐉 House of the Dragon</button>
-          <button class="ls-demo" onclick="quickPlayTmdb('155','movie',1,1,'The Dark Knight')">🦇 The Dark Knight</button>
+          <button class="ls-demo" onclick="quickPlayTmdb('94997','tv',1,1,'House of the Dragon')">🐉 House of the
+            Dragon</button>
+          <button class="ls-demo" onclick="quickPlayTmdb('155','movie',1,1,'The Dark Knight')">🦇 The Dark
+            Knight</button>
           <button class="ls-demo" onclick="quickPlayTmdb('1399','tv',1,1,'Game of Thrones')">⚔️ Game of Thrones</button>
           <button class="ls-demo" onclick="quickPlayTmdb('157336','movie',1,1,'Interstellar')">⏳ Interstellar</button>
         </div>
@@ -4861,453 +4869,503 @@
             bufferingGoal: 10, rebufferingGoal: 2, bufferBehind: 30,
             retryParameters: { maxAttempts: 1, baseDelay: 200, backoffFactor: 1, timeout: 6000 }
           },
-          manifest: { retryParameters: { maxAttempts: 1, baseDelay:    // ══════════════════════════════════════════════════════════
-    // TMDB & FILMU M3U8 STREAM FETCHER
-    // ══════════════════════════════════════════════════════════
-    let _currentTmdb = null;
-
-    function parseFilmuOrTmdbUrl(str) {
-      if (!str) return null;
-      const clean = str.trim();
-
-      // Match embed iframe or raw URL
-      const tvMatch = clean.match(/embed\.filmu\.in\/tv\/(\d+)(?:\/(\d+))?(?:\/(\d+))?/i);
-      if (tvMatch) {
-        return {
-          type: 'tv',
-          tmdbId: tvMatch[1],
-          season: tvMatch[2] || '1',
-          episode: tvMatch[3] || '1'
-        };
+          manifest: {
+            retryParameters: {
+              maxAttempts: 1, baseDelay:    200, backoffFactor: 1, timeout: 6000
+            }
+          }
+        });
+        await shakaInst.load(url);
+        spin.classList.remove('on');
+        isLiveStream = shakaInst.isLive();
+        if (isLiveStream) updateLiveBadge();
+        vid.play().catch(() => { vid.muted = true; vid.play().catch(() => { }); });
+      } catch (e) {
+        console.warn('Shaka HLS failed, falling back to native:', e);
+        try { if (shakaInst) { await shakaInst.destroy(); shakaInst = null; } } catch { }
+        playFancodeNative(url);
       }
+    }
+
+    function loadHLS(url) {
+      if (preferShakaHls(url)) { playFancode(url); return; }
+      const canNative = !!vid.canPlayType('application/vnd.apple.mpegurl');
+      if (typeof Hls === 'undefined' || !Hls.isSupported()) {
+        if (canNative) { playFancodeNative(url); return; }
+        spin.classList.remove('on');
+        errMsg.textContent = 'HLS is not supported in this browser.';
+        err.style.display = 'flex';
+        return;
+      }
+      hlsInst = new Hls({ enableWorker: true, maxBufferLength: 30, liveSyncDurationCount: 3 });
+      hlsInst.loadSource(url);
+      hlsInst.attachMedia(vid);
+      hlsInst.on(Hls.Events.MANIFEST_PARSED, () => {
+        buildHLSQual(); buildAudio();
+        spin.classList.remove('on');
+        vid.play().catch(() => { });
+      });
+      hlsInst.on(Hls.Events.LEVEL_LOADED, (_e, d) => {
+        if (d.details && d.details.live && !isLiveStream) { isLiveStream = true; updateLiveBadge(); }
+      });
+      hlsInst.on(Hls.Events.ERROR, (_e, d) => {
+        if (!d.fatal) return;
+        if (d.type === Hls.ErrorTypes.NETWORK_ERROR) { hlsInst.startLoad(); return; }
+        if (d.type === Hls.ErrorTypes.MEDIA_ERROR) { hlsInst.recoverMediaError(); return; }
+        spin.classList.remove('on');
+        errMsg.textContent = 'Stream error: ' + (d.details || 'unknown');
+        err.style.display = 'flex';
+        announceError();
+      });
+    }
+
+    // ══════════════════════════════════════════════════════════
+                // TMDB & FILMU M3U8 STREAM FETCHER
+                // ══════════════════════════════════════════════════════════
+                let _currentTmdb = null;
+
+              function parseFilmuOrTmdbUrl(str) {
+          if(!str) return null;
+          const clean = str.trim();
+
+          // Match embed iframe or raw URL
+          const tvMatch = clean.match(/embed\.filmu\.in\/tv\/(\d+)(?:\/(\d+))?(?:\/(\d+))?/i);
+          if(tvMatch) {
+            return {
+              type: 'tv',
+              tmdbId: tvMatch[1],
+              season: tvMatch[2] || '1',
+              episode: tvMatch[3] || '1'
+            };
+          }
 
       const movieMatch = clean.match(/embed\.filmu\.in\/movie\/(\d+)/i);
-      if (movieMatch) {
-        return {
-          type: 'movie',
-          tmdbId: movieMatch[1],
-          season: '1',
-          episode: '1'
-        };
-      }
+          if(movieMatch) {
+            return {
+              type: 'movie',
+              tmdbId: movieMatch[1],
+              season: '1',
+              episode: '1'
+            };
+          }
 
       const tmdbSiteMatch = clean.match(/themoviedb\.org\/(movie|tv)\/(\d+)/i);
-      if (tmdbSiteMatch) {
-        return {
-          type: tmdbSiteMatch[1],
-          tmdbId: tmdbSiteMatch[2],
-          season: '1',
-          episode: '1'
-        };
-      }
+          if(tmdbSiteMatch) {
+            return {
+              type: tmdbSiteMatch[1],
+              tmdbId: tmdbSiteMatch[2],
+              season: '1',
+              episode: '1'
+            };
+          }
 
       return null;
-    }
+        }
 
     let _selectedTmdbType = 'movie';
-    function setTmdbType(type) {
-      _selectedTmdbType = type;
-      $('tmdbTypeMovie').classList.toggle('on', type === 'movie');
-      $('tmdbTypeMovie').style.background = type === 'movie' ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.06)';
-      $('tmdbTypeTv').classList.toggle('on', type === 'tv');
-      $('tmdbTypeTv').style.background = type === 'tv' ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.06)';
-      $('tmdbTvFields').style.display = type === 'tv' ? 'flex' : 'none';
-    }
+        function setTmdbType(type) {
+          _selectedTmdbType = type;
+          $('tmdbTypeMovie').classList.toggle('on', type === 'movie');
+          $('tmdbTypeMovie').style.background = type === 'movie' ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.06)';
+          $('tmdbTypeTv').classList.toggle('on', type === 'tv');
+          $('tmdbTypeTv').style.background = type === 'tv' ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.06)';
+          $('tmdbTvFields').style.display = type === 'tv' ? 'flex' : 'none';
+        }
 
-    async function submitTmdbForm() {
-      const raw = $('tmdbIdIn').value.trim();
-      if (!raw) {
-        $('tmdbIdIn').style.borderColor = '#ff4757';
-        setTimeout(() => $('tmdbIdIn').style.borderColor = '', 2000);
-        return;
-      }
-      $('tmdbIdIn').style.borderColor = '';
-
-      const parsed = parseFilmuOrTmdbUrl(raw);
-      if (parsed) {
-        await playTmdb({
-          tmdbId: parsed.tmdbId,
-          type: parsed.type,
-          season: parseInt(parsed.season || '1', 10),
-          episode: parseInt(parsed.episode || '1', 10)
-        });
-        return;
-      }
-
-      const s = parseInt($('tmdbSeasonIn').value.trim() || '1', 10);
-      const e = parseInt($('tmdbEpisodeIn').value.trim() || '1', 10);
-      await playTmdb({
-        tmdbId: raw,
-        type: _selectedTmdbType,
-        season: s,
-        episode: e
-      });
-    }
-
-    async function quickPlayTmdb(id, type, s, e, title) {
-      $('tmdbIdIn').value = id;
-      setTmdbType(type);
-      if (type === 'tv') {
-        $('tmdbSeasonIn').value = s;
-        $('tmdbEpisodeIn').value = e;
-      }
-      await playTmdb({ tmdbId: id, type, season: s, episode: e, title });
-    }
-
-    async function playTmdb({ tmdbId, type = 'movie', season = 1, episode = 1, title = '' }) {
-      LS.style.display = 'none';
-      spin.classList.add('on');
-      showToast('⏳ Fetching M3U8 stream…', 4000);
-
-      _currentTmdb = { tmdbId, type, season, episode, title };
-
-      try {
-        let streamUrl = null;
-        let meta = null;
-        let episodes = [];
-
-        // 1. Worker feed attempt
-        try {
-          const workerUrl = `${NEW_JSON_URL}?feed=tmdb&id=${encodeURIComponent(tmdbId)}&type=${encodeURIComponent(type)}&season=${season}&episode=${episode}&title=${encodeURIComponent(title || '')}`;
-          const r = await fetch(workerUrl, { cache: 'no-store' });
-          if (r.ok) {
-            const data = await r.json();
-            if (data && data.streamUrl) {
-              streamUrl = data.streamUrl;
-              meta = data.meta;
-              episodes = data.episodes || [];
-            }
+        async function submitTmdbForm() {
+          const raw = $('tmdbIdIn').value.trim();
+          if (!raw) {
+            $('tmdbIdIn').style.borderColor = '#ff4757';
+            setTimeout(() => $('tmdbIdIn').style.borderColor = '', 2000);
+            return;
           }
-        } catch (we) {
-          console.warn('Worker tmdb feed error, trying fallback:', we);
-        }
+          $('tmdbIdIn').style.borderColor = '';
 
-        // 2. Fallback: Singularity direct with proxy
-        if (!streamUrl) {
-          try {
-            const singUrl = type === 'movie'
-              ? `https://embed.filmu.in/api/singularity-movie?id=${encodeURIComponent(tmdbId)}`
-              : `https://embed.filmu.in/api/singularity-tv?tmdb=${encodeURIComponent(tmdbId)}&s=${season}&e=${episode}`;
-            
-            const proxiedSing = `${NEW_JSON_URL}?url=${encodeURIComponent(singUrl)}&ref=${encodeURIComponent('https://embed.filmu.in/')}`;
-            const r = await fetch(proxiedSing);
-            if (r.ok) {
-              const d = await r.json();
-              const base = d._base || d.i || '';
-              if (d.sources && d.sources.length) {
-                streamUrl = d.sources[0].url;
-              } else if (d.m3u8_path) {
-                streamUrl = base ? `${base}/${d.m3u8_path.replace(/^\//, '')}` : d.m3u8_path;
-              }
-            }
-          } catch (se) {
-            console.warn('Singularity direct fallback error:', se);
-          }
-        }
-
-        // 3. Fallback: VidRock scraper with proxy
-        if (!streamUrl) {
-          try {
-            const scrapePath = `/scrape/VidRock/${type}/tmdb${tmdbId}?tmdbId=${tmdbId}&title=${encodeURIComponent(title || 'Stream')}&season=${season}&episode=${episode}`;
-            const vrUrl = `https://embed.filmu.in/api/proxy?path=${encodeURIComponent(scrapePath)}`;
-            const proxiedVr = `${NEW_JSON_URL}?url=${encodeURIComponent(vrUrl)}&ref=${encodeURIComponent('https://embed.filmu.in/')}`;
-            const r = await fetch(proxiedVr);
-            if (r.ok) {
-              const d = await r.json();
-              if (d.sources && d.sources.length) {
-                const m3u8 = d.sources.find(s => s.type === 'm3u8' || (s.url && s.url.includes('.m3u8'))) || d.sources[0];
-                if (m3u8 && m3u8.url) streamUrl = m3u8.url;
-              }
-            }
-          } catch (ve) {
-            console.warn('VidRock scraper fallback error:', ve);
-          }
-        }
-
-        if (!streamUrl) {
-          throw new Error('No stream found for TMDB ' + tmdbId);
-        }
-
-        // Metadata handling
-        const displayTitle = (meta && meta.title) || title || (type === 'tv' ? `TV Show (TMDB ${tmdbId})` : `Movie (TMDB ${tmdbId})`);
-        const subLabel = type === 'tv' ? `${displayTitle} · S${season} E${episode}` : displayTitle;
-
-        META.title = displayTitle;
-        if (meta) {
-          META.year = meta.year || '';
-          META.rating = meta.rating ? String(meta.rating) : '';
-          META.desc = meta.overview || '';
-          META.poster = meta.poster || '';
-          META.backdrop = meta.backdrop || '';
-          if (type === 'tv') META.showTitle = displayTitle;
-        }
-
-        if (type === 'tv') {
-          if (!episodes.length) {
-            episodes = Array.from({ length: Math.max(episode, 10) }, (_, i) => ({
-              season,
-              episode: i + 1,
-              title: `Episode ${i + 1}`
-            }));
+          const parsed = parseFilmuOrTmdbUrl(raw);
+          if (parsed) {
+            await playTmdb({
+              tmdbId: parsed.tmdbId,
+              type: parsed.type,
+              season: parseInt(parsed.season || '1', 10),
+              episode: parseInt(parsed.episode || '1', 10)
+            });
+            return;
           }
 
-          META.eps = episodes.map((ep, idx) => ({
-            t: ep.title || `Episode ${ep.episode || (idx + 1)}`,
-            p: ep.still || META.poster || '',
-            n: `S${season} E${ep.episode || (idx + 1)}`,
-            d: ep.overview || '',
-            tmdbId,
-            type: 'tv',
-            season: ep.season || season,
-            episode: ep.episode || (idx + 1)
-          }));
-          META.epIndex = Math.max(0, episode - 1);
-          epsBtn.style.display = 'flex';
-          renderEpisodes();
-        } else {
-          META.eps = [];
-          epsBtn.style.display = 'none';
-        }
-
-        syncPauseInfo();
-        showToast(`▶ Playing ${subLabel}`, 2500);
-
-        // Load stream into HLS / Native video player
-        loadVideo(streamUrl, subLabel, false, null);
-
-      } catch (err) {
-        console.error('playTmdb error:', err);
-        spin.classList.remove('on');
-        errMsg.textContent = 'Could not load TMDB stream. ' + (err.message || '');
-        err.style.display = 'flex';
-        showToast('⚠ Failed to fetch M3U8 stream', 3500);
-      }
-    }
-
-    playNow.addEventListener('click', granularityPlayback);
-    function granularityPlayback() {
-      const url = urlIn.value.trim();
-      if (!url) { urlIn.style.borderColor = '#ff4757'; setTimeout(() => urlIn.style.borderColor = '', 2000); return; }
-      urlIn.style.borderColor = '';
-
-      const parsed = parseFilmuOrTmdbUrl(url);
-      if (parsed) {
-        playTmdb({
-          tmdbId: parsed.tmdbId,
-          type: parsed.type,
-          season: parseInt(parsed.season || '1', 10),
-          episode: parseInt(parsed.episode || '1', 10),
-          title: titIn.value.trim()
-        });
-        return;
-      }
-
-      const type = detectUrlType(url);
-      let drm = null;
-      if (type === 'dash') {
-        const kid = keyIdIn.value.trim(), k = keyIn.value.trim(), ck = cookieIn.value.trim();
-        if (kid && k) drm = { keyId: kid, key: k, cookie: ck || null };
-      }
-      _playingChannelId = null; _playingChannelLogo = null;
-      loadVideo(url, titIn.value.trim(), false, drm);
-    }
-    urlIn.addEventListener('keydown', e => { if (e.key === 'Enter') playNow.click() });
-    $('tmdbIdIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
-    $('tmdbSeasonIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
-    $('tmdbEpisodeIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
-
-    function tryDemo(url, title) {
-      urlIn.value = url; titIn.value = title; drmFields.style.display = 'none';
-      _playingChannelId = null; _playingChannelLogo = null;
-      loadVideo(url, title);
-    }
-
-    function goBack() {
-      endHostSession();
-      if (SROLE === 'guest') { clearInterval(_pollT); clearInterval(_guestPingT); }
-      SROLE = null; SID = null;
-      showLauncher();
-      vid.pause();
-      isLiveStream = false;
-      liveBadge.style.display = 'none';
-      hideSessUI();
-      drmBadge.style.display = 'none';
-      history.replaceState(null, '', location.pathname);
-      destroyPlayers();
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // URL PARAMS — entry point
-    // ══════════════════════════════════════════════════════════
-    (async function checkParams() {
-      const q = new URLSearchParams(location.search);
-
-      parseMeta(q);
-
-      // TMDB / FilmU Direct URL Parameters (e.g. ?tmdb=1726, ?movie=1726, ?tv=94997&s=1&e=1)
-      const tmdbParam = q.get('tmdb') || q.get('movie') || q.get('tv');
-      if (tmdbParam) {
-        const type = q.get('tv') ? 'tv' : (q.get('type') || (q.get('movie') ? 'movie' : 'movie'));
-        const season = parseInt(q.get('season') || q.get('s') || '1', 10) || 1;
-        const episode = parseInt(q.get('episode') || q.get('e') || '1', 10) || 1;
-        const title = q.get('title') || q.get('t') || '';
-        await playTmdb({ tmdbId: tmdbParam, type, season, episode, title });
-        return;
-      }
-
-      // Check pathname for /movie/1726 or /tv/94997/1/1
-      const pathParsed = parseFilmuOrTmdbUrl(location.href);
-      if (pathParsed) {
-        await playTmdb({
-          tmdbId: pathParsed.tmdbId,
-          type: pathParsed.type,
-          season: parseInt(pathParsed.season || '1', 10),
-          episode: parseInt(pathParsed.episode || '1', 10)
-        });
-        return;
-      }
-
-      // Auto-fetch an episode list (e.g. from the MX worker) so the switcher appears
-      const epsrc = q.get('epsrc');
-      if (epsrc && !META.eps.length) loadEpsFrom(epsrc);
-      // If episodes were supplied, boot straight into the current episode.
-      if (META.eps.length && !q.get('url') && !q.get('src') && !q.get('chid') && !q.get('bundle')) {
-        const cur = META.eps[META.epIndex] || META.eps[0];
-        if (cur && cur.u) {
-          const label = (META.showTitle ? META.showTitle + ' · ' : '') + (cur.t || 'Episode ' + (META.epIndex + 1));
-          loadVideo(cur.u, label, false, null);
-          return;
-        }
-      }
-
-      const bundleRaw = q.get('bundle');
-      if (bundleRaw) { await handleBundleParam(bundleRaw); return; }
-
-      /* ?tab=tmdb|live|sony|fc|bb|willow|prime|iptv */
-      const tab = q.get('tab');
-      if (tab && TAB_KEYS[tab]) {
-        if (SOLO) { spin.classList.add('on'); } else { LS.style.display = 'flex'; }
-        switchTab(TAB_KEYS[tab]);
-        const wanted = q.get('id');
-        if (wanted) await openTabItem(TAB_KEYS[tab], wanted);
-        return;
-      }
-
-      const directUrl = q.get('url');
-      const directTitle = q.get('title');
-      if (directUrl) {
-        const parsedTmdb = parseFilmuOrTmdbUrl(directUrl);
-        if (parsedTmdb) {
+          const s = parseInt($('tmdbSeasonIn').value.trim() || '1', 10);
+          const e = parseInt($('tmdbEpisodeIn').value.trim() || '1', 10);
           await playTmdb({
-            tmdbId: parsedTmdb.tmdbId,
-            type: parsedTmdb.type,
-            season: parseInt(parsedTmdb.season || '1', 10),
-            episode: parseInt(parsedTmdb.episode || '1', 10),
-            title: directTitle || ''
+            tmdbId: raw,
+            type: _selectedTmdbType,
+            season: s,
+            episode: e
           });
-          return;
         }
-        loadVideo(directUrl, directTitle || 'Movie', false, null);
-        return;
-      }
 
-      const sid = q.get('sid');
-      const chid = q.get('chid');
-      const srcRaw = q.get('src');
-      const tRaw = q.get('t');
-      const k1 = q.get('k1'), k2 = q.get('k2'), k3 = q.get('k3');
-
-      if (!chid && !srcRaw) return;
-
-      if (chid) {
-        const channelId = dob(chid);
-        const title = dob(tRaw || '');
-        showToast('⏳ Fetching stream…', 3000);
-        try {
-          const ch = await resolveChannelById(channelId);
-          if (!ch || !ch.url) throw new Error('Channel not found in feed');
-          _playingChannelId = channelId; _playingChannelLogo = ch.logo || null;
-          const drm = (ch.keyId && ch.key) ? { keyId: ch.keyId, key: ch.key, cookie: ch.cookie || null } : null;
-          if (sid) {
-            try { const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}'); if (st.ended) { loadVideo(ch.url, ch.name, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; } } catch { }
-            loadVideo(ch.url, ch.name, true, drm);
-            setTimeout(() => joinAsGuest(sid, ch.url, ch.name, drm), 600);
-            showToast('👀 Joining shared session…', 2500);
-          } else {
-            loadVideo(ch.url, ch.name, false, drm);
+        async function quickPlayTmdb(id, type, s, e, title) {
+          $('tmdbIdIn').value = id;
+          setTmdbType(type);
+          if (type === 'tv') {
+            $('tmdbSeasonIn').value = s;
+            $('tmdbEpisodeIn').value = e;
           }
-        } catch (e) {
-          console.error('chid resolve failed', e);
-          errMsg.textContent = 'Could not load channel. ' + e.message;
-          err.style.display = 'flex';
+          await playTmdb({ tmdbId: id, type, season: s, episode: e, title });
         }
-        return;
-      }
 
-      const src = dob(srcRaw);
-      const title = dob(tRaw || '');
-      const drm = (k1 && k2) ? { keyId: dob(k1), key: dob(k2), cookie: k3 ? dob(k3) : null } : null;
-      if (src && sid) {
-        try { const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}'); if (st.ended) { loadVideo(src, title, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; } } catch { }
-        loadVideo(src, title, true, drm);
-        setTimeout(() => joinAsGuest(sid, src, title, drm), 600);
-        showToast('👀 Joining shared session…', 2500);
-      } else if (src) {
-        loadVideo(src, title, false, drm);
-      }
-    })();
+        async function playTmdb({ tmdbId, type = 'movie', season = 1, episode = 1, title = '' }) {
+          LS.style.display = 'none';
+          spin.classList.add('on');
+          showToast('⏳ Fetching M3U8 stream…', 4000);
 
-    // ══════════════════════════════════════════════════════════
-    // SHOW METADATA · PAUSE INFO · EPISODES
-    // ══════════════════════════════════════════════════════════
-    function parseMeta(q) {
-      META.rating = q.get('rating') || '';
-      META.year = q.get('year') || '';
-      META.dur = q.get('dur') || '';
-      META.desc = q.get('desc') || '';
-      META.poster = q.get('poster') || '';
-      META.showTitle = q.get('show') || '';
-      const epsRaw = q.get('eps');
-      if (epsRaw) {
-        try { const arr = JSON.parse(epsRaw); if (Array.isArray(arr)) META.eps = arr; } catch (e) { console.warn('bad eps param', e); }
-      }
-      META.epIndex = parseInt(q.get('ep') || '0', 10) || 0;
-      if (META.eps.length) {
-        epsBtn.style.display = 'flex';
-        const cur = META.eps[META.epIndex];
-        if (cur && cur.d && !META.desc) META.desc = cur.d;
-        renderEpisodes();
-      }
-    }
+          _currentTmdb = { tmdbId, type, season, episode, title };
 
-    async function loadEpsFrom(url) {
-      if (!url || META.eps.length) return;
-      try {
-        const r = await fetch(url);
-        const d = await r.json();
-        const list = (d && (d.eps || d.episodes)) || [];
-        if (Array.isArray(list) && list.length) {
-          META.eps = list;
-          META.epIndex = typeof d.currentIndex === 'number' ? d.currentIndex : 0;
-          if (d.show && !META.showTitle) META.showTitle = d.show;
-          const cur = META.eps[META.epIndex];
-          if (cur && cur.d && !META.desc) META.desc = cur.d;
-          epsBtn.style.display = 'flex';
-          renderEpisodes();
-          syncPauseInfo();
+          try {
+            let streamUrl = null;
+            let meta = null;
+            let episodes = [];
+
+            // 1. Worker feed attempt
+            try {
+              const workerUrl = `${NEW_JSON_URL}?feed=tmdb&id=${encodeURIComponent(tmdbId)}&type=${encodeURIComponent(type)}&season=${season}&episode=${episode}&title=${encodeURIComponent(title || '')}`;
+              const r = await fetch(workerUrl, { cache: 'no-store' });
+              if (r.ok) {
+                const data = await r.json();
+                if (data && data.streamUrl) {
+                  streamUrl = data.streamUrl;
+                  meta = data.meta;
+                  episodes = data.episodes || [];
+                }
+              }
+            } catch (we) {
+              console.warn('Worker tmdb feed error, trying fallback:', we);
+            }
+
+            // 2. Fallback: Singularity direct with proxy
+            if (!streamUrl) {
+              try {
+                const singUrl = type === 'movie'
+                  ? `https://embed.filmu.in/api/singularity-movie?id=${encodeURIComponent(tmdbId)}`
+                  : `https://embed.filmu.in/api/singularity-tv?tmdb=${encodeURIComponent(tmdbId)}&s=${season}&e=${episode}`;
+
+                const proxiedSing = `${NEW_JSON_URL}?url=${encodeURIComponent(singUrl)}&ref=${encodeURIComponent('https://embed.filmu.in/')}`;
+                const r = await fetch(proxiedSing);
+                if (r.ok) {
+                  const d = await r.json();
+                  const base = d._base || d.i || '';
+                  if (d.sources && d.sources.length) {
+                    streamUrl = d.sources[0].url;
+                  } else if (d.m3u8_path) {
+                    streamUrl = base ? `${base}/${d.m3u8_path.replace(/^\//, '')}` : d.m3u8_path;
+                  }
+                }
+              } catch (se) {
+                console.warn('Singularity direct fallback error:', se);
+              }
+            }
+
+            // 3. Fallback: VidRock scraper with proxy
+            if (!streamUrl) {
+              try {
+                const scrapePath = `/scrape/VidRock/${type}/tmdb${tmdbId}?tmdbId=${tmdbId}&title=${encodeURIComponent(title || 'Stream')}&season=${season}&episode=${episode}`;
+                const vrUrl = `https://embed.filmu.in/api/proxy?path=${encodeURIComponent(scrapePath)}`;
+                const proxiedVr = `${NEW_JSON_URL}?url=${encodeURIComponent(vrUrl)}&ref=${encodeURIComponent('https://embed.filmu.in/')}`;
+                const r = await fetch(proxiedVr);
+                if (r.ok) {
+                  const d = await r.json();
+                  if (d.sources && d.sources.length) {
+                    const m3u8 = d.sources.find(s => s.type === 'm3u8' || (s.url && s.url.includes('.m3u8'))) || d.sources[0];
+                    if (m3u8 && m3u8.url) streamUrl = m3u8.url;
+                  }
+                }
+              } catch (ve) {
+                console.warn('VidRock scraper fallback error:', ve);
+              }
+            }
+
+            if (!streamUrl) {
+              throw new Error('No stream found for TMDB ' + tmdbId);
+            }
+
+            // Metadata handling
+            const displayTitle = (meta && meta.title) || title || (type === 'tv' ? `TV Show (TMDB ${tmdbId})` : `Movie (TMDB ${tmdbId})`);
+            const subLabel = type === 'tv' ? `${displayTitle} · S${season} E${episode}` : displayTitle;
+
+            META.title = displayTitle;
+            if (meta) {
+              META.year = meta.year || '';
+              META.rating = meta.rating ? String(meta.rating) : '';
+              META.desc = meta.overview || '';
+              META.poster = meta.poster || '';
+              META.backdrop = meta.backdrop || '';
+              if (type === 'tv') META.showTitle = displayTitle;
+            }
+
+            if (type === 'tv') {
+              if (!episodes.length) {
+                episodes = Array.from({ length: Math.max(episode, 10) }, (_, i) => ({
+                  season,
+                  episode: i + 1,
+                  title: `Episode ${i + 1}`
+                }));
+              }
+
+              META.eps = episodes.map((ep, idx) => ({
+                t: ep.title || `Episode ${ep.episode || (idx + 1)}`,
+                p: ep.still || META.poster || '',
+                n: `S${season} E${ep.episode || (idx + 1)}`,
+                d: ep.overview || '',
+                tmdbId,
+                type: 'tv',
+                season: ep.season || season,
+                episode: ep.episode || (idx + 1)
+              }));
+              META.epIndex = Math.max(0, episode - 1);
+              epsBtn.style.display = 'flex';
+              renderEpisodes();
+            } else {
+              META.eps = [];
+              epsBtn.style.display = 'none';
+            }
+
+            syncPauseInfo();
+            showToast(`▶ Playing ${subLabel}`, 2500);
+
+            // Load stream into HLS / Native video player
+            loadVideo(streamUrl, subLabel, false, null);
+
+          } catch (ex) {
+            console.error('playTmdb error:', ex);
+            spin.classList.remove('on');
+            errMsg.textContent = 'Could not load TMDB stream. ' + (ex.message || '');
+            err.style.display = 'flex';
+            showToast('⚠ Failed to fetch M3U8 stream', 3500);
+          }
         }
-      } catch (e) { console.warn('epsrc fetch failed', e); }
-    }
 
-    function renderEpisodes() {
-      $('epsShowTitle').textContent = META.showTitle || META.title || 'Episodes';
-      $('epsSub').textContent = META.eps.length + ' episode' + (META.eps.length > 1 ? 's' : '');
-      epsList.innerHTML = '';
-      META.eps.forEach((ep, i) => {
-        const card = document.createElement('div');
-        card.className = 'ep-card' + (i === META.epIndex ? ' playing' : '');
-        const num = ep.n || ('E' + (i + 1));
-        card.innerHTML = `
+        playNow.addEventListener('click', granularityPlayback);
+        function granularityPlayback() {
+          const url = urlIn.value.trim();
+          if (!url) { urlIn.style.borderColor = '#ff4757'; setTimeout(() => urlIn.style.borderColor = '', 2000); return; }
+          urlIn.style.borderColor = '';
+
+          const parsed = parseFilmuOrTmdbUrl(url);
+          if (parsed) {
+            playTmdb({
+              tmdbId: parsed.tmdbId,
+              type: parsed.type,
+              season: parseInt(parsed.season || '1', 10),
+              episode: parseInt(parsed.episode || '1', 10),
+              title: titIn.value.trim()
+            });
+            return;
+          }
+
+          const type = detectUrlType(url);
+          let drm = null;
+          if (type === 'dash') {
+            const kid = keyIdIn.value.trim(), k = keyIn.value.trim(), ck = cookieIn.value.trim();
+            if (kid && k) drm = { keyId: kid, key: k, cookie: ck || null };
+          }
+          _playingChannelId = null; _playingChannelLogo = null;
+          loadVideo(url, titIn.value.trim(), false, drm);
+        }
+        urlIn.addEventListener('keydown', e => { if (e.key === 'Enter') playNow.click() });
+        $('tmdbIdIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
+        $('tmdbSeasonIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
+        $('tmdbEpisodeIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
+
+        function tryDemo(url, title) {
+          urlIn.value = url; titIn.value = title; drmFields.style.display = 'none';
+          _playingChannelId = null; _playingChannelLogo = null;
+          loadVideo(url, title);
+        }
+
+        function goBack() {
+          endHostSession();
+          if (SROLE === 'guest') { clearInterval(_pollT); clearInterval(_guestPingT); }
+          SROLE = null; SID = null;
+          showLauncher();
+          vid.pause();
+          isLiveStream = false;
+          liveBadge.style.display = 'none';
+          hideSessUI();
+          drmBadge.style.display = 'none';
+          history.replaceState(null, '', location.pathname);
+          destroyPlayers();
+        }
+
+        // ══════════════════════════════════════════════════════════
+        // URL PARAMS — entry point
+        // ══════════════════════════════════════════════════════════
+        (async function checkParams() {
+          const q = new URLSearchParams(location.search);
+
+          parseMeta(q);
+
+          // TMDB / FilmU Direct URL Parameters (e.g. ?tmdb=1726, ?movie=1726, ?tv=94997&s=1&e=1)
+          const tmdbParam = q.get('tmdb') || q.get('movie') || q.get('tv');
+          if (tmdbParam) {
+            const type = q.get('tv') ? 'tv' : (q.get('type') || (q.get('movie') ? 'movie' : 'movie'));
+            const season = parseInt(q.get('season') || q.get('s') || '1', 10) || 1;
+            const episode = parseInt(q.get('episode') || q.get('e') || '1', 10) || 1;
+            const title = q.get('title') || q.get('t') || '';
+            await playTmdb({ tmdbId: tmdbParam, type, season, episode, title });
+            return;
+          }
+
+          // Check pathname for /movie/1726 or /tv/94997/1/1
+          const pathParsed = parseFilmuOrTmdbUrl(location.href);
+          if (pathParsed) {
+            await playTmdb({
+              tmdbId: pathParsed.tmdbId,
+              type: pathParsed.type,
+              season: parseInt(pathParsed.season || '1', 10),
+              episode: parseInt(pathParsed.episode || '1', 10)
+            });
+            return;
+          }
+
+          // Auto-fetch an episode list (e.g. from the MX worker) so the switcher appears
+          const epsrc = q.get('epsrc');
+          if (epsrc && !META.eps.length) loadEpsFrom(epsrc);
+          // If episodes were supplied, boot straight into the current episode.
+          if (META.eps.length && !q.get('url') && !q.get('src') && !q.get('chid') && !q.get('bundle')) {
+            const cur = META.eps[META.epIndex] || META.eps[0];
+            if (cur && cur.u) {
+              const label = (META.showTitle ? META.showTitle + ' · ' : '') + (cur.t || 'Episode ' + (META.epIndex + 1));
+              loadVideo(cur.u, label, false, null);
+              return;
+            }
+          }
+
+          const bundleRaw = q.get('bundle');
+          if (bundleRaw) { await handleBundleParam(bundleRaw); return; }
+
+          /* ?tab=tmdb|live|sony|fc|bb|willow|prime|iptv */
+          const tab = q.get('tab');
+          if (tab && TAB_KEYS[tab]) {
+            if (SOLO) { spin.classList.add('on'); } else { LS.style.display = 'flex'; }
+            switchTab(TAB_KEYS[tab]);
+            const wanted = q.get('id');
+            if (wanted) await openTabItem(TAB_KEYS[tab], wanted);
+            return;
+          }
+
+          const directUrl = q.get('url');
+          const directTitle = q.get('title');
+          if (directUrl) {
+            const parsedTmdb = parseFilmuOrTmdbUrl(directUrl);
+            if (parsedTmdb) {
+              await playTmdb({
+                tmdbId: parsedTmdb.tmdbId,
+                type: parsedTmdb.type,
+                season: parseInt(parsedTmdb.season || '1', 10),
+                episode: parseInt(parsedTmdb.episode || '1', 10),
+                title: directTitle || ''
+              });
+              return;
+            }
+            loadVideo(directUrl, directTitle || 'Movie', false, null);
+            return;
+          }
+
+          const sid = q.get('sid');
+          const chid = q.get('chid');
+          const srcRaw = q.get('src');
+          const tRaw = q.get('t');
+          const k1 = q.get('k1'), k2 = q.get('k2'), k3 = q.get('k3');
+
+          if (!chid && !srcRaw) return;
+
+          if (chid) {
+            const channelId = dob(chid);
+            const title = dob(tRaw || '');
+            showToast('⏳ Fetching stream…', 3000);
+            try {
+              const ch = await resolveChannelById(channelId);
+              if (!ch || !ch.url) throw new Error('Channel not found in feed');
+              _playingChannelId = channelId; _playingChannelLogo = ch.logo || null;
+              const drm = (ch.keyId && ch.key) ? { keyId: ch.keyId, key: ch.key, cookie: ch.cookie || null } : null;
+              if (sid) {
+                try { const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}'); if (st.ended) { loadVideo(ch.url, ch.name, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; } } catch { }
+                loadVideo(ch.url, ch.name, true, drm);
+                setTimeout(() => joinAsGuest(sid, ch.url, ch.name, drm), 600);
+                showToast('👀 Joining shared session…', 2500);
+              } else {
+                loadVideo(ch.url, ch.name, false, drm);
+              }
+            } catch (e) {
+              console.error('chid resolve failed', e);
+              errMsg.textContent = 'Could not load channel. ' + e.message;
+              err.style.display = 'flex';
+            }
+            return;
+          }
+
+          const src = dob(srcRaw);
+          const title = dob(tRaw || '');
+          const drm = (k1 && k2) ? { keyId: dob(k1), key: dob(k2), cookie: k3 ? dob(k3) : null } : null;
+          if (src && sid) {
+            try { const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}'); if (st.ended) { loadVideo(src, title, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; } } catch { }
+            loadVideo(src, title, true, drm);
+            setTimeout(() => joinAsGuest(sid, src, title, drm), 600);
+            showToast('👀 Joining shared session…', 2500);
+          } else if (src) {
+            loadVideo(src, title, false, drm);
+          }
+        })();
+
+        // ══════════════════════════════════════════════════════════
+        // SHOW METADATA · PAUSE INFO · EPISODES
+        // ══════════════════════════════════════════════════════════
+        function parseMeta(q) {
+          META.rating = q.get('rating') || '';
+          META.year = q.get('year') || '';
+          META.dur = q.get('dur') || '';
+          META.desc = q.get('desc') || '';
+          META.poster = q.get('poster') || '';
+          META.showTitle = q.get('show') || '';
+          const epsRaw = q.get('eps');
+          if (epsRaw) {
+            try { const arr = JSON.parse(epsRaw); if (Array.isArray(arr)) META.eps = arr; } catch (e) { console.warn('bad eps param', e); }
+          }
+          META.epIndex = parseInt(q.get('ep') || '0', 10) || 0;
+          if (META.eps.length) {
+            epsBtn.style.display = 'flex';
+            const cur = META.eps[META.epIndex];
+            if (cur && cur.d && !META.desc) META.desc = cur.d;
+            renderEpisodes();
+          }
+        }
+
+        async function loadEpsFrom(url) {
+          if (!url || META.eps.length) return;
+          try {
+            const r = await fetch(url);
+            const d = await r.json();
+            const list = (d && (d.eps || d.episodes)) || [];
+            if (Array.isArray(list) && list.length) {
+              META.eps = list;
+              META.epIndex = typeof d.currentIndex === 'number' ? d.currentIndex : 0;
+              if (d.show && !META.showTitle) META.showTitle = d.show;
+              const cur = META.eps[META.epIndex];
+              if (cur && cur.d && !META.desc) META.desc = cur.d;
+              epsBtn.style.display = 'flex';
+              renderEpisodes();
+              syncPauseInfo();
+            }
+          } catch (e) { console.warn('epsrc fetch failed', e); }
+        }
+
+        function renderEpisodes() {
+          $('epsShowTitle').textContent = META.showTitle || META.title || 'Episodes';
+          $('epsSub').textContent = META.eps.length + ' episode' + (META.eps.length > 1 ? 's' : '');
+          epsList.innerHTML = '';
+          META.eps.forEach((ep, i) => {
+            const card = document.createElement('div');
+            card.className = 'ep-card' + (i === META.epIndex ? ' playing' : '');
+            const num = ep.n || ('E' + (i + 1));
+            card.innerHTML = `
       <div class="ep-thumb">
         ${ep.p ? `<img src="${ep.p}" loading="lazy" onerror="this.style.display='none'"/>` : ''}
         <span class="ep-num">${num}</span>
@@ -5318,482 +5376,327 @@
         <div class="ep-title">${ep.t || ('Episode ' + (i + 1))}</div>
         ${ep.d ? `<div class="ep-desc">${ep.d}</div>` : ''}
       </div>`;
-        card.onclick = () => switchEpisode(i);
-        epsList.appendChild(card);
+            card.onclick = () => switchEpisode(i);
+            epsList.appendChild(card);
+          });
+        }
+
+        function switchEpisode(i) {
+          if (i < 0 || i >= META.eps.length) return;
+          const ep = META.eps[i];
+          if (!ep) return;
+          META.epIndex = i;
+          META.title = ep.t || META.title;
+          if (ep.d) META.desc = ep.d;
+          if (ep.p) META.poster = ep.p;
+          renderEpisodes();
+          syncPauseInfo();
+          epsPanel.classList.remove('open');
+
+          if (ep.tmdbId) {
+            playTmdb({
+              tmdbId: ep.tmdbId,
+              type: 'tv',
+              season: ep.season || 1,
+              episode: ep.episode || (i + 1),
+              title: META.showTitle || META.title
+            });
+            return;
+          }
+
+          if (!ep.u) return;
+          const label = (META.showTitle ? META.showTitle + ' · ' : '') + (ep.t || ('Episode ' + (i + 1)));
+          loadVideo(ep.u, label, false, null);
+          showToast('▶ ' + (ep.n ? ep.n + ' — ' : '') + (ep.t || 'Episode ' + (i + 1)), 2400);
+        }
+
+        function toggleEpsPanel() {
+          if (epsPanel.classList.contains('open')) { epsPanel.classList.remove('open') }
+          else { epsPanel.classList.add('open'); showUI() }
+        }
+
+      // Fill the pause overlay from current META (called on load + episode switch)
+      function syncPauseInfo() {
+        const cur = META.eps[META.epIndex];
+        $('piTitle').textContent = META.showTitle || META.title || 'Now Playing';
+        const setChip = (id, val, disp = 'inline') => { const el = $(id); if (val) { el.textContent = val; el.style.display = disp } else { el.style.display = 'none' } };
+        setChip('piRating', META.rating);
+        // episode label (only when playing a show)
+        const epLabel = (META.eps.length && cur) ? ((cur.n ? cur.n + '  ' : '') + (cur.t || '')) : '';
+        setChip('piEpLabel', epLabel);
+        setChip('piYear', META.year);
+        setChip('piDur', META.dur);
+        $('piDot1').style.display = (META.year && META.dur) ? 'inline-block' : 'none';
+        setChip('piDesc', META.desc, 'block');
+      }
+
+      // Show / hide the Netflix-style pause overlay (VOD only, not live)
+      function showPauseInfo() { if (isLiveStream) return; syncPauseInfo(); pauseInfo.classList.add('on'); }
+      function hidePauseInfo() { pauseInfo.classList.remove('on'); }
+
+      // ══════════════════════════════════════════════════════════
+      // PLAY / PAUSE / OVERLAYS
+      // ══════════════════════════════════════════════════════════
+      function togglePlay() { if (vid.paused) vid.play().catch(() => { }); else vid.pause() }
+      clickZone.addEventListener('click', togglePlay);
+      playBtn.addEventListener('click', e => { e.stopPropagation(); togglePlay() });
+      vid.addEventListener('play', () => { pPath.setAttribute('d', P.pause); cSvg.querySelector('path').setAttribute('d', P.pause); pop(cAnim); hidePauseInfo(); schedHide() });
+      vid.addEventListener('pause', () => { pPath.setAttribute('d', P.play); cSvg.querySelector('path').setAttribute('d', P.play); pop(cAnim); showUI(); clearTimeout(hideT); showPauseInfo() });
+      vid.addEventListener('ended', () => {
+        pPath.setAttribute('d', P.play); showUI();
+        // Auto-advance to the next episode when a show is playing
+        if (META.eps.length && META.epIndex < META.eps.length - 1) { switchEpisode(META.epIndex + 1); return }
+        if (SROLE === 'host') endHostSession();
       });
-    }
 
-    function switchEpisode(i) {
-      if (i < 0 || i >= META.eps.length) return;
-      const ep = META.eps[i];
-      if (!ep) return;
-      META.epIndex = i;
-      META.title = ep.t || META.title;
-      if (ep.d) META.desc = ep.d;
-      if (ep.p) META.poster = ep.p;
-      renderEpisodes();
-      syncPauseInfo();
-      epsPanel.classList.remove('open');
+      // ══════════════════════════════════════════════════════════
+      // SKIP / VOLUME / PROGRESS
+      // ══════════════════════════════════════════════════════════
+      function skip(s) {
+        if (isLiveStream && s > 0) { const e = getLiveEdge(); vid.currentTime = Math.min(e - .5, vid.currentTime + s) }
+        else vid.currentTime = Math.max(0, Math.min(vid.duration || 0, vid.currentTime + s));
+        pop(s < 0 ? sfl : sfr); showUI();
+      }
+      rwBtn.addEventListener('click', e => { e.stopPropagation(); skip(-10) });
+      fwBtn.addEventListener('click', e => { e.stopPropagation(); skip(10) });
+      function updVol() { vPath.setAttribute('d', (vid.muted || vid.volume === 0) ? P.voff : P.von) }
+      muteBtn.addEventListener('click', e => { e.stopPropagation(); vid.muted = !vid.muted; volSlider.value = vid.muted ? 0 : vid.volume * 100; updVol(); showToast(vid.muted ? '🔇 Muted' : '🔊 Unmuted') });
+      volSlider.addEventListener('input', e => { e.stopPropagation(); vid.volume = e.target.value / 100; vid.muted = vid.volume === 0; updVol() });
 
-      if (ep.tmdbId) {
-        playTmdb({
-          tmdbId: ep.tmdbId,
-          type: 'tv',
-          season: ep.season || 1,
-          episode: ep.episode || (i + 1),
-          title: META.showTitle || META.title
+      // Global timeupdate handler for HLS / DASH / live streams
+      // (Native MP4 uses its own listener registered in loadNative)
+      vid.addEventListener('timeupdate', () => {
+        // Skip if native MP4 listener is active (avoids double-updating)
+        if (_mp4Listeners.timeupdate) return;
+        if (isLiveStream) { updateLiveProgress(); return }
+        if (drag || !vid.duration) return;
+        const p = vid.currentTime / vid.duration;
+        progFill.style.width = (p * 100) + '%';
+        progThumb.style.left = (p * 100) + '%';
+        timeLbl.textContent = `${fmt(vid.currentTime)} / ${fmt(vid.duration)}`;
+      });
+
+      vid.addEventListener('progress', () => {
+        if (isLiveStream) return;
+        if (!vid.duration || !vid.buffered.length) return;
+        progBuf.style.width = (vid.buffered.end(vid.buffered.length - 1) / vid.duration * 100) + '%';
+      });
+
+      progWrap.addEventListener('mousemove', e => {
+        const r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+        if (isLiveStream) { const sk = vid.seekable; const dvr = sk && sk.length > 0 ? sk.end(0) - sk.start(0) : 0; if (dvr > 0 && dvr < 86400) { const d = dvr * (1 - p); progTip.textContent = d < LIVE_THRESH ? 'LIVE' : `-${Math.round(d)}s` } else progTip.textContent = 'LIVE' }
+        else progTip.textContent = fmt(p * (vid.duration || 0));
+        progTip.style.left = (p * 100) + '%';
+      });
+      progWrap.addEventListener('mousedown', e => { drag = true; seekAt(e); const up = () => { drag = false; document.removeEventListener('mouseup', up); document.removeEventListener('mousemove', seekAt) }; document.addEventListener('mousemove', seekAt); document.addEventListener('mouseup', up) });
+      function seekAt(e) { const r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); if (isLiveStream) { const sk = vid.seekable; if (sk && sk.length > 0) { const dvr = sk.end(0) - sk.start(0); if (dvr < 86400) vid.currentTime = sk.start(0) + p * dvr } } else vid.currentTime = p * (vid.duration || 0); progFill.style.width = (p * 100) + '%'; progThumb.style.left = (p * 100) + '%' }
+      progWrap.addEventListener('touchstart', e => { drag = true; seekT(e) }, { passive: true });
+      progWrap.addEventListener('touchmove', seekT, { passive: true });
+      progWrap.addEventListener('touchend', () => { drag = false; if (isLiveStream) updateLiveBadge() });
+      function seekT(e) { const t = e.touches[0], r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (t.clientX - r.left) / r.width)); if (isLiveStream) { const sk = vid.seekable; if (sk && sk.length > 0) { const dvr = sk.end(0) - sk.start(0); if (dvr < 86400) vid.currentTime = sk.start(0) + p * dvr } } else vid.currentTime = p * (vid.duration || 0); progFill.style.width = (p * 100) + '%'; progThumb.style.left = (p * 100) + '%' }
+
+      // ══════════════════════════════════════════════════════════
+      // QUALITY (HLS)
+      // ══════════════════════════════════════════════════════════
+      function buildHLSQual() {
+        if (!hlsInst || !hlsInst.levels.length) return;
+        qualMenu.innerHTML = '<div class="dlbl">Quality</div>';
+        const a = document.createElement('div'); a.className = 'ditem on'; a.dataset.level = '-1'; a.innerHTML = 'Auto<span class="chk">✓</span>'; a.onclick = () => setQ(-1); qualMenu.appendChild(a);
+        hlsInst.levels.forEach((l, i) => { const el = document.createElement('div'); el.className = 'ditem'; el.dataset.level = i; const lb = l.height ? l.height + 'p' : 'Level ' + i; el.innerHTML = `${lb}<span class="chk">✓</span>`; el.onclick = () => setQ(i); qualMenu.appendChild(el) });
+      }
+      function setQ(lv) { if (!hlsInst) return; hlsInst.currentLevel = lv; qualMenu.querySelectorAll('.ditem').forEach(el => el.classList.toggle('on', el.dataset.level == lv)); qualMenu.classList.remove('open'); const lb = lv === -1 ? 'Auto' : (hlsInst.levels[lv]?.height ? hlsInst.levels[lv].height + 'p' : 'Level ' + lv); qualLbl.textContent = lb; showToast('Quality: ' + lb) }
+      qualBtn.addEventListener('click', e => { e.stopPropagation(); qualMenu.classList.toggle('open'); speedMenu.classList.remove('open'); audioMenu.classList.remove('open') });
+
+      // ══════════════════════════════════════════════════════════
+      // AUDIO TRACKS (HLS)
+      // ══════════════════════════════════════════════════════════
+      function buildAudio() {
+        if (!hlsInst) return;
+        const tracks = hlsInst.audioTracks;
+        if (!tracks || tracks.length <= 1) { audioWrap.style.display = 'none'; return }
+        audioMenu.innerHTML = '<div class="dlbl">Audio</div>';
+        tracks.forEach((t, i) => {
+          const name = normLang(t.lang || t.name || t.groupId || ''); const flag = langFlag(name);
+          const el = document.createElement('div'); el.className = 'ditem' + (i === hlsInst.audioTrack ? ' on' : '');
+          el.innerHTML = `<span><span class="lang-flag">${flag}</span> ${name}</span><span class="chk">✓</span>`;
+          el.onclick = () => setAudio(i); audioMenu.appendChild(el);
         });
-        return;
+        const cur = tracks[hlsInst.audioTrack];
+        if (cur) { const n = normLang(cur.lang || cur.name || ''); audioLbl.innerHTML = `${langFlag(n)} ${n}` }
+        audioWrap.style.display = 'flex';
+      }
+      function setAudio(idx) {
+        if (!hlsInst) return; hlsInst.audioTrack = idx;
+        audioMenu.querySelectorAll('.ditem').forEach((el, i) => el.classList.toggle('on', i === idx)); audioMenu.classList.remove('open');
+        const t = hlsInst.audioTracks[idx]; const n = normLang(t?.lang || t?.name || ''); const f = langFlag(n);
+        audioLbl.innerHTML = `${f} ${n}`; showToast(`${f} ${n}`);
+      }
+      audioBtn.addEventListener('click', e => { e.stopPropagation(); audioMenu.classList.toggle('open'); qualMenu.classList.remove('open'); speedMenu.classList.remove('open') });
+
+      // ══════════════════════════════════════════════════════════
+      // SPEED / FULLSCREEN / PIP / UI
+      // ══════════════════════════════════════════════════════════
+      speedLbl.addEventListener('click', e => { e.stopPropagation(); speedMenu.classList.toggle('open'); qualMenu.classList.remove('open'); audioMenu.classList.remove('open') });
+      document.querySelectorAll('.ditem[data-s]').forEach(el => {
+        el.addEventListener('click', e => { e.stopPropagation(); const s = parseFloat(el.dataset.s); vid.playbackRate = s; speedLbl.textContent = s === 1 ? '1x' : s + 'x'; document.querySelectorAll('.ditem[data-s]').forEach(x => x.classList.toggle('on', x === el)); speedMenu.classList.remove('open'); showToast('Speed: ' + (s === 1 ? 'Normal' : s + 'x')) });
+      });
+      fsBtn.addEventListener('click', e => { e.stopPropagation(); if (!document.fullscreenElement) player.requestFullscreen().catch(() => { }); else document.exitFullscreen() });
+      document.addEventListener('fullscreenchange', () => fsPath.setAttribute('d', document.fullscreenElement ? P.fsoff : P.fson));
+      pipBtn.addEventListener('click', async e => { e.stopPropagation(); try { if (document.pictureInPictureElement) await document.exitPictureInPicture(); else await vid.requestPictureInPicture() } catch { } });
+      vid.addEventListener('waiting', () => spin.classList.add('on'));
+      vid.addEventListener('canplay', () => spin.classList.remove('on'));
+      vid.addEventListener('playing', () => spin.classList.remove('on'));
+      function showUI() { player.classList.remove('hide-ui'); player.classList.add('show-ui'); clearTimeout(hideT) }
+      function schedHide() { clearTimeout(hideT); hideT = setTimeout(() => { if (!vid.paused && !sharePanel.classList.contains('open')) { player.classList.add('hide-ui'); player.classList.remove('show-ui') } }, 3500) }
+      player.addEventListener('mousemove', () => { showUI(); if (!vid.paused) schedHide() });
+      player.addEventListener('mouseleave', () => { if (!vid.paused) schedHide() });
+      document.addEventListener('click', e => {
+        if (!sharePanel.contains(e.target) && !sessionBadge.contains(e.target) && !shareBtn.contains(e.target)) sharePanel.classList.remove('open');
+        qualMenu.classList.remove('open'); speedMenu.classList.remove('open'); audioMenu.classList.remove('open');
+      });
+      document.addEventListener('keydown', e => {
+        if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+        switch (e.key) {
+          case ' ': case 'k': e.preventDefault(); togglePlay(); break;
+          case 'ArrowLeft': e.preventDefault(); skip(-10); break;
+          case 'ArrowRight': e.preventDefault(); skip(10); break;
+          case 'ArrowUp': e.preventDefault(); vid.volume = Math.min(1, vid.volume + .1); volSlider.value = vid.volume * 100; updVol(); showToast('Vol: ' + Math.round(vid.volume * 100) + '%'); break;
+          case 'ArrowDown': e.preventDefault(); vid.volume = Math.max(0, vid.volume - .1); volSlider.value = vid.volume * 100; updVol(); showToast('Vol: ' + Math.round(vid.volume * 100) + '%'); break;
+          case 'm': case 'M': vid.muted = !vid.muted; volSlider.value = vid.muted ? 0 : vid.volume * 100; updVol(); showToast(vid.muted ? '🔇 Muted' : '🔊 Unmuted'); break;
+          case 'f': case 'F': fsBtn.click(); break;
+          case 'p': case 'P': pipBtn.click(); break;
+          case 'l': case 'L': if (isLiveStream) jumpToLive(); break;
+          case 's': case 'S': toggleSharePanel(); break;
+        }
+        showUI(); if (!vid.paused) schedHide();
+      });
+
+      // ══════════════════════════════════════════════════════════
+      // SIDEBAR
+      // ══════════════════════════════════════════════════════════
+      let sbChannels = [], sbSelected = new Set(), sbLoaded = false;
+
+      function toggleSidebar() {
+        const sb = $('bundleSidebar');
+        const btn = $('bundleToggle');
+        const isOpen = sb.classList.contains('open');
+        sb.classList.toggle('open', !isOpen);
+        btn.classList.toggle('open', !isOpen);
+        if (!isOpen && !sbLoaded) sbFetchChannels();
       }
 
-      if (!ep.u) return;
-      const label = (META.showTitle ? META.showTitle + ' · ' : '') + (ep.t || ('Episode ' + (i + 1)));
-      loadVideo(ep.u, label, false, null);
-      showToast('▶ ' + (ep.n ? ep.n + ' — ' : '') + (ep.t || 'Episode ' + (i + 1)), 2400);
-    }
-
-    function toggleEpsPanel() {
-      if (epsPanel.classList.contains('open')) { epsPanel.classList.remove('open') }
-      else { epsPanel.classList.add('open'); showUI() }
-    } && TAB_KEYS[tab]) {
-        // Solo shows the spinner, not the list it would otherwise sit behind.
-        if (SOLO) { spin.classList.add('on'); } else { LS.style.display = 'flex'; }
-        switchTab(TAB_KEYS[tab]);
-        const wanted = q.get('id');
-        if (wanted) await openTabItem(TAB_KEYS[tab], wanted);
-        return;
-      }
-
-      const directUrl = q.get('url');
-      const directTitle = q.get('title');
-      if (directUrl) {
-        loadVideo(directUrl, directTitle || 'Movie', false, null);
-        return;
-      }
-
-      const sid = q.get('sid');
-      const chid = q.get('chid');
-      const srcRaw = q.get('src');
-      const tRaw = q.get('t');
-      const k1 = q.get('k1'), k2 = q.get('k2'), k3 = q.get('k3');
-
-      if (!chid && !srcRaw) return;
-
-      if (chid) {
-        const channelId = dob(chid);
-        const title = dob(tRaw || '');
-        showToast('⏳ Fetching stream…', 3000);
+      async function sbFetchChannels() {
+        const loading = $('sbChLoading');
+        const errEl = $('sbChErr');
+        const wrap = $('sbChWrap');
+        loading.style.display = 'flex'; errEl.style.display = 'none'; wrap.style.display = 'none';
         try {
-          const ch = await resolveChannelById(channelId);
-          if (!ch || !ch.url) throw new Error('Channel not found in feed');
-          // Keep the shared id (e.g. 'fc_live') so re-sharing stays permanent.
-          _playingChannelId = channelId; _playingChannelLogo = ch.logo || null;
-          const drm = (ch.keyId && ch.key) ? { keyId: ch.keyId, key: ch.key, cookie: ch.cookie || null } : null;
-          if (sid) {
-            try { const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}'); if (st.ended) { loadVideo(ch.url, ch.name, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; } } catch { }
-            loadVideo(ch.url, ch.name, true, drm);
-            setTimeout(() => joinAsGuest(sid, ch.url, ch.name, drm), 600);
-            showToast('👀 Joining shared session…', 2500);
-          } else {
-            loadVideo(ch.url, ch.name, false, drm);
-          }
+          const map = await getChMap();
+          const channels = Object.values(map);
+          if (!channels.length) throw new Error('No channels');
+          sbChannels = channels;
+          sbLoaded = true;
+          loading.style.display = 'none';
+          wrap.style.display = 'block';
+          renderSbChannels();
         } catch (e) {
-          console.error('chid resolve failed', e);
-          errMsg.textContent = 'Could not load channel. ' + e.message;
-          err.style.display = 'flex';
+          loading.style.display = 'none';
+          errEl.style.display = 'block';
+          console.error(e);
         }
-        return;
       }
 
-      const src = dob(srcRaw);
-      const title = dob(tRaw || '');
-      const drm = (k1 && k2) ? { keyId: dob(k1), key: dob(k2), cookie: k3 ? dob(k3) : null } : null;
-      if (src && sid) {
-        try { const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}'); if (st.ended) { loadVideo(src, title, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; } } catch { }
-        loadVideo(src, title, true, drm);
-        setTimeout(() => joinAsGuest(sid, src, title, drm), 600);
-        showToast('👀 Joining shared session…', 2500);
-      } else if (src) {
-        loadVideo(src, title, false, drm);
-      }
-    })();
-
-    // ══════════════════════════════════════════════════════════
-    // SHOW METADATA · PAUSE INFO · EPISODES
-    // ══════════════════════════════════════════════════════════
-    // Read metadata + episode list from URL params. All optional & backward-compat.
-    //   rating, year, dur, desc, poster, show  → pause-overlay info
-    //   eps  = JSON array [{t:title, u:playUrl, p:poster, n:label, d:desc}]
-    //   ep   = index of the episode currently playing (default 0)
-    function parseMeta(q) {
-      META.rating = q.get('rating') || '';
-      META.year = q.get('year') || '';
-      META.dur = q.get('dur') || '';
-      META.desc = q.get('desc') || '';
-      META.poster = q.get('poster') || '';
-      META.showTitle = q.get('show') || '';
-      const epsRaw = q.get('eps');
-      if (epsRaw) {
-        try { const arr = JSON.parse(epsRaw); if (Array.isArray(arr)) META.eps = arr; } catch (e) { console.warn('bad eps param', e); }
-      }
-      META.epIndex = parseInt(q.get('ep') || '0', 10) || 0;
-      if (META.eps.length) {
-        epsBtn.style.display = 'flex';
-        const cur = META.eps[META.epIndex];
-        if (cur && cur.d && !META.desc) META.desc = cur.d;
-        renderEpisodes();
-      }
-    }
-
-    // Fetch an episode list from a URL (e.g. MX worker ?episodes=<id>) and populate
-    // the switcher — lets a show "just work" when launched with only its stream.
-    // Response shape: { eps:[{t,u,p,n,d}], currentIndex, show }.
-    async function loadEpsFrom(url) {
-      if (!url || META.eps.length) return;
-      try {
-        const r = await fetch(url);
-        const d = await r.json();
-        const list = (d && (d.eps || d.episodes)) || [];
-        if (Array.isArray(list) && list.length) {
-          META.eps = list;
-          META.epIndex = typeof d.currentIndex === 'number' ? d.currentIndex : 0;
-          if (d.show && !META.showTitle) META.showTitle = d.show;
-          const cur = META.eps[META.epIndex];
-          if (cur && cur.d && !META.desc) META.desc = cur.d;
-          epsBtn.style.display = 'flex';
-          renderEpisodes();
-          syncPauseInfo();
-        }
-      } catch (e) { console.warn('epsrc fetch failed', e); }
-    }
-
-    function renderEpisodes() {
-      $('epsShowTitle').textContent = META.showTitle || META.title || 'Episodes';
-      $('epsSub').textContent = META.eps.length + ' episode' + (META.eps.length > 1 ? 's' : '');
-      epsList.innerHTML = '';
-      META.eps.forEach((ep, i) => {
-        const card = document.createElement('div');
-        card.className = 'ep-card' + (i === META.epIndex ? ' playing' : '');
-        const num = ep.n || ('E' + (i + 1));
-        card.innerHTML = `
-      <div class="ep-thumb">
-        ${ep.p ? `<img src="${ep.p}" loading="lazy" onerror="this.style.display='none'"/>` : ''}
-        <span class="ep-num">${num}</span>
-        <div class="ep-play"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div>
-        <div class="ep-nowbar"></div>
-      </div>
-      <div class="ep-info">
-        <div class="ep-title">${ep.t || ('Episode ' + (i + 1))}</div>
-        ${ep.d ? `<div class="ep-desc">${ep.d}</div>` : ''}
-      </div>`;
-        card.onclick = () => switchEpisode(i);
-        epsList.appendChild(card);
-      });
-    }
-
-    function switchEpisode(i) {
-      if (i < 0 || i >= META.eps.length) return;
-      const ep = META.eps[i];
-      if (!ep || !ep.u) return;
-      META.epIndex = i;
-      META.title = ep.t || META.title;
-      if (ep.d) META.desc = ep.d;
-      if (ep.p) META.poster = ep.p;
-      renderEpisodes();
-      syncPauseInfo();
-      epsPanel.classList.remove('open');
-      const label = (META.showTitle ? META.showTitle + ' · ' : '') + (ep.t || ('Episode ' + (i + 1)));
-      loadVideo(ep.u, label, false, null);
-      showToast('▶ ' + (ep.n ? ep.n + ' — ' : '') + (ep.t || 'Episode ' + (i + 1)), 2400);
-    }
-
-    function toggleEpsPanel() {
-      if (epsPanel.classList.contains('open')) { epsPanel.classList.remove('open') }
-      else { epsPanel.classList.add('open'); showUI() }
-    }
-
-    // Fill the pause overlay from current META (called on load + episode switch)
-    function syncPauseInfo() {
-      const cur = META.eps[META.epIndex];
-      $('piTitle').textContent = META.showTitle || META.title || 'Now Playing';
-      const setChip = (id, val, disp = 'inline') => { const el = $(id); if (val) { el.textContent = val; el.style.display = disp } else { el.style.display = 'none' } };
-      setChip('piRating', META.rating);
-      // episode label (only when playing a show)
-      const epLabel = (META.eps.length && cur) ? ((cur.n ? cur.n + '  ' : '') + (cur.t || '')) : '';
-      setChip('piEpLabel', epLabel);
-      setChip('piYear', META.year);
-      setChip('piDur', META.dur);
-      $('piDot1').style.display = (META.year && META.dur) ? 'inline-block' : 'none';
-      setChip('piDesc', META.desc, 'block');
-    }
-
-    // Show / hide the Netflix-style pause overlay (VOD only, not live)
-    function showPauseInfo() { if (isLiveStream) return; syncPauseInfo(); pauseInfo.classList.add('on'); }
-    function hidePauseInfo() { pauseInfo.classList.remove('on'); }
-
-    // ══════════════════════════════════════════════════════════
-    // PLAY / PAUSE / OVERLAYS
-    // ══════════════════════════════════════════════════════════
-    function togglePlay() { if (vid.paused) vid.play().catch(() => { }); else vid.pause() }
-    clickZone.addEventListener('click', togglePlay);
-    playBtn.addEventListener('click', e => { e.stopPropagation(); togglePlay() });
-    vid.addEventListener('play', () => { pPath.setAttribute('d', P.pause); cSvg.querySelector('path').setAttribute('d', P.pause); pop(cAnim); hidePauseInfo(); schedHide() });
-    vid.addEventListener('pause', () => { pPath.setAttribute('d', P.play); cSvg.querySelector('path').setAttribute('d', P.play); pop(cAnim); showUI(); clearTimeout(hideT); showPauseInfo() });
-    vid.addEventListener('ended', () => {
-      pPath.setAttribute('d', P.play); showUI();
-      // Auto-advance to the next episode when a show is playing
-      if (META.eps.length && META.epIndex < META.eps.length - 1) { switchEpisode(META.epIndex + 1); return }
-      if (SROLE === 'host') endHostSession();
-    });
-
-    // ══════════════════════════════════════════════════════════
-    // SKIP / VOLUME / PROGRESS
-    // ══════════════════════════════════════════════════════════
-    function skip(s) {
-      if (isLiveStream && s > 0) { const e = getLiveEdge(); vid.currentTime = Math.min(e - .5, vid.currentTime + s) }
-      else vid.currentTime = Math.max(0, Math.min(vid.duration || 0, vid.currentTime + s));
-      pop(s < 0 ? sfl : sfr); showUI();
-    }
-    rwBtn.addEventListener('click', e => { e.stopPropagation(); skip(-10) });
-    fwBtn.addEventListener('click', e => { e.stopPropagation(); skip(10) });
-    function updVol() { vPath.setAttribute('d', (vid.muted || vid.volume === 0) ? P.voff : P.von) }
-    muteBtn.addEventListener('click', e => { e.stopPropagation(); vid.muted = !vid.muted; volSlider.value = vid.muted ? 0 : vid.volume * 100; updVol(); showToast(vid.muted ? '🔇 Muted' : '🔊 Unmuted') });
-    volSlider.addEventListener('input', e => { e.stopPropagation(); vid.volume = e.target.value / 100; vid.muted = vid.volume === 0; updVol() });
-
-    // Global timeupdate handler for HLS / DASH / live streams
-    // (Native MP4 uses its own listener registered in loadNative)
-    vid.addEventListener('timeupdate', () => {
-      // Skip if native MP4 listener is active (avoids double-updating)
-      if (_mp4Listeners.timeupdate) return;
-      if (isLiveStream) { updateLiveProgress(); return }
-      if (drag || !vid.duration) return;
-      const p = vid.currentTime / vid.duration;
-      progFill.style.width = (p * 100) + '%';
-      progThumb.style.left = (p * 100) + '%';
-      timeLbl.textContent = `${fmt(vid.currentTime)} / ${fmt(vid.duration)}`;
-    });
-
-    vid.addEventListener('progress', () => {
-      if (isLiveStream) return;
-      if (!vid.duration || !vid.buffered.length) return;
-      progBuf.style.width = (vid.buffered.end(vid.buffered.length - 1) / vid.duration * 100) + '%';
-    });
-
-    progWrap.addEventListener('mousemove', e => {
-      const r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-      if (isLiveStream) { const sk = vid.seekable; const dvr = sk && sk.length > 0 ? sk.end(0) - sk.start(0) : 0; if (dvr > 0 && dvr < 86400) { const d = dvr * (1 - p); progTip.textContent = d < LIVE_THRESH ? 'LIVE' : `-${Math.round(d)}s` } else progTip.textContent = 'LIVE' }
-      else progTip.textContent = fmt(p * (vid.duration || 0));
-      progTip.style.left = (p * 100) + '%';
-    });
-    progWrap.addEventListener('mousedown', e => { drag = true; seekAt(e); const up = () => { drag = false; document.removeEventListener('mouseup', up); document.removeEventListener('mousemove', seekAt) }; document.addEventListener('mousemove', seekAt); document.addEventListener('mouseup', up) });
-    function seekAt(e) { const r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); if (isLiveStream) { const sk = vid.seekable; if (sk && sk.length > 0) { const dvr = sk.end(0) - sk.start(0); if (dvr < 86400) vid.currentTime = sk.start(0) + p * dvr } } else vid.currentTime = p * (vid.duration || 0); progFill.style.width = (p * 100) + '%'; progThumb.style.left = (p * 100) + '%' }
-    progWrap.addEventListener('touchstart', e => { drag = true; seekT(e) }, { passive: true });
-    progWrap.addEventListener('touchmove', seekT, { passive: true });
-    progWrap.addEventListener('touchend', () => { drag = false; if (isLiveStream) updateLiveBadge() });
-    function seekT(e) { const t = e.touches[0], r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (t.clientX - r.left) / r.width)); if (isLiveStream) { const sk = vid.seekable; if (sk && sk.length > 0) { const dvr = sk.end(0) - sk.start(0); if (dvr < 86400) vid.currentTime = sk.start(0) + p * dvr } } else vid.currentTime = p * (vid.duration || 0); progFill.style.width = (p * 100) + '%'; progThumb.style.left = (p * 100) + '%' }
-
-    // ══════════════════════════════════════════════════════════
-    // QUALITY (HLS)
-    // ══════════════════════════════════════════════════════════
-    function buildHLSQual() {
-      if (!hlsInst || !hlsInst.levels.length) return;
-      qualMenu.innerHTML = '<div class="dlbl">Quality</div>';
-      const a = document.createElement('div'); a.className = 'ditem on'; a.dataset.level = '-1'; a.innerHTML = 'Auto<span class="chk">✓</span>'; a.onclick = () => setQ(-1); qualMenu.appendChild(a);
-      hlsInst.levels.forEach((l, i) => { const el = document.createElement('div'); el.className = 'ditem'; el.dataset.level = i; const lb = l.height ? l.height + 'p' : 'Level ' + i; el.innerHTML = `${lb}<span class="chk">✓</span>`; el.onclick = () => setQ(i); qualMenu.appendChild(el) });
-    }
-    function setQ(lv) { if (!hlsInst) return; hlsInst.currentLevel = lv; qualMenu.querySelectorAll('.ditem').forEach(el => el.classList.toggle('on', el.dataset.level == lv)); qualMenu.classList.remove('open'); const lb = lv === -1 ? 'Auto' : (hlsInst.levels[lv]?.height ? hlsInst.levels[lv].height + 'p' : 'Level ' + lv); qualLbl.textContent = lb; showToast('Quality: ' + lb) }
-    qualBtn.addEventListener('click', e => { e.stopPropagation(); qualMenu.classList.toggle('open'); speedMenu.classList.remove('open'); audioMenu.classList.remove('open') });
-
-    // ══════════════════════════════════════════════════════════
-    // AUDIO TRACKS (HLS)
-    // ══════════════════════════════════════════════════════════
-    function buildAudio() {
-      if (!hlsInst) return;
-      const tracks = hlsInst.audioTracks;
-      if (!tracks || tracks.length <= 1) { audioWrap.style.display = 'none'; return }
-      audioMenu.innerHTML = '<div class="dlbl">Audio</div>';
-      tracks.forEach((t, i) => {
-        const name = normLang(t.lang || t.name || t.groupId || ''); const flag = langFlag(name);
-        const el = document.createElement('div'); el.className = 'ditem' + (i === hlsInst.audioTrack ? ' on' : '');
-        el.innerHTML = `<span><span class="lang-flag">${flag}</span> ${name}</span><span class="chk">✓</span>`;
-        el.onclick = () => setAudio(i); audioMenu.appendChild(el);
-      });
-      const cur = tracks[hlsInst.audioTrack];
-      if (cur) { const n = normLang(cur.lang || cur.name || ''); audioLbl.innerHTML = `${langFlag(n)} ${n}` }
-      audioWrap.style.display = 'flex';
-    }
-    function setAudio(idx) {
-      if (!hlsInst) return; hlsInst.audioTrack = idx;
-      audioMenu.querySelectorAll('.ditem').forEach((el, i) => el.classList.toggle('on', i === idx)); audioMenu.classList.remove('open');
-      const t = hlsInst.audioTracks[idx]; const n = normLang(t?.lang || t?.name || ''); const f = langFlag(n);
-      audioLbl.innerHTML = `${f} ${n}`; showToast(`${f} ${n}`);
-    }
-    audioBtn.addEventListener('click', e => { e.stopPropagation(); audioMenu.classList.toggle('open'); qualMenu.classList.remove('open'); speedMenu.classList.remove('open') });
-
-    // ══════════════════════════════════════════════════════════
-    // SPEED / FULLSCREEN / PIP / UI
-    // ══════════════════════════════════════════════════════════
-    speedLbl.addEventListener('click', e => { e.stopPropagation(); speedMenu.classList.toggle('open'); qualMenu.classList.remove('open'); audioMenu.classList.remove('open') });
-    document.querySelectorAll('.ditem[data-s]').forEach(el => {
-      el.addEventListener('click', e => { e.stopPropagation(); const s = parseFloat(el.dataset.s); vid.playbackRate = s; speedLbl.textContent = s === 1 ? '1x' : s + 'x'; document.querySelectorAll('.ditem[data-s]').forEach(x => x.classList.toggle('on', x === el)); speedMenu.classList.remove('open'); showToast('Speed: ' + (s === 1 ? 'Normal' : s + 'x')) });
-    });
-    fsBtn.addEventListener('click', e => { e.stopPropagation(); if (!document.fullscreenElement) player.requestFullscreen().catch(() => { }); else document.exitFullscreen() });
-    document.addEventListener('fullscreenchange', () => fsPath.setAttribute('d', document.fullscreenElement ? P.fsoff : P.fson));
-    pipBtn.addEventListener('click', async e => { e.stopPropagation(); try { if (document.pictureInPictureElement) await document.exitPictureInPicture(); else await vid.requestPictureInPicture() } catch { } });
-    vid.addEventListener('waiting', () => spin.classList.add('on'));
-    vid.addEventListener('canplay', () => spin.classList.remove('on'));
-    vid.addEventListener('playing', () => spin.classList.remove('on'));
-    function showUI() { player.classList.remove('hide-ui'); player.classList.add('show-ui'); clearTimeout(hideT) }
-    function schedHide() { clearTimeout(hideT); hideT = setTimeout(() => { if (!vid.paused && !sharePanel.classList.contains('open')) { player.classList.add('hide-ui'); player.classList.remove('show-ui') } }, 3500) }
-    player.addEventListener('mousemove', () => { showUI(); if (!vid.paused) schedHide() });
-    player.addEventListener('mouseleave', () => { if (!vid.paused) schedHide() });
-    document.addEventListener('click', e => {
-      if (!sharePanel.contains(e.target) && !sessionBadge.contains(e.target) && !shareBtn.contains(e.target)) sharePanel.classList.remove('open');
-      qualMenu.classList.remove('open'); speedMenu.classList.remove('open'); audioMenu.classList.remove('open');
-    });
-    document.addEventListener('keydown', e => {
-      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-      switch (e.key) {
-        case ' ': case 'k': e.preventDefault(); togglePlay(); break;
-        case 'ArrowLeft': e.preventDefault(); skip(-10); break;
-        case 'ArrowRight': e.preventDefault(); skip(10); break;
-        case 'ArrowUp': e.preventDefault(); vid.volume = Math.min(1, vid.volume + .1); volSlider.value = vid.volume * 100; updVol(); showToast('Vol: ' + Math.round(vid.volume * 100) + '%'); break;
-        case 'ArrowDown': e.preventDefault(); vid.volume = Math.max(0, vid.volume - .1); volSlider.value = vid.volume * 100; updVol(); showToast('Vol: ' + Math.round(vid.volume * 100) + '%'); break;
-        case 'm': case 'M': vid.muted = !vid.muted; volSlider.value = vid.muted ? 0 : vid.volume * 100; updVol(); showToast(vid.muted ? '🔇 Muted' : '🔊 Unmuted'); break;
-        case 'f': case 'F': fsBtn.click(); break;
-        case 'p': case 'P': pipBtn.click(); break;
-        case 'l': case 'L': if (isLiveStream) jumpToLive(); break;
-        case 's': case 'S': toggleSharePanel(); break;
-      }
-      showUI(); if (!vid.paused) schedHide();
-    });
-
-    // ══════════════════════════════════════════════════════════
-    // SIDEBAR
-    // ══════════════════════════════════════════════════════════
-    let sbChannels = [], sbSelected = new Set(), sbLoaded = false;
-
-    function toggleSidebar() {
-      const sb = $('bundleSidebar');
-      const btn = $('bundleToggle');
-      const isOpen = sb.classList.contains('open');
-      sb.classList.toggle('open', !isOpen);
-      btn.classList.toggle('open', !isOpen);
-      if (!isOpen && !sbLoaded) sbFetchChannels();
-    }
-
-    async function sbFetchChannels() {
-      const loading = $('sbChLoading');
-      const errEl = $('sbChErr');
-      const wrap = $('sbChWrap');
-      loading.style.display = 'flex'; errEl.style.display = 'none'; wrap.style.display = 'none';
-      try {
-        const map = await getChMap();
-        const channels = Object.values(map);
-        if (!channels.length) throw new Error('No channels');
-        sbChannels = channels;
-        sbLoaded = true;
-        loading.style.display = 'none';
-        wrap.style.display = 'block';
-        renderSbChannels();
-      } catch (e) {
-        loading.style.display = 'none';
-        errEl.style.display = 'block';
-        console.error(e);
-      }
-    }
-
-    function renderSbChannels() {
-      const list = $('sbChList');
-      list.innerHTML = '';
-      sbChannels.forEach((ch, i) => {
-        const row = document.createElement('div');
-        row.className = 'ch-row';
-        row.dataset.idx = i;
-        row.innerHTML = `
+      function renderSbChannels() {
+        const list = $('sbChList');
+        list.innerHTML = '';
+        sbChannels.forEach((ch, i) => {
+          const row = document.createElement('div');
+          row.className = 'ch-row';
+          row.dataset.idx = i;
+          row.innerHTML = `
       <img class="ch-row-img" src="${ch.logo}" alt="${ch.name}"
         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 fill=%22%231a1a1a%22/><text x=%2216%22 y=%2220%22 text-anchor=%22middle%22 fill=%22%23444%22 font-size=%2212%22>📺</text></svg>'">
       <span class="ch-row-name">${ch.name}</span>
       <div class="ch-row-check">✓</div>`;
-        row.onclick = () => toggleCh(i, row);
-        list.appendChild(row);
-      });
-      updateSelCount();
-    }
+          row.onclick = () => toggleCh(i, row);
+          list.appendChild(row);
+        });
+        updateSelCount();
+      }
 
-    function toggleCh(i, row) {
-      if (sbSelected.has(i)) { sbSelected.delete(i); row.classList.remove('selected') }
-      else { sbSelected.add(i); row.classList.add('selected') }
-      updateSelCount();
-    }
+      function toggleCh(i, row) {
+        if (sbSelected.has(i)) { sbSelected.delete(i); row.classList.remove('selected') }
+        else { sbSelected.add(i); row.classList.add('selected') }
+        updateSelCount();
+      }
 
-    function toggleSelectAll() {
-      const allSelected = sbSelected.size === sbChannels.length;
-      sbSelected.clear();
-      document.querySelectorAll('.ch-row').forEach((row, i) => {
-        if (!allSelected) { sbSelected.add(i); row.classList.add('selected') }
-        else row.classList.remove('selected');
-      });
-      updateSelCount();
-    }
+      function toggleSelectAll() {
+        const allSelected = sbSelected.size === sbChannels.length;
+        sbSelected.clear();
+        document.querySelectorAll('.ch-row').forEach((row, i) => {
+          if (!allSelected) { sbSelected.add(i); row.classList.add('selected') }
+          else row.classList.remove('selected');
+        });
+        updateSelCount();
+      }
 
-    function updateSelCount() {
-      const n = sbSelected.size;
-      $('selCountTxt').textContent = n + ' selected';
-      $('selAllBtn').textContent = n === sbChannels.length ? 'Deselect all' : 'Select all';
-      $('genBtn').disabled = n === 0;
-    }
+      function updateSelCount() {
+        const n = sbSelected.size;
+        $('selCountTxt').textContent = n + ' selected';
+        $('selAllBtn').textContent = n === sbChannels.length ? 'Deselect all' : 'Select all';
+        $('genBtn').disabled = n === 0;
+      }
 
-    // ══════════════════════════════════════════════════════════
-    // BUNDLE GENERATION
-    // ══════════════════════════════════════════════════════════
-    let _lastBundleUrl = '';
+      // ══════════════════════════════════════════════════════════
+      // BUNDLE GENERATION
+      // ══════════════════════════════════════════════════════════
+      let _lastBundleUrl = '';
 
-    function generateBundle() {
-      if (sbSelected.size === 0) return;
-      const base = $('playerBaseUrl').value.trim() || window.location.origin + window.location.pathname;
-      const name = $('bundleName').value.trim() || 'Channel Bundle';
-      const ids = [];
-      sbSelected.forEach(i => { const ch = sbChannels[i]; if (ch.id) ids.push(ch.id); });
-      const payload = JSON.stringify({ title: name, ids });
-      const encoded = obf(payload);
-      const finalUrl = `${base}?bundle=${encodeURIComponent(encoded)}`;
-      _lastBundleUrl = finalUrl;
-      $('bundleUrlText').textContent = finalUrl;
-      const snippet = `import StreamXPlayer from './StreamXPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
-      $('embedSnippet').textContent = snippet;
-      $('bundleResult').style.display = 'flex';
-    }
+      function generateBundle() {
+        if (sbSelected.size === 0) return;
+        const base = $('playerBaseUrl').value.trim() || window.location.origin + window.location.pathname;
+        const name = $('bundleName').value.trim() || 'Channel Bundle';
+        const ids = [];
+        sbSelected.forEach(i => { const ch = sbChannels[i]; if (ch.id) ids.push(ch.id); });
+        const payload = JSON.stringify({ title: name, ids });
+        const encoded = obf(payload);
+        const finalUrl = `${base}?bundle=${encodeURIComponent(encoded)}`;
+        _lastBundleUrl = finalUrl;
+        $('bundleUrlText').textContent = finalUrl;
+        const snippet = `import StreamXPlayer from './StreamXPlayer';\n\n// ${name}\nexport default function App() {\n  return (\n    <StreamXPlayer\n      bundleUrl="${finalUrl}"\n      title="${name}"\n      autoPlay={true}\n    />\n  );\n}`;
+        $('embedSnippet').textContent = snippet;
+        $('bundleResult').style.display = 'flex';
+      }
 
-    function copyBundleUrl() {
-      navigator.clipboard.writeText(_lastBundleUrl).then(() => {
-        const btn = $('bundleCopyBtn');
-        btn.textContent = '✅ Copied!'; btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '📋 Copy URL'; btn.classList.remove('copied') }, 2000);
-      }).catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = _lastBundleUrl; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta);
-        $('bundleCopyBtn').textContent = '✅ Copied!';
-        setTimeout(() => $('bundleCopyBtn').textContent = '📋 Copy URL', 2000);
-      });
-    }
+      function copyBundleUrl() {
+        navigator.clipboard.writeText(_lastBundleUrl).then(() => {
+          const btn = $('bundleCopyBtn');
+          btn.textContent = '✅ Copied!'; btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = '📋 Copy URL'; btn.classList.remove('copied') }, 2000);
+        }).catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = _lastBundleUrl; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+          $('bundleCopyBtn').textContent = '✅ Copied!';
+          setTimeout(() => $('bundleCopyBtn').textContent = '📋 Copy URL', 2000);
+        });
+      }
 
-    function openBundleUrl() { window.open(_lastBundleUrl, '_blank') }
+      function openBundleUrl() { window.open(_lastBundleUrl, '_blank') }
 
-    function copyEmbed() {
-      const code = $('embedSnippet').textContent;
-      navigator.clipboard.writeText(code).catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = code; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta);
-      });
-      const btn = event.target;
-      btn.textContent = '✅ Copied!';
-      setTimeout(() => btn.textContent = 'Copy React snippet', 2000);
-    }
+      function copyEmbed() {
+        const code = $('embedSnippet').textContent;
+        navigator.clipboard.writeText(code).catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = code; document.body.appendChild(ta); ta.select();
+          document.execCommand('copy'); document.body.removeChild(ta);
+        });
+        const btn = event.target;
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = 'Copy React snippet', 2000);
+      }
 
-    $('playerBaseUrl').value = window.location.origin + window.location.pathname;
+      $('playerBaseUrl').value = window.location.origin + window.location.pathname;
   </script>
 </body>
 
