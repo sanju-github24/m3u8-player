@@ -2116,6 +2116,7 @@
       </div>
     </div>
     <div class="ls-box">
+      <div class="ls-tabs">
         <button class="ls-tab on" id="tabCustom" onclick="switchTab('custom')">🔗 Custom URL</button>
         <button class="ls-tab" id="tabTmdb" onclick="switchTab('tmdb')">🎬 TMDB / FilmU</button>
         <button class="ls-tab" id="tabLive" onclick="switchTab('live')">📺 Live TV</button>
@@ -5118,6 +5119,9 @@
       loadVideo(url, titIn.value.trim(), false, drm);
     }
     urlIn.addEventListener('keydown', e => { if (e.key === 'Enter') playNow.click() });
+    $('tmdbIdIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
+    $('tmdbSeasonIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
+    $('tmdbEpisodeIn')?.addEventListener('keydown', e => { if (e.key === 'Enter') submitTmdbForm() });
 
     function tryDemo(url, title) {
       urlIn.value = url; titIn.value = title; drmFields.style.display = 'none';
