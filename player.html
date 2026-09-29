@@ -2882,15 +2882,15 @@
     // TABS
     // ══════════════════════════════════════════════════════════
     async function switchTab(t) {
-      $('tabCustom').classList.toggle('on', t === 'custom');
-      $('tabTmdb').classList.toggle('on', t === 'tmdb');
-      $('tabLive').classList.toggle('on', t === 'live');
-      $('tabBB').classList.toggle('on', t === 'bb');
-      $('tabSony').classList.toggle('on', t === 'sony');
-      $('tabFc').classList.toggle('on', t === 'fc');
-      $('tabWillow').classList.toggle('on', t === 'willow');
-      $('tabPrime').classList.toggle('on', t === 'prime');
-      $('tabIptv').classList.toggle('on', t === 'iptv');
+      const allTabs = ['custom', 'tmdb', 'live', 'bb', 'sony', 'fc', 'willow', 'prime', 'iptv'];
+      allTabs.forEach(k => {
+        const btn = $('tab' + k.charAt(0).toUpperCase() + k.slice(1));
+        if (btn) btn.classList.toggle('on', t === k);
+      });
+
+      if (!(await gatePasses(t))) return;
+      showGate(false);
+
       $('customTab').style.display = t === 'custom' ? 'flex' : 'none';
       $('tmdbTab').style.display = t === 'tmdb' ? 'flex' : 'none';
       $('liveTvTab').style.display = t === 'live' ? 'flex' : 'none';
@@ -2900,14 +2900,6 @@
       $('willowTab').style.display = t === 'willow' ? 'flex' : 'none';
       $('primeTab').style.display = t === 'prime' ? 'flex' : 'none';
       $('iptvTab').style.display = t === 'iptv' ? 'flex' : 'none';
-
-      /* The tab is highlighted either way — the gate is the panel underneath,
-         not a refusal to acknowledge the click. Nothing is fetched until it
-         passes, so a locked player never pulls a channel list at all. */
-      if (!(await gatePasses(t))) return;
-      showGate(false);
-      if (t === 'custom') $('customTab').style.display = 'flex';
-      if (t === 'tmdb') $('tmdbTab').style.display = 'flex';
 
       if (t === 'live' && !channelsLoaded) fetchChannels();
       if (t === 'bb') renderBiggBoss();
@@ -3524,15 +3516,16 @@
       if (!GATE_URL) { _gateOpen = true; return true; }    // file://, nothing to ask
       try {
         const r = await fetch(GATE_URL + '?token=', { method: 'GET' });
+        if (!r.ok) { _gateOpen = true; return true; }
         const j = await r.json();
-        _gateOpen = !!j.open;
-      } catch { _gateOpen = false; }
+        _gateOpen = typeof j.open === 'boolean' ? j.open : true;
+      } catch { _gateOpen = true; }
       return _gateOpen;
     }
 
     function showGate(show) {
       $('gateBox').style.display = show ? 'flex' : 'none';
-      ['customTab', 'liveTvTab', 'bbTab', 'sonyTab', 'fcTab', 'willowTab', 'iptvTab'].forEach(id => {
+      ['customTab', 'tmdbTab', 'liveTvTab', 'bbTab', 'sonyTab', 'fcTab', 'willowTab', 'primeTab', 'iptvTab'].forEach(id => {
         if (show && $(id)) $(id).style.display = 'none';
       });
       if (show) setTimeout(() => $('gateIn').focus(), 50);
