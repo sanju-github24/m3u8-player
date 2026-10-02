@@ -5265,7 +5265,16 @@
               });
               return;
             }
-            loadVideo(directUrl, directTitle || 'Movie', false, null);
+            /* A direct ?url= link dropped any credentials it was handed and always
+               played with none, so a stream that needed them could not play from
+               this path even when the caller supplied everything. */
+            const directKeyId = q.get('keyId');
+            const directKey = q.get('key');
+            const directCookie = q.get('cookie');
+            const drm = (directKeyId || directKey || directCookie)
+              ? { keyId: directKeyId || '', key: directKey || '', cookie: directCookie || '' }
+              : null;
+            loadVideo(directUrl, directTitle || 'Movie', false, drm);
             return;
           }
 
