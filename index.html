@@ -2710,6 +2710,9 @@
     // ══════════════════════════════════════════════════════════
     const OLD_JSON_URL = 'https://binge-giotv.pages.dev/data/id.json';
     const NEW_JSON_URL = 'https://jtv-proxy.sanjusanjay0444.workers.dev/';
+    /* Our own backend. It is the only provider here that can answer with a
+       stream we actually own, so it is asked first. */
+    const ANCHOR_API = 'https://movies1-backend.onrender.com';
 
     let _chMap = null;
     let _chMapPromise = null;
@@ -5196,6 +5199,30 @@
            gets from the first one, and the only way to find that out is to try
            to play it. So the rest of the list travels with the stream. */
         const providers = [
+          /* Ours, before anyone else's.
+
+             For the titles we host there is no reason to ask a third party for
+             a manifest: our copy is on our own CDN, it is the quality we
+             uploaded, it carries the audio tracks we put in it, and it does not
+             stop working because someone else changed their mind. It is also
+             the only link here that cannot be swapped for a decoy.
+
+             /api/own-stream answers by TMDB id and says no — quietly — when the
+             title is not ours or the episode was never uploaded, which is most
+             of them. Nothing below changes: a no here simply means the next
+             provider runs exactly as it did before. */
+          async () => {
+            const qs = new URLSearchParams({
+              tmdbId: String(tmdbId), type, season: String(season), episode: String(episode),
+            });
+            const r = await fetch(`${ANCHOR_API}/api/own-stream?${qs}`, { cache: 'no-store' });
+            if (!r.ok) return null;
+            const d = await r.json();
+            if (!d || !d.success || !d.url) return null;
+            if (d.title && !meta) meta = { title: d.title, poster: d.poster || '' };
+            // No referer or user-agent games: it is our origin asking our CDN.
+            return { url: d.url, ref: '', ua: '', name: 'AnchorHD • our CDN' };
+          },
           async () => {
             const workerUrl = `${NEW_JSON_URL}?feed=tmdb&id=${encodeURIComponent(tmdbId)}&type=${encodeURIComponent(type)}&season=${season}&episode=${episode}&title=${encodeURIComponent(title || '')}`;
             const r = await fetch(workerUrl, { cache: 'no-store' });
