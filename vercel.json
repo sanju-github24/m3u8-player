@@ -1,6 +1,16 @@
 {
-  "regions": ["bom1"],
+  "regions": [
+    "bom1"
+  ],
   "functions": {
-    "api/live-proxy.js": { "maxDuration": 60 }
-  }
+    "api/live-proxy.js": {
+      "maxDuration": 60
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/player.html",
+      "destination": "/index.html"
+    }
+  ]
 }
