@@ -2190,7 +2190,7 @@
               style="padding:10px 14px;font-size:.85rem" />
           </div>
         </div>
-        <button class="ls-play" id="tmdbPlayBtn" onclick="submitTmdbForm()">▶ Fetch & Play M3U8</button>
+        <button class="ls-play" id="tmdbPlayBtn" onclick="submitTmdbForm()">▶ Fetch &amp; Play M3U8</button>
         <div class="ls-div">— Popular / Quick Play —</div>
         <div class="ls-demos" style="flex-wrap:wrap">
           <button class="ls-demo" onclick="quickPlayTmdb('1726','movie',1,1,'Iron Man')">🦸 Iron Man (1726)</button>
@@ -2493,6 +2493,15 @@
           </svg>
           <span class="lbl">Episodes</span>
         </button>
+        <div class="menu-wrap" id="srvWrap" style="display:none">
+          <button class="top-btn" id="srvBtn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff">
+              <path d="M4 1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 14h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1zm2.5 2.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm0-14a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+            </svg>
+            <span id="srvLbl">Server</span>
+          </button>
+          <div class="drop drop-top" id="srvMenu"></div>
+        </div>
         <div class="menu-wrap" id="audioWrap" style="display:none">
           <button class="top-btn" id="audioBtn">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff">
@@ -2843,6 +2852,7 @@
     const pipBtn = $('pipBtn'), qualBtn = $('qualBtn'), qualLbl = $('qualLbl'), qualMenu = $('qualMenu');
     const speedLbl = $('speedLbl'), speedMenu = $('speedMenu');
     const audioBtn = $('audioBtn'), audioLbl = $('audioLbl'), audioMenu = $('audioMenu'), audioWrap = $('audioWrap');
+    const srvBtn = $('srvBtn'), srvLbl = $('srvLbl'), srvMenu = $('srvMenu'), srvWrap = $('srvWrap');
     const spin = $('spin'), cAnim = $('cAnim'), cSvg = $('cSvg');
     const sfl = $('sfl'), sfr = $('sfr'), toast = $('toast');
     const err = $('err'), errMsg = $('errMsg');
@@ -4492,7 +4502,78 @@
     // ══════════════════════════════════════════════════════════
     // LOAD VIDEO — unified entry point
     // ══════════════════════════════════════════════════════════
-    async function loadVideo(url, title, asGuest = false, drm = null) {
+    /* Providers not yet tried for whatever is playing, and the name to put
+       back on screen if one of them has to take over. Set by whoever calls
+       loadVideo; every other tab passes nothing, which clears them. */
+    let _altProviders = [], _altLabel = '';
+
+    /* Everything that answered for the title on screen, and which of them is
+       playing. A title is served by four of these — one singularity host and
+       three VidRock mirrors — and before this only the first was ever asked.
+       Now they are all collected, so a slow or broken one is a click away from
+       the next instead of a dead end. */
+    let _servers = [], _serverAt = -1, _searchRun = 0;
+
+    function buildServers() {
+      if (_servers.length < 2) { srvWrap.style.display = 'none'; return; }
+      srvMenu.innerHTML = '<div class="dlbl">Server</div>';
+      _servers.forEach((c, i) => {
+        const el = document.createElement('div');
+        el.className = 'ditem' + (i === _serverAt ? ' on' : '');
+        el.innerHTML = `<span>${c.name || ('Server ' + (i + 1))}</span><span class="chk">✓</span>`;
+        el.onclick = () => playServer(i);
+        srvMenu.appendChild(el);
+      });
+      srvLbl.textContent = (_servers[_serverAt] && _servers[_serverAt].name) || 'Server';
+      srvWrap.style.display = 'flex';
+    }
+
+    function playServer(i) {
+      const c = _servers[i];
+      if (!c || i === _serverAt) { srvMenu.classList.remove('open'); return; }
+      _serverAt = i;
+      srvMenu.classList.remove('open');
+      showToast(`⇄ ${c.name || ('Server ' + (i + 1))}`, 2000);
+      /* The ones after it stay in the fallback queue, so a server picked by
+         hand that then fails still falls through rather than stopping. */
+      loadVideo(viaWorker(c.url, { ref: c.ref || FILMU_REF, ua: c.ua || '' }), _altLabel,
+        false, null, _servers.slice(i + 1).map(x => async () => x));
+      buildServers();
+    }
+
+    srvBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      srvMenu.classList.toggle('open');
+      qualMenu.classList.remove('open'); speedMenu.classList.remove('open'); audioMenu.classList.remove('open');
+    });
+
+    /* The next provider in line, when the one playing turns out not to play.
+       Returns false when the list is exhausted, and the caller shows the
+       error it was going to show anyway. */
+    async function tryNextProvider(why) {
+      while (_altProviders.length) {
+        const next = _altProviders.shift();
+        let got = null;
+        try { got = await next(); } catch (e) { got = null; }
+        const list = (Array.isArray(got) ? got : [got]).filter(c => c && c.url);
+        if (list.length) {
+          const c = list[0];
+          /* Anything else this one found goes to the front of the queue. */
+          _altProviders = list.slice(1).map(x => async () => x).concat(_altProviders);
+          showToast(`⟳ ${why} — trying another source`, 2500);
+          const at = _servers.findIndex(x => x.url === c.url);
+          if (at >= 0) { _serverAt = at; buildServers(); }
+          loadVideo(viaWorker(c.url, { ref: c.ref || FILMU_REF, ua: c.ua || '' }), _altLabel, false, null, _altProviders);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    async function loadVideo(url, title, asGuest = false, drm = null, alts = []) {
+      if (!alts || !alts.length) { if (!_servers.length) srvWrap.style.display = 'none'; }
+      _altProviders = Array.isArray(alts) ? alts.slice() : [];
+      _altLabel = title;
       err.style.display = 'none';
       errMsg.textContent = 'Could not play this stream.';
       isLiveStream = false;
@@ -4897,19 +4978,84 @@
         err.style.display = 'flex';
         return;
       }
-      hlsInst = new Hls({ enableWorker: true, maxBufferLength: 30, liveSyncDurationCount: 3 });
+      hlsInst = new Hls({
+        enableWorker: true,
+        liveSyncDurationCount: 3,
+        /* Through the worker every request costs an extra hop, so the two
+           things that delay a first picture are worth removing: hls.js's
+           startup bandwidth probe, which spends a request deciding what it
+           could have learned from the first fragment, and waiting for the
+           level to load before fetching that fragment at all. */
+        testBandwidth: false,
+        startFragPrefetch: true,
+        /* Without a measurement it assumes 500kbps and opens on the lowest
+           rung; these streams are 1080p single-rung anyway, and a realistic
+           figure stops it hedging. */
+        abrEwmaDefaultEstimate: 3000000,
+        /* Deeper than the default: one slow segment through the proxy should
+           cost nothing visible. */
+        maxBufferLength: 60,
+        maxMaxBufferLength: 120,
+        backBufferLength: 30,
+      });
       hlsInst.loadSource(url);
       hlsInst.attachMedia(vid);
-      hlsInst.on(Hls.Events.MANIFEST_PARSED, () => {
+      hlsInst.on(Hls.Events.MANIFEST_PARSED, (_evt, parsed) => {
+        /* The sample clip. Recognising it is fiddlier than it looks: these
+           providers call the real stream tiles.m3u8 too, so the name proves
+           nothing on its own — what the decoy has is NOTHING beside it, no
+           alternate audio and no subtitles, where a real one carries seven or
+           eleven languages.
+         *
+           And the tracks must be read from the event, not from the instance.
+           hlsInst.audioTracks is filled on its own event, which lands after
+           this one, so asking the instance here says zero for every stream —
+           which is how a perfectly good eleven-language master got mistaken
+           for a decoy and thrown away. */
+        const levels = (parsed && parsed.levels) || hlsInst.levels || [];
+        const alt = ((parsed && parsed.audioTracks) || []).length
+          + ((parsed && parsed.subtitleTracks) || []).length;
+        const only = levels.length === 1 ? levels[0] : null;
+        if (only && !alt && /tiles\.m3u8/.test(only.url?.[0] || only.url || '')
+            && only.height && only.height <= 720) {
+          hlsInst.destroy(); hlsInst = null;
+          tryNextProvider('that source only offered its sample clip').then((moved) => {
+            if (moved) return;
+            spin.classList.remove('on');
+            errMsg.textContent = 'Every source offered only its sample clip for this title.';
+            err.style.display = 'flex';
+          });
+          return;
+        }
         buildHLSQual(); buildAudio();
         spin.classList.remove('on');
         vid.play().catch(() => { });
       });
+      /* The renditions are published on their own event, and on these
+         playlists it lands after MANIFEST_PARSED — built only there, the menu
+         was asked for the tracks before hls.js had them and hid itself. */
+      hlsInst.on(Hls.Events.AUDIO_TRACKS_UPDATED, () => buildAudio());
+      hlsInst.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => buildAudio());
       hlsInst.on(Hls.Events.LEVEL_LOADED, (_e, d) => {
         if (d.details && d.details.live && !isLiveStream) { isLiveStream = true; updateLiveBadge(); }
       });
       hlsInst.on(Hls.Events.ERROR, (_e, d) => {
         if (!d.fatal) return;
+        /* The playlist itself never arrived: the host is gone, or it refused
+           us. Retrying it forever is what made a dead TV source spin instead
+           of moving to the provider behind it. */
+        if (/^manifest(Load|Parsing)/.test(d.details || '') && _altProviders.length) {
+          try { hlsInst.destroy(); } catch (ignored) { /* already gone */ }
+          hlsInst = null;
+          tryNextProvider('that source did not answer').then((moved) => {
+            if (moved) return;
+            spin.classList.remove('on');
+            errMsg.textContent = 'Stream error: ' + (d.details || 'unknown');
+            err.style.display = 'flex';
+            announceError();
+          });
+          return;
+        }
         if (d.type === Hls.ErrorTypes.NETWORK_ERROR) { hlsInst.startLoad(); return; }
         if (d.type === Hls.ErrorTypes.MEDIA_ERROR) { hlsInst.recoverMediaError(); return; }
         spin.classList.remove('on');
@@ -4920,6 +5066,22 @@
     }
 
     // ══════════════════════════════════════════════════════════
+    /* The page these streams are served to. Everything in this section is
+       fetched as if it came from there, because the CDN decides what to send
+       by looking at it. */
+    const FILMU_REF = 'https://embed.filmu.in/';
+
+    /* The decoy: a master with one 720p variant called tiles.m3u8, no audio
+       tracks and no subtitles, a few dozen bytes long. A real film's master
+       lists several of each. */
+    function looksLikeSample(m3u8) {
+      if (!m3u8 || !/#EXTM3U/.test(m3u8)) return false;
+      const hasTiles = /(^|\/)tiles\.m3u8/m.test(m3u8);
+      const tracks = (m3u8.match(/#EXT-X-MEDIA:/g) || []).length;
+      const variants = (m3u8.match(/#EXT-X-STREAM-INF:/g) || []).length;
+      return hasTiles && tracks === 0 && variants <= 1;
+    }
+
     // TMDB & FILMU M3U8 STREAM FETCHER
     // ══════════════════════════════════════════════════════════
     let _currentTmdb = null;
@@ -4983,12 +5145,13 @@
 
       const parsed = parseFilmuOrTmdbUrl(raw);
       if (parsed) {
-        await playTmdb({
+        const args = {
           tmdbId: parsed.tmdbId,
           type: parsed.type,
           season: parseInt(parsed.season || '1', 10),
           episode: parseInt(parsed.episode || '1', 10)
-        });
+        };
+        await playTmdb(args);
         return;
       }
 
@@ -5018,73 +5181,94 @@
       showToast('⏳ Fetching M3U8 stream…', 4000);
 
       _currentTmdb = { tmdbId, type, season, episode, title };
+      _servers = []; _serverAt = -1; _searchRun++; srvWrap.style.display = 'none';
 
       try {
         let streamUrl = null;
         let meta = null;
         let episodes = [];
 
-        // 1. Worker feed attempt
-        try {
-          const workerUrl = `${NEW_JSON_URL}?feed=tmdb&id=${encodeURIComponent(tmdbId)}&type=${encodeURIComponent(type)}&season=${season}&episode=${episode}&title=${encodeURIComponent(title || '')}`;
-          const r = await fetch(workerUrl, { cache: 'no-store' });
-          if (r.ok) {
+        /* Three places to ask, in the order they have been worth asking.
+           Each is tried only when the one before it has nothing — but the ones
+           not tried are KEPT, because "it answered" and "it plays" are
+           different things. A provider will hand back a URL on a host whose
+           DNS no longer resolves, which is what every TV episode currently
+           gets from the first one, and the only way to find that out is to try
+           to play it. So the rest of the list travels with the stream. */
+        const providers = [
+          async () => {
+            const workerUrl = `${NEW_JSON_URL}?feed=tmdb&id=${encodeURIComponent(tmdbId)}&type=${encodeURIComponent(type)}&season=${season}&episode=${episode}&title=${encodeURIComponent(title || '')}`;
+            const r = await fetch(workerUrl, { cache: 'no-store' });
+            if (!r.ok) return null;
             const data = await r.json();
-            if (data && data.streamUrl) {
-              streamUrl = data.streamUrl;
-              meta = data.meta;
-              episodes = data.episodes || [];
-            }
-          }
-        } catch (we) {
-          console.warn('Worker tmdb feed error, trying fallback:', we);
-        }
-
-        // 2. Fallback: Singularity direct with proxy
-        if (!streamUrl) {
-          try {
+            if (!data || !data.streamUrl) return null;
+            meta = data.meta || meta;
+            episodes = data.episodes || episodes;
+            return { url: data.streamUrl, ref: data.ref || FILMU_REF, ua: data.ua || '', name: 'FilmU • Feed' };
+          },
+          async () => {
             const singUrl = type === 'movie'
               ? `https://embed.filmu.in/api/singularity-movie?id=${encodeURIComponent(tmdbId)}`
               : `https://embed.filmu.in/api/singularity-tv?tmdb=${encodeURIComponent(tmdbId)}&s=${season}&e=${episode}`;
-
-            const proxiedSing = `${NEW_JSON_URL}?url=${encodeURIComponent(singUrl)}&ref=${encodeURIComponent('https://embed.filmu.in/')}`;
-            const r = await fetch(proxiedSing);
-            if (r.ok) {
-              const d = await r.json();
-              const base = d._base || d.i || '';
-              if (d.sources && d.sources.length) {
-                streamUrl = d.sources[0].url;
-              } else if (d.m3u8_path) {
-                streamUrl = base ? `${base}/${d.m3u8_path.replace(/^\//, '')}` : d.m3u8_path;
-              }
+            const r = await fetch(`${NEW_JSON_URL}?url=${encodeURIComponent(singUrl)}&ref=${encodeURIComponent(FILMU_REF)}`);
+            if (!r.ok) return null;
+            const d = await r.json();
+            const base = d._base || d.i || '';
+            if (d.sources && d.sources.length) {
+              return d.sources.map((x, i) => ({ url: x.url, ref: FILMU_REF,
+                name: 'FilmU • Singularity' + (d.sources.length > 1 ? ` ${i + 1}` : '') }));
             }
-          } catch (se) {
-            console.warn('Singularity direct fallback error:', se);
-          }
-        }
-
-        // 3. Fallback: VidRock scraper with proxy
-        if (!streamUrl) {
-          try {
+            if (d.m3u8_path) return { url: base ? `${base}/${d.m3u8_path.replace(/^\//, '')}` : d.m3u8_path, ref: FILMU_REF, name: 'FilmU • Singularity' };
+            return null;
+          },
+          async () => {
             const scrapePath = `/scrape/VidRock/${type}/tmdb${tmdbId}?tmdbId=${tmdbId}&title=${encodeURIComponent(title || 'Stream')}&season=${season}&episode=${episode}`;
             const vrUrl = `https://embed.filmu.in/api/proxy?path=${encodeURIComponent(scrapePath)}`;
-            const proxiedVr = `${NEW_JSON_URL}?url=${encodeURIComponent(vrUrl)}&ref=${encodeURIComponent('https://embed.filmu.in/')}`;
-            const r = await fetch(proxiedVr);
-            if (r.ok) {
-              const d = await r.json();
-              if (d.sources && d.sources.length) {
-                const m3u8 = d.sources.find(s => s.type === 'm3u8' || (s.url && s.url.includes('.m3u8'))) || d.sources[0];
-                if (m3u8 && m3u8.url) streamUrl = m3u8.url;
-              }
-            }
-          } catch (ve) {
-            console.warn('VidRock scraper fallback error:', ve);
+            const r = await fetch(`${NEW_JSON_URL}?url=${encodeURIComponent(vrUrl)}&ref=${encodeURIComponent(FILMU_REF)}`);
+            if (!r.ok) return null;
+            const d = await r.json();
+            if (!d.sources || !d.sources.length) return null;
+            /* This one scrapes other players, and each source it finds is
+               served by whoever it was scraped from — with THEIR referer, not
+               FilmU's. Stamping every stream with the same one is why these
+               never played: the CDN was being told the request came from a
+               site it has never heard of. */
+            const m3u8First = d.sources.filter(x => x.type === 'm3u8' || (x.url && x.url.includes('.m3u8')));
+            return (m3u8First.length ? m3u8First : d.sources).map(x => ({
+              url: x.url,
+              ref: (x.headers && (x.headers.Referer || x.headers.referer)) || FILMU_REF,
+              ua: (x.headers && (x.headers['User-Agent'] || x.headers['user-agent'])) || '',
+              name: x.name || 'FilmU • VidRock',
+            }));
+          },
+        ];
+
+        /* One order for both. The TV host looks unreachable from an Indian
+           home connection — the ISP cuts it by SNI, and by DNS — which is why
+           it seems dead when you curl it from a laptop. It is not: every
+           request here goes through the worker, which runs on Cloudflare and
+           has no such opinion, and from there the same URL returns a full
+           ladder with seven audio languages. So singularity stays first for
+           episodes as well as films, and the scraper stays behind it. */
+        const chain = providers.slice();
+
+        let chosen = null, rest = [];
+        for (let i = 0; i < chain.length && !chosen; i++) {
+          let got = null;
+          try { got = await chain[i](); } catch (pe) { console.warn('tmdb provider ' + i + ':', pe); }
+          const list = (Array.isArray(got) ? got : [got]).filter(c => c && c.url);
+          if (list.length) {
+            chosen = list[0];
+            /* The rest of this provider's sources first — they are already
+               resolved — then the providers nobody has had to ask yet. */
+            rest = list.slice(1).map(c => async () => c).concat(chain.slice(i + 1));
           }
         }
 
-        if (!streamUrl) {
+        if (!chosen) {
           throw new Error('No stream found for TMDB ' + tmdbId);
         }
+        streamUrl = chosen.url;
 
         // Metadata handling
         const displayTitle = (meta && meta.title) || title || (type === 'tv' ? `TV Show (TMDB ${tmdbId})` : `Movie (TMDB ${tmdbId})`);
@@ -5128,10 +5312,47 @@
         }
 
         syncPauseInfo();
+
+        /* The CDN answers by Referer. Asked without one it hands back a
+           seventy-byte master pointing at tiles.m3u8 — a sample clip, the same
+           one for every film, which is why everything played the same dance
+           video. Asked as the embed page, the real master comes back with its
+           audio and subtitle tracks. A browser cannot set Referer itself, so
+           this goes through the worker like every other tab's stream does; the
+           worker rewrites the playlist, so the segments carry it too. */
+        const playUrl = viaWorker(chosen.url, { ref: chosen.ref || FILMU_REF, ua: chosen.ua || '' });
+
         showToast(`▶ Playing ${subLabel}`, 2500);
 
-        // Load stream into HLS / Native video player
-        loadVideo(streamUrl, subLabel, false, null);
+        // Load stream into HLS / Native video player — with the providers
+        // that were not needed, in case this one does not play.
+        loadVideo(playUrl, subLabel, false, null, rest);
+
+        /* FilmU serves a title from more than one place, and stopping at the
+           first answer is why only singularity's ever showed. The rest are
+           asked now, in the background, so playback is not held up for them:
+           each one that answers joins the Server menu, and the fallback queue
+           is rebuilt from the full list. */
+        _servers = [{ ...chosen, name: chosen.name || 'FilmU • Singularity' }];
+        _serverAt = 0;
+        buildServers();
+        (async () => {
+          const mine = _searchRun = (_searchRun || 0) + 1;
+          for (const resolve of rest) {
+            let got = null;
+            try { got = await resolve(); } catch (se) { got = null; }
+            if (mine !== _searchRun) return;               // another title took over
+            const found = (Array.isArray(got) ? got : [got]).filter(c => c && c.url);
+            if (!found.length) continue;
+            const known = new Set(_servers.map(c => c.url));
+            const fresh = found.filter(c => !known.has(c.url));
+            if (!fresh.length) continue;
+            _servers = _servers.concat(fresh);
+            buildServers();
+            /* Already resolved, so the fallback no longer has to ask again. */
+            _altProviders = _servers.slice(_serverAt + 1).map(c => async () => c);
+          }
+        })();
 
       } catch (ex) {
         console.error('playTmdb error:', ex);
@@ -5492,12 +5713,56 @@
       else progTip.textContent = fmt(p * (vid.duration || 0));
       progTip.style.left = (p * 100) + '%';
     });
-    progWrap.addEventListener('mousedown', e => { drag = true; seekAt(e); const up = () => { drag = false; document.removeEventListener('mouseup', up); document.removeEventListener('mousemove', seekAt) }; document.addEventListener('mousemove', seekAt); document.addEventListener('mouseup', up) });
-    function seekAt(e) { const r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); if (isLiveStream) { const sk = vid.seekable; if (sk && sk.length > 0) { const dvr = sk.end(0) - sk.start(0); if (dvr < 86400) vid.currentTime = sk.start(0) + p * dvr } } else vid.currentTime = p * (vid.duration || 0); progFill.style.width = (p * 100) + '%'; progThumb.style.left = (p * 100) + '%' }
-    progWrap.addEventListener('touchstart', e => { drag = true; seekT(e) }, { passive: true });
-    progWrap.addEventListener('touchmove', seekT, { passive: true });
-    progWrap.addEventListener('touchend', () => { drag = false; if (isLiveStream) updateLiveBadge() });
-    function seekT(e) { const t = e.touches[0], r = progTrack.getBoundingClientRect(), p = Math.max(0, Math.min(1, (t.clientX - r.left) / r.width)); if (isLiveStream) { const sk = vid.seekable; if (sk && sk.length > 0) { const dvr = sk.end(0) - sk.start(0); if (dvr < 86400) vid.currentTime = sk.start(0) + p * dvr } } else vid.currentTime = p * (vid.duration || 0); progFill.style.width = (p * 100) + '%'; progThumb.style.left = (p * 100) + '%' }
+    /* Dragging the bar used to seek on every mousemove — sixty a second, each
+       one telling hls.js to abandon the fragment it was loading and fetch
+       another. Through the worker each of those abandoned fetches had already
+       cost a round trip, so a scrub across the film queued dozens of requests
+       for positions nobody ever watched, and the one that mattered arrived
+       last. The bar now moves under the finger and the seek happens once, when
+       it is let go. */
+    const seekPct = (clientX) => {
+      const r = progTrack.getBoundingClientRect();
+      return Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+    };
+    const paintSeek = (p) => {
+      progFill.style.width = (p * 100) + '%';
+      progThumb.style.left = (p * 100) + '%';
+    };
+    const commitSeek = (p) => {
+      if (isLiveStream) {
+        const sk = vid.seekable;
+        if (sk && sk.length > 0) {
+          const dvr = sk.end(0) - sk.start(0);
+          if (dvr < 86400) vid.currentTime = sk.start(0) + p * dvr;
+        }
+      } else {
+        vid.currentTime = p * (vid.duration || 0);
+      }
+      paintSeek(p);
+    };
+
+    let seekTo = null;                       // where the finger is, uncommitted
+    progWrap.addEventListener('mousedown', e => {
+      drag = true; seekTo = seekPct(e.clientX); paintSeek(seekTo);
+      const move = (ev) => { seekTo = seekPct(ev.clientX); paintSeek(seekTo); };
+      const up = () => {
+        drag = false;
+        if (seekTo !== null) commitSeek(seekTo);   // the one seek that counts
+        seekTo = null;
+        document.removeEventListener('mouseup', up);
+        document.removeEventListener('mousemove', move);
+      };
+      document.addEventListener('mousemove', move);
+      document.addEventListener('mouseup', up);
+    });
+    progWrap.addEventListener('touchstart', e => { drag = true; seekTo = seekPct(e.touches[0].clientX); paintSeek(seekTo); }, { passive: true });
+    progWrap.addEventListener('touchmove', e => { seekTo = seekPct(e.touches[0].clientX); paintSeek(seekTo); }, { passive: true });
+    progWrap.addEventListener('touchend', () => {
+      drag = false;
+      if (seekTo !== null) commitSeek(seekTo);
+      seekTo = null;
+      if (isLiveStream) updateLiveBadge();
+    });
 
     // ══════════════════════════════════════════════════════════
     // QUALITY (HLS)
