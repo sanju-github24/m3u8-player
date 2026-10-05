@@ -9,7 +9,7 @@
        requests return 200 (this is what makes native HLS play on iOS Safari). -->
   <meta name="referrer" content="no-referrer" />
   <title>StreamX Player</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.16/hls.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -5806,25 +5806,48 @@
     // ══════════════════════════════════════════════════════════
     // AUDIO TRACKS (HLS)
     // ══════════════════════════════════════════════════════════
+    /* Every language the stream has. Some streams give each language an
+       audio group of its own, with the video listed once per group; then
+       audioTracks names only the group playing and audioTrack only switches
+       inside it — the menu said Kannada while Hindi played, and picking
+       another did nothing. allAudioTracks is all of them, and setAudioOption
+       moves to the group carrying the one picked. A language listed in
+       several groups is shown once. */
+    const audioKey = (t) => `${String(t?.lang || '').toLowerCase()}|${String(t?.name || '').toLowerCase()}`;
+    function allAudio() {
+      const list = (hlsInst?.allAudioTracks?.length ? hlsInst.allAudioTracks : hlsInst?.audioTracks) || [];
+      const seen = new Set();
+      return list.filter((t) => { const k = audioKey(t); if (seen.has(k)) return false; seen.add(k); return true; });
+    }
+    function playingAudio(list) {
+      const cur = (hlsInst?.audioTracks || [])[hlsInst?.audioTrack];
+      return cur ? list.findIndex((t) => audioKey(t) === audioKey(cur)) : -1;
+    }
     function buildAudio() {
       if (!hlsInst) return;
-      const tracks = hlsInst.audioTracks;
+      const tracks = allAudio();
       if (!tracks || tracks.length <= 1) { audioWrap.style.display = 'none'; return }
+      const on = playingAudio(tracks);
       audioMenu.innerHTML = '<div class="dlbl">Audio</div>';
       tracks.forEach((t, i) => {
         const name = normLang(t.lang || t.name || t.groupId || ''); const flag = langFlag(name);
-        const el = document.createElement('div'); el.className = 'ditem' + (i === hlsInst.audioTrack ? ' on' : '');
+        const el = document.createElement('div'); el.className = 'ditem' + (i === on ? ' on' : '');
         el.innerHTML = `<span><span class="lang-flag">${flag}</span> ${name}</span><span class="chk">✓</span>`;
         el.onclick = () => setAudio(i); audioMenu.appendChild(el);
       });
-      const cur = tracks[hlsInst.audioTrack];
+      const cur = tracks[on];
       if (cur) { const n = normLang(cur.lang || cur.name || ''); audioLbl.innerHTML = `${langFlag(n)} ${n}` }
       audioWrap.style.display = 'flex';
     }
     function setAudio(idx) {
-      if (!hlsInst) return; hlsInst.audioTrack = idx;
+      if (!hlsInst) return;
+      const t = allAudio()[idx]; if (!t) return;
+      if (!(typeof hlsInst.setAudioOption === 'function' && hlsInst.setAudioOption(t))) {
+        const i = (hlsInst.audioTracks || []).findIndex((x) => audioKey(x) === audioKey(t));
+        if (i >= 0) hlsInst.audioTrack = i;
+      }
       audioMenu.querySelectorAll('.ditem').forEach((el, i) => el.classList.toggle('on', i === idx)); audioMenu.classList.remove('open');
-      const t = hlsInst.audioTracks[idx]; const n = normLang(t?.lang || t?.name || ''); const f = langFlag(n);
+      const n = normLang(t?.lang || t?.name || ''); const f = langFlag(n);
       audioLbl.innerHTML = `${f} ${n}`; showToast(`${f} ${n}`);
     }
     audioBtn.addEventListener('click', e => { e.stopPropagation(); audioMenu.classList.toggle('open'); qualMenu.classList.remove('open'); speedMenu.classList.remove('open') });
