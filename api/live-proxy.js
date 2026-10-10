@@ -25,7 +25,7 @@ const DEFAULT_UA =
 
 /* Only these hosts, so this cannot be used as an open relay for anything on
    the internet. It is a public URL on a domain you own. */
-const ALLOWED = ['fancode.com', 'akamaized.net', 'hotstar.com', 'jio.com'];
+const ALLOWED = ['fancode.com', 'akamaized.net', 'hotstar.com', 'jio.com', 'hakunaymatata.com'];
 
 /* Hosts that want an address no datacenter has. Everything else is served
    straight from Mumbai, which is faster and does not depend on a stranger. */
