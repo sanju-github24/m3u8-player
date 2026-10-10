@@ -117,6 +117,8 @@ export default async function handler(req, res) {
     'Origin': refOrigin,
     'Accept': '*/*',
     ...(cookie ? { Cookie: cookie } : {}),
+    // A player seeking in a file asks for a byte range; pass it on.
+    ...(req.headers.range ? { Range: req.headers.range } : {}),
   };
 
   let upstream, usedProxy = '';
@@ -222,5 +224,6 @@ export default async function handler(req, res) {
   // Segments and keys: hand the bytes back with CORS added.
   res.setHeader('Content-Type', ct || 'application/octet-stream');
   res.setHeader('Cache-Control', upstream.headers.get('cache-control') || 'no-cache');
-  return res.status(200).send(Buffer.from(await upstream.arrayBuffer()));
+  for (const h of ['content-range', 'accept-ranges']) { const v = upstream.headers.get(h); if (v) res.setHeader(h, v); }
+  return res.status(upstream.status === 206 ? 206 : 200).send(Buffer.from(await upstream.arrayBuffer()));
 }
