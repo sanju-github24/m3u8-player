@@ -4606,7 +4606,7 @@
       if (type === 'dash') {
         await loadShaka(url, title, drm);
       } else if (type === 'hls') {
-        loadHLS(url);
+        loadHLS(url, drm && drm.cookie);
       } else {
         // MP4 / WebM / OGG / MOV / MKV / proxy — native <video> element
         loadNative(url, title);
@@ -4687,6 +4687,16 @@
     // ══════════════════════════════════════════════════════════
     // SHAKA — MPEG-DASH + ClearKey DRM
     // ══════════════════════════════════════════════════════════
+    /* Jio's CDN wants the __hdnea__ token on every request — manifest,
+       child playlist and segment alike — and a browser cannot send it as a
+       Cookie header cross-origin. It takes it in the query string instead,
+       and answers with CORS *, so the player goes to Jio directly. */
+    function withJioToken(uri, cookie) {
+      if (!cookie || !/cdn\.jio\.com/.test(uri) || uri.includes('__hdnea__')) return uri;
+      const raw = cookie.startsWith('__hdnea__=') ? cookie.slice('__hdnea__='.length) : cookie;
+      return uri + (uri.includes('?') ? '&' : '?') + '__hdnea__=' + raw;
+    }
+
     async function loadShaka(url, title, drm) {
       shaka.polyfill.installAll();
       if (!shaka.Player.isBrowserSupported()) {
@@ -4760,13 +4770,8 @@
       }
 
       if (drm && drm.cookie) {
-        const rawVal = drm.cookie.startsWith('__hdnea__=') ? drm.cookie.slice('__hdnea__='.length) : drm.cookie;
         shakaInst.getNetworkingEngine().registerRequestFilter((type, request) => {
-          request.uris = request.uris.map(uri => {
-            const isJio = uri.includes('jiotvpllive.cdn.jio.com') || uri.includes('jiotvmblive.cdn.jio.com') || uri.includes('cdn.jio.com');
-            if (isJio && !uri.includes('__hdnea__')) { return uri + (uri.includes('?') ? '&' : '?') + '__hdnea__=' + rawVal; }
-            return uri;
-          });
+          request.uris = request.uris.map(uri => withJioToken(uri, drm.cookie));
         });
       }
       shakaInst.addEventListener('error', ev => {
@@ -4971,11 +4976,11 @@
       }
     }
 
-    function loadHLS(url) {
+    function loadHLS(url, cookie = '') {
       if (preferShakaHls(url)) { playFancode(url); return; }
       const canNative = !!vid.canPlayType('application/vnd.apple.mpegurl');
       if (typeof Hls === 'undefined' || !Hls.isSupported()) {
-        if (canNative) { playFancodeNative(url); return; }
+        if (canNative) { playFancodeNative(withJioToken(url, cookie)); return; }
         spin.classList.remove('on');
         errMsg.textContent = 'HLS is not supported in this browser.';
         err.style.display = 'flex';
@@ -5000,6 +5005,12 @@
         maxBufferLength: 60,
         maxMaxBufferLength: 120,
         backBufferLength: 30,
+        /* Re-opened only when the URL needs the token; otherwise hls.js
+           opens it itself as usual. */
+        xhrSetup: cookie ? (xhr, u) => {
+          const signed = withJioToken(u, cookie);
+          if (signed !== u) xhr.open('GET', signed, true);
+        } : undefined,
       });
       hlsInst.loadSource(url);
       hlsInst.attachMedia(vid);
@@ -5387,6 +5398,7 @@
         errMsg.textContent = 'Could not load TMDB stream. ' + (ex.message || '');
         err.style.display = 'flex';
         showToast('⚠ Failed to fetch M3U8 stream', 3500);
+        announceError();
       }
     }
 
@@ -5537,7 +5549,7 @@
           const ch = await resolveChannelById(channelId);
           if (!ch || !ch.url) throw new Error('Channel not found in feed');
           _playingChannelId = channelId; _playingChannelLogo = ch.logo || null;
-          const drm = (ch.keyId && ch.key) ? { keyId: ch.keyId, key: ch.key, cookie: ch.cookie || null } : null;
+          const drm = (ch.keyId && ch.key) || ch.cookie ? { keyId: ch.keyId || '', key: ch.key || '', cookie: ch.cookie || null } : null;
           if (sid) {
             try { const st = JSON.parse(localStorage.getItem(sKey(sid)) || '{}'); if (st.ended) { loadVideo(ch.url, ch.name, true, drm); showToast('⚠ Session ended — playing directly', 3000); return; } } catch { }
             loadVideo(ch.url, ch.name, true, drm);

@@ -9,14 +9,13 @@ import { writeFile, readFile } from "node:fs/promises";
 
 const FEEDS = [
   {
-    file: "jtv.json",
-    url: "https://raw.githubusercontent.com/sportlive18/jio-tv-auto-update-playlist/refs/heads/main/jtv.json",
-    ok: (t) => { const d = JSON.parse(t); const r = Array.isArray(d) ? d : Object.values(d);
-                 return r.length > 100 && r.some((x) => x.url && x.name); },
+    file: "zio.m3u",
+    url: "https://raw.githubusercontent.com/sportlive18/sportlink-update/refs/heads/main/zio.m3u",
+    ok: (t) => t.startsWith("#EXTM3U") && (t.match(/#EXTINF/g) || []).length > 100 && t.includes("__hdnea__="),
   },
   {
     file: "hotstar.m3u",
-    url: "https://raw.githubusercontent.com/sportlive18/jio-tv-auto-update-playlist/refs/heads/main/hotstar.m3u",
+    url: "https://raw.githubusercontent.com/sportlive18/sportlink-update/refs/heads/main/tstar.m3u",
     ok: (t) => t.startsWith("#EXTM3U") && (t.match(/#EXTINF/g) || []).length > 20 && t.includes("hdntl="),
   },
   {

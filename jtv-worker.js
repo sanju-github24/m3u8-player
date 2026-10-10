@@ -1,5 +1,5 @@
-const JTV_JSON =
-  'https://raw.githubusercontent.com/sportlive18/jio-tv-auto-update-playlist/refs/heads/main/jtv.json';
+const JTV_M3U =
+  'https://raw.githubusercontent.com/sportlive18/sportlink-update/refs/heads/main/zio.m3u';
 
 const JTV_PLUS =
   'https://jtv-plus.jijenoh451.workers.dev/stream/data.json';
@@ -27,18 +27,18 @@ const BROWSERISH = {
 
 const SOURCES = [
   [
-    'jtv.json',
-    JTV_JSON,
+    'zio.m3u',
+    JTV_M3U,
     {
-      accept: 'application/json',
+      accept: 'text/plain',
       'user-agent': 'player.html/1.0',
     },
   ],
   [
     'mirror',
-    MIRROR + 'jtv.json',
+    MIRROR + 'zio.m3u',
     {
-      accept: 'application/json',
+      accept: 'text/plain',
       'user-agent': 'player.html/1.0',
     },
   ],
@@ -60,7 +60,7 @@ const WILLOW_JSON =
   'https://raw.githubusercontent.com/sportlive18/Willow-Cricbuzz-Prime-Video-Sport-Live-Event-Auto-Updated-Playlist/refs/heads/main/willow.json';
 
 const HOTSTAR_M3U =
-  'https://raw.githubusercontent.com/sportlive18/jio-tv-auto-update-playlist/refs/heads/main/hotstar.m3u';
+  'https://raw.githubusercontent.com/sportlive18/sportlink-update/refs/heads/main/tstar.m3u';
 
 const PRIME_JSON =
   'https://raw.githubusercontent.com/sportlive18/Willow-Cricbuzz-Prime-Video-Sport-Live-Event-Auto-Updated-Playlist/refs/heads/main/primesport.json';
@@ -158,6 +158,10 @@ async function loadSource(name, url, headers) {
     );
   }
 
+  if (text.trimStart().startsWith('#EXTM3U')) {
+    return finishRows(parseJtvM3u(text));
+  }
+
   const parsed = JSON.parse(text);
 
   const rows = Array.isArray(parsed)
@@ -168,6 +172,10 @@ async function loadSource(name, url, headers) {
         ? Object.values(parsed)
         : [];
 
+  return finishRows(rows);
+}
+
+function finishRows(rows) {
   const normalized = rows
     .map(normalize)
     .filter(ch => ch.channel_id && ch.channel_url);
@@ -177,6 +185,71 @@ async function loadSource(name, url, headers) {
   }
 
   return normalized;
+}
+
+// The display name is what follows the attributes, not what follows the first
+// comma: logo URLs carry commas of their own (".../w_450,h_253/...").
+function extinfName(line) {
+  const tail = line.slice(line.lastIndexOf('"') + 1);
+  const name = tail.slice(tail.indexOf(',') + 1).trim();
+
+  return name || (/tvg-name="([^"]*)"/.exec(line) || [, ''])[1].trim();
+}
+
+// Turn a JioTV M3U (KODIPROP keys, cookie in stream_headers) into rows of
+// the same shape the JSON feeds give, so normalize() handles both.
+function parseJtvM3u(text) {
+  const rows = [];
+  let cur = null;
+
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+
+    if (!line) continue;
+
+    if (line.startsWith('#EXTINF')) {
+      const attr = name =>
+        (new RegExp(name + '="([^"]*)"').exec(line) || [, ''])[1];
+
+      cur = {
+        id: attr('tvg-id'),
+        name: extinfName(line),
+        logo: attr('tvg-logo'),
+        group: attr('group-title').replace(/^Sportlink\s*I\s*/i, ''),
+        keyId: '',
+        key: '',
+        cookie: '',
+      };
+
+      continue;
+    }
+
+    if (!cur) continue;
+
+    if (line.includes('license_key=')) {
+      // Some entries repeat the pair, comma-separated; the first is enough.
+      const [kid = '', key = ''] = (
+        line.split('license_key=')[1] || ''
+      ).split(',')[0].split(':');
+
+      cur.keyId = kid.trim();
+      cur.key = key.trim();
+      continue;
+    }
+
+    if (!cur.cookie) {
+      const m = /__hdnea__=[^&"\s]+/.exec(line);
+      if (m) cur.cookie = m[0];
+    }
+
+    if (line.startsWith('#')) continue;
+
+    cur.url = line;
+    rows.push(cur);
+    cur = null;
+  }
+
+  return rows;
 }
 
 async function handleFeed(env, ctx) {
@@ -340,7 +413,7 @@ function normalize(ch) {
     channel_logo: cleanValue(ch.channel_logo || ch.logo),
     channel_url: url,
     channel_group: cleanValue(
-      ch.group || ch.channel_group
+      ch.group || ch.channel_group || ch.category || ch.catogry
     ),
     keyId: cleanValue(ch.keyId || ch.key_id),
     key: cleanValue(ch.key),
@@ -919,9 +992,7 @@ async function handleHotstarFeed() {
       if (!line) continue;
 
       if (line.startsWith('#EXTINF')) {
-        const name = (
-          line.split(',').slice(1).join(',') || ''
-        ).trim();
+        const name = extinfName(line);
 
         const logo = (
           /tvg-logo="([^"]*)"/.exec(line) || [, '']
