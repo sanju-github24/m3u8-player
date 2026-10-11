@@ -68,25 +68,43 @@ const norm = (s) => String(s || "").toLowerCase().replace(/\s+s\d+(\s*-\s*s\d+)?
   .normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
 const yearOf = (s) => Number(String(s || "").slice(0, 4)) || 0;
 
+/* The same name with the spaces and doubled letters gone, so spellings of
+   one Indian title meet: "TamilRockerz" is MoviBox's "Tamil Rockerz", and
+   TMDB's "Bāhubali" its "Baahubali". */
+const compact = (s) => norm(s).replace(/ /g, "").replace(/(.)\1+/g, "$1");
+// "TamilRockerz" → "Tamil Rockerz", for searching: their search wants the words.
+const splitWords = (s) => String(s || "").replace(/([a-z])([A-Z])/g, "$1 $2");
+const latin = (s) => /^[\x20-\x7e\u00c0-\u024f]+$/.test(String(s || ""));
+
+/* The names to look for: TMDB's title, its original title when it is in
+   Latin letters, and the alternative titles it lists for India, the US and
+   Britain — MoviBox often goes by one of those. */
 async function tmdbTitle(id, type) {
   for (const k of type ? [type] : ["movie", "tv"]) {
-    const r = await fetch(`https://api.themoviedb.org/3/${k}/${id}?api_key=${TMDB_KEY}`, { signal: AbortSignal.timeout(10000) });
+    const r = await fetch(`https://api.themoviedb.org/3/${k}/${id}?api_key=${TMDB_KEY}&append_to_response=alternative_titles`, { signal: AbortSignal.timeout(10000) });
     if (!r.ok) continue;
     const d = await r.json();
-    return { type: k, titles: [...new Set([d.title || d.name, d.original_title || d.original_name].filter(Boolean))],
-      year: yearOf(d.release_date || d.first_air_date) };
+    const alts = (d.alternative_titles?.titles || d.alternative_titles?.results || [])
+      .filter((a) => ["IN", "US", "GB"].includes(a.iso_3166_1)).map((a) => a.title);
+    const names = [d.title || d.name, d.original_title || d.original_name, ...alts].filter((t) => t && latin(t));
+    return { type: k, titles: [...new Set(names)].slice(0, 6), year: yearOf(d.release_date || d.first_air_date) };
   }
   throw new Error("TMDB has no title with that id");
 }
 
-/* The MoviBox title that is this one: the same name (any language's version
-   — they all list the others) and, for a film, the same year give or take one. */
+/* The MoviBox title that is this one: the same name, spaces aside (any
+   language's version — they all list the others), and for a film the same
+   year give or take one. A series is listed once a season with that
+   season's date, so its year only breaks a tie. */
 async function findSubject(titles, year, type) {
-  const want = titles.map(norm).filter(Boolean);
-  for (const t of titles) {
-    const d = await mb("/subject/search", { method: "POST", body: { keyword: t, page: 1, perPage: 20, subjectType: type === "tv" ? 2 : 1 } });
-    const hit = (d.items || []).find((x) => want.includes(norm(x.title))
-      && (!year || type === "tv" || Math.abs(yearOf(x.releaseDate) - year) <= 1));
+  const want = new Set(titles.map(compact).filter(Boolean));
+  // Searched as plain letters too: their search does not see "ā" as "a".
+  const keywords = [...new Set(titles.flatMap((t) => [splitWords(t), t, norm(splitWords(t))]))].slice(0, 4);
+  for (const keyword of keywords) {
+    const d = await mb("/subject/search", { method: "POST", body: { keyword, page: 1, perPage: 20, subjectType: type === "tv" ? 2 : 1 } });
+    const same = (d.items || []).filter((x) => want.has(compact(x.title)));
+    const near = (x) => year && Math.abs(yearOf(x.releaseDate) - year) <= 1;
+    const hit = type === "tv" ? (same.find(near) || same[0]) : same.find((x) => !year || near(x));
     if (hit) return hit;
   }
   return null;
