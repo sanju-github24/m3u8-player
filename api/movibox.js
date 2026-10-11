@@ -1,7 +1,7 @@
 /* MoviBox watch pages for one title, every language — for AnchorMB.
  *
  *   GET /api/movibox?tmdb=<id>[&type=movie|tv][&se=1&ep=1]
- *     { title, year, type, languages: [{ language, code, original, subjectId, url }] }
+ *     { title, year, type, seasons?: [{ se, eps }], languages: [{ language, code, original, subjectId, url }] }
  *
  * AnchorMB plays MoviBox's own watch page in a frame, so the video goes from
  * their CDN straight to the viewer: none of it passes through us. Their CDN
@@ -122,7 +122,11 @@ export default async function handler(req, res) {
     }));
     // The pages do not move, so the CDN can keep the answer for hours.
     res.setHeader("Cache-Control", "public, s-maxage=21600, stale-while-revalidate=86400");
-    res.status(200).json({ title: t.titles[0], year: t.year, type: t.type, se: se || undefined, ep: ep || undefined, languages });
+    // A series: every season and how many episodes it has, for picking one in the player.
+    const seasons = t.type === "tv"
+      ? (detail?.resource?.seasons || []).map((x) => ({ se: Number(x.se), eps: Number(x.maxEp) || 0 })).filter((x) => x.se > 0 && x.eps > 0)
+      : undefined;
+    res.status(200).json({ title: t.titles[0], year: t.year, type: t.type, se: se || undefined, ep: ep || undefined, seasons, languages });
   } catch (e) {
     res.setHeader("Cache-Control", "no-store");
     res.status(502).json({ error: e.message });
