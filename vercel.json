@@ -5,6 +5,9 @@
   "functions": {
     "api/live-proxy.js": {
       "maxDuration": 60
+    },
+    "api/movibox.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
