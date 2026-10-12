@@ -141,9 +141,22 @@ export default async function handler(req, res) {
         else if (!upstream) { upstream = await get(targetUrl.toString(), headers, null, 15000); usedProxy = ''; }
       }
     } else if (needsResidential(targetUrl.hostname)) {
-      const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
-      if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
-      else upstream = await get(targetUrl.toString(), headers, null, 15000);
+      /* Try straight from here first. Some of these hosts — Star Sports and
+         the other Digital channels on livetv.hotstar.com, a JioTV-catchup
+         path — accept this Mumbai address and answer in one fast request;
+         the proxy hunt was the slow part. Only a real refusal (the CDN's
+         datacenter block: 403/451/452/475) sends us to the pool, so a host
+         that genuinely needs a residential IP behaves exactly as before,
+         just after one quick try. A timeout or network error also falls
+         through to the hunt. */
+      try { upstream = await get(targetUrl.toString(), headers, null, 4500); }
+      catch { upstream = null; }
+      const blocked = upstream && [403, 451, 452, 475].includes(upstream.status);
+      if (!upstream || blocked) {
+        const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
+        if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
+        else if (!upstream) upstream = await get(targetUrl.toString(), headers, null, 15000);
+      }
     } else {
       upstream = await get(targetUrl.toString(), headers, null, 15000);
     }
