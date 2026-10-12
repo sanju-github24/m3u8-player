@@ -47,6 +47,11 @@ const needsResidential = (h) => NEEDS_RESIDENTIAL.some(s => h === s || h.endsWit
 let pool = { list: [], at: 0 };
 let known = new Map();          // hostname -> proxy that last worked for it
 let directOk = new Map();      // residential-host -> true (this address is accepted) | false (blocked, use a proxy)
+/* Proven to block every datacenter address (Mumbai and a Delhi VPS both
+   refused, 2026-10): the paid Hotstar/Sony CDNs. Pre-marked so Star Sports
+   and the other Digital channels go straight to the residential pool with
+   no wasted direct probe. The learning path above still covers any new host. */
+for (const h of ['livetv.hotstar.com', 'live09p.hotstar.com', 'sonydaimenew.akamaized.net']) directOk.set(h, false);
 
 async function proxyList() {
   if (pool.list.length && Date.now() - pool.at < 15 * 60_000) return pool.list;
