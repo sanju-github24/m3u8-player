@@ -1,10 +1,11 @@
 /* =====================================================================
    Download relay — the same file, under a clean name.
 
-   The file host names every download after its own link, which starts
-   "www.1TamilMV.capital_-_…", and its token is tied to that exact path, so
-   the name cannot be fixed in the link. This worker streams the file
-   through unchanged and only sets the name the browser saves it under.
+   The file hosts name every download after their own site — 1TamilMV puts
+   "www.1TamilMV.capital_-_…" at the front, HDHub4u stamps "…-HDHub4u.Ms"
+   before the extension — and the token is tied to that exact path, so the
+   name cannot be fixed in the link. This worker streams the file through
+   unchanged and only sets the name the browser saves it under.
 
      GET /?u=<file url>&n=<name>
        u — the file's full link, token included (https, allowed hosts only)
@@ -18,7 +19,10 @@
    this → Deploy. Then set VITE_DL_RELAY on the site to the worker's URL.
    ===================================================================== */
 
-const ALLOWED_HOSTS = ['juicybits.site', 'hakunaymatata.com'];
+const ALLOWED_HOSTS = [
+  'juicybits.site', 'hakunaymatata.com',                 // 1TamilMV / 1TamilBlasters
+  'pixeldrain.dev', 'cloudflarestorage.com', 'googleusercontent.com',   // HDHub4u (pixeldrain, R2 FSL, 10Gbps)
+];
 
 const allowed = (host) => ALLOWED_HOSTS.some((h) => host === h || host.endsWith('.' + h));
 
@@ -28,15 +32,22 @@ const allowed = (host) => ALLOWED_HOSTS.some((h) => host === h || host.endsWith(
 const REFERER_FOR = [[/(^|\.)hakunaymatata\.com$/i, 'https://movibox.net/']];
 const refererFor = (host) => (REFERER_FOR.find(([re]) => re.test(host)) || [])[1] || '';
 
-// "www.1TamilMV.capital - Sardar 2 (2026) …" / "www.1TamilMV.capital_-_Sardar_2…" → "Sardar 2 (2026) …"
-const stripPrefix = (s) => String(s || '').replace(/^\s*www[._]1tamilmv[._][a-z]+[\s_]*-[\s_]*/i, '');
+/* The site tag a host stamps on, removed wherever it sits:
+     "www.1TamilMV.capital - Sardar 2 (2026) …" → "Sardar 2 (2026) …"  (prefix)
+     "War.2.2025.…x264-HDHub4u.Ms.mkv"          → "War.2.2025.…x264.mkv" (suffix)
+   Only the known release sites, so an ordinary part of a title is left alone. */
+const SITES = '(?:www[._])?(?:1?tamilmv|1?tamilblasters|hdhub4u)';
+const SITE_PREFIX = new RegExp(`^\\s*${SITES}[._][a-z]+[\\s_]*-[\\s_]*`, 'i');                       // "www.1TamilMV.capital - "
+const SITE_LEAD_TAG = new RegExp(`^\\s*[\\[(@]\\s*${SITES}[._][a-z]{2,4}\\s*[\\])]?\\s*[-–—_]*\\s*`, 'i'); // "[HDHub4u.Dad] "
+const SITE_SUFFIX = new RegExp(`[\\s._-]*[\\[(@-]?\\s*${SITES}[._][a-z]{2,4}\\s*[\\])]?(?=\\.[a-z0-9]{2,4}\\s*$|\\s*$)`, 'i'); // "-HDHub4u.Ms.mkv"
+const stripSiteTags = (s) => String(s || '').replace(SITE_PREFIX, '').replace(SITE_LEAD_TAG, '').replace(SITE_SUFFIX, '');
 
 function cleanName(name, link) {
-  let n = stripPrefix(name);
+  let n = stripSiteTags(name);
   if (!n) {
-    // No name given: the link's own file name, prefix off, underscores as spaces.
+    // No name given: the link's own file name, tags off, underscores as spaces.
     const last = decodeURIComponent(new URL(link).pathname.split('/').pop() || 'video');
-    n = stripPrefix(last).replace(/_/g, ' ');
+    n = stripSiteTags(last).replace(/_/g, ' ');
   }
   // Characters no file system accepts, and a sane length.
   n = n.replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200) || 'video';
