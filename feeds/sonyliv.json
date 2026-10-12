@@ -1,17 +1,8 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "14:42:01 12-10-2026",
+    "last update time": "00:27:51 13-10-2026",
     "matches": [
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090547508,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026117/1791639178260873_ISL_NorthEast_United_vs_Mohun_Bagan_Promo_landscape_thumb_tonight.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - MG Indian Super League 2026-27"
-        },
         {
             "event_category": "Football",
             "isLive": false,
@@ -60,6 +51,15 @@
         {
             "event_category": "Football",
             "isLive": false,
+            "contentId": 1090547559,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026175/1791802307972655_UCL26_Arsenal_vs_Lille_dated_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Arsenal vs LOSC - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
             "contentId": 1090547561,
             "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026017/1791450952659369_UCL26_MAN-CITY_vs_PSG_promo_landscape_thumb_ddt.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
@@ -78,11 +78,11 @@
         {
             "event_category": "Football",
             "isLive": false,
-            "contentId": 1090547559,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026011/1791448087139949_UCL_ARS_vs_LOSC_landscape.jpg",
+            "contentId": 1090547508,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026211/1791827627278142_ISL26_Punjab_FC_vs_Odisha_FC_promo_dated_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Arsenal vs LOSC - UEFA Champions League 2026-27"
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - MG Indian Super League 2026-27"
         },
         {
             "event_category": "Football",
