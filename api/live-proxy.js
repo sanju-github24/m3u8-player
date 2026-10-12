@@ -46,6 +46,7 @@ const needsResidential = (h) => NEEDS_RESIDENTIAL.some(s => h === s || h.endsWit
    A cold start pays for the list again; that is one small fetch. */
 let pool = { list: [], at: 0 };
 let known = new Map();          // hostname -> proxy that last worked for it
+let directOk = new Map();      // residential-host -> true (this address is accepted) | false (blocked, use a proxy)
 
 async function proxyList() {
   if (pool.list.length && Date.now() - pool.at < 15 * 60_000) return pool.list;
@@ -141,21 +142,31 @@ export default async function handler(req, res) {
         else if (!upstream) { upstream = await get(targetUrl.toString(), headers, null, 15000); usedProxy = ''; }
       }
     } else if (needsResidential(targetUrl.hostname)) {
-      /* Try straight from here first. Some of these hosts — Star Sports and
-         the other Digital channels on livetv.hotstar.com, a JioTV-catchup
-         path — accept this Mumbai address and answer in one fast request;
-         the proxy hunt was the slow part. Only a real refusal (the CDN's
-         datacenter block: 403/451/452/475) sends us to the pool, so a host
-         that genuinely needs a residential IP behaves exactly as before,
-         just after one quick try. A timeout or network error also falls
-         through to the hunt. */
-      try { upstream = await get(targetUrl.toString(), headers, null, 4500); }
-      catch { upstream = null; }
-      const blocked = upstream && [403, 451, 452, 475].includes(upstream.status);
-      if (!upstream || blocked) {
+      /* Some of these hosts — Star Sports and the other Digital channels on
+         livetv.hotstar.com, a JioTV-catchup path — may accept this Mumbai
+         address and answer in one fast request, while the paid-app CDNs
+         block every datacenter IP and must go through a residential proxy.
+         Which is which is learned per host and remembered, so the cost is
+         paid at most once on a warm instance: a host known to block skips
+         straight to the pool; otherwise one quick direct try decides it. A
+         real refusal (403/451/452/475) marks it blocking; a 2xx marks it
+         direct and serves with no proxy. */
+      if (directOk.get(targetUrl.hostname) === false) {
         const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
         if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
-        else if (!upstream) upstream = await get(targetUrl.toString(), headers, null, 15000);
+        else upstream = await get(targetUrl.toString(), headers, null, 15000);
+      } else {
+        const known_direct = directOk.get(targetUrl.hostname) === true;
+        try { upstream = await get(targetUrl.toString(), headers, null, known_direct ? 15000 : 4500); }
+        catch { upstream = null; }
+        if (upstream && upstream.ok) {
+          directOk.set(targetUrl.hostname, true);
+        } else {
+          if (upstream && [403, 451, 452, 475].includes(upstream.status)) directOk.set(targetUrl.hostname, false);
+          const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
+          if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
+          else if (!upstream) upstream = await get(targetUrl.toString(), headers, null, 15000);
+        }
       }
     } else {
       upstream = await get(targetUrl.toString(), headers, null, 15000);
