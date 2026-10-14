@@ -1,46 +1,33 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "18:22:41 14-10-2026",
+    "last update time": "23:16:37 14-10-2026",
     "matches": [
         {
-            "event_category": "Volleyball",
+            "event_category": "Football",
             "isLive": true,
-            "contentId": "1090547987_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026138/179166619555518_VCL_Ayodhya_Garjan_vs_Emperia_Marathas_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 1",
+            "contentId": "1090548028_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025857/1791174240883329_UCL2627_MD2_LASK_vs_Liverpool_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
-            "event_name": "Volleyball Championship League 2026 ",
-            "match_name": "Ayodhya Garjan vs Emperia Marathas - 14 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Volleyba1410/ENG/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Volleyba1410/ENG/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Volleyba1410/ENG/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4"
-        },
-        {
-            "event_category": "Volleyball",
-            "isLive": true,
-            "contentId": "1090547987_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026138/179166619555518_VCL_Ayodhya_Garjan_vs_Emperia_Marathas_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 1",
-            "audioLanguageName": "ENG",
-            "event_name": "Volleyball Championship League 2026 ",
-            "match_name": "Ayodhya Garjan vs Emperia Marathas - 14 Oct 2026 [HIN]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120299/Volleyba1410/HIN/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120299/Volleyba1410/HIN/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120299/Volleyba1410/HIN/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4"
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "LASK vs Liverpool - 14 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Footlive1410/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792043196~acl=/*~id=87240094541803657712509353308284~hmac=2b24f5838ffcdaa662ad811a17db554c307ff2050aa25f39cd76f2a4b36a9a2a",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Footlive1410/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792043196~acl=/*~id=87240094541803657712509353308284~hmac=2b24f5838ffcdaa662ad811a17db554c307ff2050aa25f39cd76f2a4b36a9a2a",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Footlive1410/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792043196~acl=/*~id=87240094541803657712509353308284~hmac=2b24f5838ffcdaa662ad811a17db554c307ff2050aa25f39cd76f2a4b36a9a2a"
         },
         {
             "event_category": "Football",
             "isLive": true,
-            "contentId": "1090547981_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025828/1791091406768672_UYL26_Roma_vs_Real_Madrid_live_landscape_thumb.jpg",
+            "contentId": "1090548027_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025857/1791173966647329_UCL2627_MD2_Feyenoord_vs_Como_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
-            "event_name": "UEFA Youth League 2026-27",
-            "match_name": "Roma vs Real Madrid - MD 2 - 14 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1410/ENG/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1410/ENG/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1410/ENG/std_lrl-800300010.m3u8?hdnea=exp=1792025560~acl=/*~id=76298337831051764556722717979023~hmac=cc59bdb7f8c75cd2756cf5faf5c51cb7919cf103f605e6167019c080e89765e4"
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Feyenoord vs Como - 14 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Footlive1410/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792043196~acl=/*~id=87240094541803657712509353308284~hmac=2b24f5838ffcdaa662ad811a17db554c307ff2050aa25f39cd76f2a4b36a9a2a",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Footlive1410/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792043196~acl=/*~id=87240094541803657712509353308284~hmac=2b24f5838ffcdaa662ad811a17db554c307ff2050aa25f39cd76f2a4b36a9a2a",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Footlive1410/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792043196~acl=/*~id=87240094541803657712509353308284~hmac=2b24f5838ffcdaa662ad811a17db554c307ff2050aa25f39cd76f2a4b36a9a2a"
         },
         {
             "event_category": "Football",
@@ -63,15 +50,6 @@
         {
             "event_category": "Football",
             "isLive": false,
-            "contentId": 1090547562,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026019/1791451548448457_UCL26_ROMA_vs_Real-Madrid_promo_landscape_thumb_tonight.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Roma vs Real Madrid - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
             "contentId": 1090547561,
             "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026017/1791450432688369_UCL26_MAN-CITY_vs_PSG_promo_landscape_thumb_tonight.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
@@ -81,8 +59,17 @@
         {
             "event_category": "Football",
             "isLive": false,
+            "contentId": 1090547562,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026019/1791451548448457_UCL26_ROMA_vs_Real-Madrid_promo_landscape_thumb_tonight.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Roma vs Real Madrid - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
             "contentId": 1090547508,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026211/1791827634062142_ISL26_Punjab_FC_vs_Odisha_FC_tonight_promo_landscape_thumb.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026301/1791963024349998_ISL_SCD_vs_Mohun_Bagan_FC_promo_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - MG Indian Super League 2026-27"
@@ -122,6 +109,15 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour of New Zealand "
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090548283,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026328/1791978466033872_STCL_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Salute Tiranga Cricket League (STCL) 2026"
         }
     ]
 }
