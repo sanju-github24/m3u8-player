@@ -1,7 +1,7 @@
 {
     "name": "Fancode Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "12:25:23 AM 16-10-2026",
+    "last update time": "04:10:41 AM 16-10-2026",
     "matches": [
         {
             "event_category": "Cricket",
@@ -100,18 +100,6 @@
             "startTime": "07:00:00 PM 16-10-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4249142,
-            "title": "Al-Qadsiah FC vs Abha Club (Roshn Saudi League 2026-2027)",
-            "match_name": "Al-Qadsiah FC vs Abha Club",
-            "event_name": "Roshn Saudi League 2026-2027",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249142_53025_ALQ_ABC_FC-Web.png",
-            "team_1": "Al-Qadsiah FC",
-            "team_2": "Abha Club",
-            "status": "UPCOMING",
-            "startTime": "06:45:00 PM 16-10-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4250182,
             "title": "TBC vs TBC (Atlanta Open T20 2026)",
@@ -122,6 +110,18 @@
             "team_2": "TBC",
             "status": "UPCOMING",
             "startTime": "07:30:00 PM 16-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249142,
+            "title": "Al-Qadsiah FC vs Abha Club (Roshn Saudi League 2026-2027)",
+            "match_name": "Al-Qadsiah FC vs Abha Club",
+            "event_name": "Roshn Saudi League 2026-2027",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249142_53025_ALQ_ABC_FC-Web.png",
+            "team_1": "Al-Qadsiah FC",
+            "team_2": "Abha Club",
+            "status": "UPCOMING",
+            "startTime": "06:45:00 PM 16-10-2026"
         },
         {
             "event_category": "Cricket",
@@ -160,6 +160,18 @@
             "startTime": "11:45:00 PM 16-10-2026"
         },
         {
+            "event_category": "Cricket",
+            "match_id": 4249283,
+            "title": "South Australia vs Queensland (One Day Cup, 2026/27)",
+            "match_name": "South Australia vs Queensland",
+            "event_name": "One Day Cup, 2026/27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249283_53072_SAU_QUN_FC-Web.jpg",
+            "team_1": "South Australia",
+            "team_2": "Queensland",
+            "status": "UPCOMING",
+            "startTime": "05:00:00 AM 17-10-2026"
+        },
+        {
             "event_category": "Football",
             "match_id": 4247653,
             "title": "Deportivo de La Coruna vs Levante (LALIGA 2026-27)",
@@ -182,102 +194,6 @@
             "team_2": "Wolverhampton Wanderers F.C.",
             "status": "UPCOMING",
             "startTime": "12:30:00 AM 17-10-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4249283,
-            "title": "South Australia vs Queensland (One Day Cup, 2026/27)",
-            "match_name": "South Australia vs Queensland",
-            "event_name": "One Day Cup, 2026/27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249283_53072_SAU_QUN_FC-Web.jpg",
-            "team_1": "South Australia",
-            "team_2": "Queensland",
-            "status": "UPCOMING",
-            "startTime": "05:00:00 AM 17-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4248845,
-            "title": "ATP Masters - Rolex Shanghai Masters vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
-            "match_name": "ATP Masters - Rolex Shanghai Masters",
-            "event_name": "ATP Masters - Rolex Shanghai Masters",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
-            "team_1": "ATP Masters - Rolex Shanghai Masters",
-            "team_2": "Shanghai, China",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 PM 16-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4248846,
-            "title": "ATP Masters - Rolex Shanghai Masters vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
-            "match_name": "ATP Masters - Rolex Shanghai Masters",
-            "event_name": "ATP Masters - Rolex Shanghai Masters",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
-            "team_1": "ATP Masters - Rolex Shanghai Masters",
-            "team_2": "Shanghai, China",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 PM 16-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4248847,
-            "title": "ATP Masters - Rolex Shanghai Masters vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
-            "match_name": "ATP Masters - Rolex Shanghai Masters",
-            "event_name": "ATP Masters - Rolex Shanghai Masters",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
-            "team_1": "ATP Masters - Rolex Shanghai Masters",
-            "team_2": "Shanghai, China",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 PM 16-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4248848,
-            "title": "ATP Masters - Rolex Shanghai Masters vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
-            "match_name": "ATP Masters - Rolex Shanghai Masters",
-            "event_name": "ATP Masters - Rolex Shanghai Masters",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
-            "team_1": "ATP Masters - Rolex Shanghai Masters",
-            "team_2": "Shanghai, China",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 PM 16-10-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4249834,
-            "title": "Sydney FC vs Western Sydney Wanderers (A-League 2026-27)",
-            "match_name": "Sydney FC vs Western Sydney Wanderers",
-            "event_name": "A-League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249834_53101_SYD_SYW_fc-Web_1791982772009.jpg",
-            "team_1": "Sydney FC",
-            "team_2": "Western Sydney Wanderers",
-            "status": "UPCOMING",
-            "startTime": "02:30:00 PM 16-10-2026"
-        },
-        {
-            "event_category": "Badminton",
-            "match_id": 4250145,
-            "title": "QF - Court 1 vs Denmark (BWF Super 750 - Denmark Open 2026)",
-            "match_name": "QF - Court 1",
-            "event_name": "BWF Super 750 - Denmark Open 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/badminton_FC-W.png",
-            "team_1": "QF - Court 1",
-            "team_2": "Denmark",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 PM 16-10-2026"
-        },
-        {
-            "event_category": "Badminton",
-            "match_id": 4250146,
-            "title": "QF - Court 2 vs Denmark (BWF Super 750 - Denmark Open 2026)",
-            "match_name": "QF - Court 2",
-            "event_name": "BWF Super 750 - Denmark Open 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/badminton_FC-W.png",
-            "team_1": "QF - Court 2",
-            "team_2": "Denmark",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 PM 16-10-2026"
         },
         {
             "event_category": "Cricket",
@@ -304,6 +220,42 @@
             "startTime": "04:30:00 AM 17-10-2026"
         },
         {
+            "event_category": "Tennis",
+            "match_id": 4248846,
+            "title": "Stadium Court vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
+            "match_name": "Stadium Court",
+            "event_name": "ATP Masters - Rolex Shanghai Masters",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
+            "team_1": "Stadium Court",
+            "team_2": "Shanghai, China",
+            "status": "UPCOMING",
+            "startTime": "09:30:00 AM 16-10-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4248845,
+            "title": "World Feed vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
+            "match_name": "World Feed",
+            "event_name": "ATP Masters - Rolex Shanghai Masters",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
+            "team_1": "World Feed",
+            "team_2": "Shanghai, China",
+            "status": "UPCOMING",
+            "startTime": "12:00:00 PM 16-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249834,
+            "title": "Sydney FC vs Western Sydney Wanderers (A-League 2026-27)",
+            "match_name": "Sydney FC vs Western Sydney Wanderers",
+            "event_name": "A-League 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249834_53101_SYD_SYW_fc-Web_1791982772009.jpg",
+            "team_1": "Sydney FC",
+            "team_2": "Western Sydney Wanderers",
+            "status": "UPCOMING",
+            "startTime": "02:30:00 PM 16-10-2026"
+        },
+        {
             "event_category": "Football",
             "match_id": 4249994,
             "title": "Leganes vs C\u00f3rdoba (LALIGA Hypermotion 2026-27)",
@@ -314,6 +266,30 @@
             "team_2": "C\u00f3rdoba",
             "status": "UPCOMING",
             "startTime": "12:00:00 AM 17-10-2026"
+        },
+        {
+            "event_category": "Badminton",
+            "match_id": 4250145,
+            "title": "QF - Court 1 vs Denmark (BWF Super 750 - Denmark Open 2026)",
+            "match_name": "QF - Court 1",
+            "event_name": "BWF Super 750 - Denmark Open 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/badminton_FC-W.png",
+            "team_1": "QF - Court 1",
+            "team_2": "Denmark",
+            "status": "UPCOMING",
+            "startTime": "03:30:00 PM 16-10-2026"
+        },
+        {
+            "event_category": "Badminton",
+            "match_id": 4250146,
+            "title": "QF - Court 2 vs Denmark (BWF Super 750 - Denmark Open 2026)",
+            "match_name": "QF - Court 2",
+            "event_name": "BWF Super 750 - Denmark Open 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/badminton_FC-W.png",
+            "team_1": "QF - Court 2",
+            "team_2": "Denmark",
+            "status": "UPCOMING",
+            "startTime": "03:30:00 PM 16-10-2026"
         },
         {
             "event_category": "Cricket",
@@ -422,6 +398,90 @@
             "team_2": "ICA Berlin",
             "status": "UPCOMING",
             "startTime": "04:00:00 PM 17-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249836,
+            "title": "Macarthur vs Perth Glory (A-League 2026-27)",
+            "match_name": "Macarthur vs Perth Glory",
+            "event_name": "A-League 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249836_53101_MAC_PG_fc-Web_1791982773863.jpg",
+            "team_1": "Macarthur",
+            "team_2": "Perth Glory",
+            "status": "UPCOMING",
+            "startTime": "11:30:00 AM 17-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249595,
+            "title": "Watford F.C. vs Charlton Athletic F.C (EFL Championship 2026-27)",
+            "match_name": "Watford F.C. vs Charlton Athletic F.C",
+            "event_name": "EFL Championship 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249595_52993_WAT_CHL_fc-web.jpg",
+            "team_1": "Watford F.C.",
+            "team_2": "Charlton Athletic F.C",
+            "status": "UPCOMING",
+            "startTime": "05:00:00 PM 17-10-2026"
+        },
+        {
+            "event_category": "Badminton",
+            "match_id": 4250147,
+            "title": "Semi-Final vs Denmark (BWF Super 750 - Denmark Open 2026)",
+            "match_name": "Semi-Final",
+            "event_name": "BWF Super 750 - Denmark Open 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/badminton_FC-W.png",
+            "team_1": "Semi-Final",
+            "team_2": "Denmark",
+            "status": "UPCOMING",
+            "startTime": "12:30:00 PM 17-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4247654,
+            "title": "RCD Espanyol vs Atletico de Madrid (LALIGA 2026-27)",
+            "match_name": "RCD Espanyol vs Atletico de Madrid",
+            "event_name": "LALIGA 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247654_53004_ESL_ATM_FC-Web.png",
+            "team_1": "RCD Espanyol",
+            "team_2": "Atletico de Madrid",
+            "status": "UPCOMING",
+            "startTime": "05:30:00 PM 17-10-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250228,
+            "title": "Darmstadt CC vs Koln CC (GSL Championship 2026)",
+            "match_name": "Darmstadt CC vs Koln CC",
+            "event_name": "GSL Championship 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250228_53117_DCC_KCC_fc-web.jpg",
+            "team_1": "Darmstadt CC",
+            "team_2": "Koln CC",
+            "status": "UPCOMING",
+            "startTime": "06:00:00 PM 17-10-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4248849,
+            "title": "ATP Masters - Rolex Shanghai Masters vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
+            "match_name": "ATP Masters - Rolex Shanghai Masters",
+            "event_name": "ATP Masters - Rolex Shanghai Masters",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
+            "team_1": "ATP Masters - Rolex Shanghai Masters",
+            "team_2": "Shanghai, China",
+            "status": "UPCOMING",
+            "startTime": "01:30:00 PM 17-10-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4248850,
+            "title": "ATP Masters - Rolex Shanghai Masters vs Shanghai, China (ATP Masters - Rolex Shanghai Masters)",
+            "match_name": "ATP Masters - Rolex Shanghai Masters",
+            "event_name": "ATP Masters - Rolex Shanghai Masters",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Shanghai_Web-match-card.png",
+            "team_1": "ATP Masters - Rolex Shanghai Masters",
+            "team_2": "Shanghai, China",
+            "status": "UPCOMING",
+            "startTime": "01:30:00 PM 17-10-2026"
         }
     ]
 }
