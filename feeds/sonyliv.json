@@ -1,20 +1,103 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "15:02:12 16-10-2026",
+    "last update time": "19:35:19 16-10-2026",
     "matches": [
         {
-            "event_category": "Golf",
+            "event_category": "Football",
             "isLive": true,
-            "contentId": "1090548552_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026393/1792045973804742_DP-World_India-Championship_Day2_landscape_thumb.jpg",
+            "contentId": "1090548555_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026301/1791961433994998_ISL_SCD_vs_Mohun_Bagan_FC_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "MG Indian Super League 2026-27",
+            "match_name": "Sporting Club Delhi vs Mohun Bagan Super Giant - 16 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090548555_HIN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026301/1791961433994998_ISL_SCD_vs_Mohun_Bagan_FC_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "MG Indian Super League 2026-27",
+            "match_name": "Sporting Club Delhi vs Mohun Bagan Super Giant - 16 Oct 2026 [HIN]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive1610/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive1610/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive1610/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090548555_BEN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026301/1791961433994998_ISL_SCD_vs_Mohun_Bagan_FC_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "MG Indian Super League 2026-27",
+            "match_name": "Sporting Club Delhi vs Mohun Bagan Super Giant - 16 Oct 2026 [BEN]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120305/Footlive1610/BEN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120305/Footlive1610/BEN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120305/Footlive1610/BEN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261"
+        },
+        {
+            "event_category": "Volleyball",
+            "isLive": true,
+            "contentId": "1090548553_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026453/179210216462210_VCL26_super6_Punjab_vs_Haryana_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 1",
+            "audioLanguageName": "ENG",
+            "event_name": "Volleyball Championship League 2026 ",
+            "match_name": "Punjab Aerostrikers vs Haryana Hurricanes - Super 6 - 16 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Volleyba1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Volleyba1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Volleyba1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261"
+        },
+        {
+            "event_category": "Volleyball",
+            "isLive": true,
+            "contentId": "1090548553_HIN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026453/179210216462210_VCL26_super6_Punjab_vs_Haryana_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 1",
+            "audioLanguageName": "ENG",
+            "event_name": "Volleyball Championship League 2026 ",
+            "match_name": "Punjab Aerostrikers vs Haryana Hurricanes - Super 6 - 16 Oct 2026 [HIN]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Volleyba1610/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Volleyba1610/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Volleyba1610/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261"
+        },
+        {
+            "event_category": "Archery",
+            "isLive": true,
+            "contentId": "1090548554_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026290/1791959239730579_APL26_Rajputana-Royals-vs-Chola-Chiefs_live_landscape_thumb.jpg",
             "broadcast_channel": "LIV",
             "audioLanguageName": "ENG",
-            "event_name": "DP World Tour",
-            "match_name": "DP World India Championship - Day 2 - 16 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2037139/Golf_DPW1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792186332~acl=/*~id=18539920280187188941620083539570~hmac=2250408fb6d7557021eb9bdcc4418800e69c269511a978958e29149989000c2a",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2037139/Golf_DPW1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792186332~acl=/*~id=18539920280187188941620083539570~hmac=2250408fb6d7557021eb9bdcc4418800e69c269511a978958e29149989000c2a",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2037139/Golf_DPW1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792186332~acl=/*~id=18539920280187188941620083539570~hmac=2250408fb6d7557021eb9bdcc4418800e69c269511a978958e29149989000c2a"
+            "event_name": "Archery Premier League 2026",
+            "match_name": "Rajputana Royals vs Chola Chiefs - 16 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Archery_1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Archery_1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Archery_1610/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792202714~acl=/*~id=04778238064211133892284974312115~hmac=d31ae52f45fa605284418fafffd86b56dd3dc8ae6758b60ed274434158d44261"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090548747,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026492/1792137929659511_INDvsNZ_promo_dated_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - India Tour Of New Zealand 2026"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090547508,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026319/1791973979294868_ISL_Bengaluru_FC_vs_Chennaiyin_FC_promo_landscape_thumb_dated.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - MG Indian Super League 2026-27"
         },
         {
             "event_category": "Cricket",
@@ -24,15 +107,6 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour Of New Zealand 2026"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090547508,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026301/1791963032361998_ISL_SCD_vs_Mohun_Bagan_FC_promo_landscape_thumb_tonight.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - MG Indian Super League 2026-27"
         },
         {
             "event_category": "Cricket",
