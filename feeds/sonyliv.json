@@ -1,60 +1,8 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "18:28:52 17-10-2026",
+    "last update time": "23:52:42 17-10-2026",
     "matches": [
-        {
-            "event_category": "Football",
-            "isLive": true,
-            "contentId": "1090548893_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026502/1792155325043755_ISL26_KSHI-vs-Odisha-FC_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "MG Indian Super League 2026-27",
-            "match_name": "Inter Kashi vs Odisha FC - 17 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive1710/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive1710/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive1710/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74"
-        },
-        {
-            "event_category": "Football",
-            "isLive": true,
-            "contentId": "1090548893_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026502/1792155325043755_ISL26_KSHI-vs-Odisha-FC_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "MG Indian Super League 2026-27",
-            "match_name": "Inter Kashi vs Odisha FC - 17 Oct 2026 [HIN]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1710/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1710/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive1710/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74"
-        },
-        {
-            "event_category": "Volleyball",
-            "isLive": true,
-            "contentId": "1090548711_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026459/1792130276555133_VCL26_Haryana-Hurricanes-vs-Emperia-Marathas_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 1",
-            "audioLanguageName": "ENG",
-            "event_name": "Volleyball Championship League 2026 ",
-            "match_name": "Haryana Hurricanes vs Emperia Marathas - Super 6 - 17 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Volleyba1710/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Volleyba1710/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Volleyba1710/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74"
-        },
-        {
-            "event_category": "Volleyball",
-            "isLive": true,
-            "contentId": "1090548711_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026459/1792130276555133_VCL26_Haryana-Hurricanes-vs-Emperia-Marathas_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 1",
-            "audioLanguageName": "ENG",
-            "event_name": "Volleyball Championship League 2026 ",
-            "match_name": "Haryana Hurricanes vs Emperia Marathas - Super 6 - 17 Oct 2026 [HIN]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Volleyba1710/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Volleyba1710/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120301/Volleyba1710/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792285131~acl=/*~id=01714850601336766592155539425032~hmac=79c0743a3e1f7140cdb84d531b5891fc2155263b9a835f291df276c6cafa4d74"
-        },
         {
             "event_category": "Cricket",
             "isLive": false,
@@ -68,7 +16,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090547508,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026319/1791973984915868_ISL_Bengaluru_FC_vs_Chennaiyin_FC_promo_landscape_thumb_tonight.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026521/1792176228300908_ISL26_Churchill_BrothersSC_vs_EastBengalFC_dated_promo_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - MG Indian Super League 2026-27"
