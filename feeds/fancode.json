@@ -1,7 +1,7 @@
 {
     "name": "Fancode Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "06:10:08 AM 19-10-2026",
+    "last update time": "10:42:33 AM 19-10-2026",
     "matches": [
         {
             "event_category": "Cricket",
@@ -39,6 +39,35 @@
         },
         {
             "event_category": "Cricket",
+            "match_id": "4249667_ENG",
+            "title": "Sheffield Shield, 2026/27 [English]",
+            "match_name": "New South Wales vs Western Australia [English]",
+            "event_name": "Sheffield Shield, 2026/27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249667_53087_WAU_NSW_FC-WEB_1791299730396.jpg",
+            "team_1": "New South Wales",
+            "team_2": "Western Australia",
+            "status": "LIVE",
+            "startTime": "08:00:00 AM 19-10-2026",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+            "dai_url": "https://in-mc-flive.fancode.com/mumbai/4249667_english_hls_27a33faf8030697_1ta-di_h264/1080p.m3u8?hdntl=Expires=1792462862~_GO=Generated~acl=/mumbai/4249667_english_hls_27a33faf8030697_1ta-di_h264/*~SessionID=fc-app_sportsguruand_watcho_bf944e12-58b9-4d~Signature=AZJsJWaG7u3JZlQJXW1N-EMidjyvT-wwJpWEzKOzJHMPN9g05ZYaW_hea5SCWnrFIPsrOtKR-qW7PDLhplnxu4XfqvQM",
+            "adfree_url": "https://in-mc-flive.fancode.com/mumbai/4249667_english_hls_27a33faf8030697_1ta-di_h264/1080p.m3u8?hdntl=Expires=1792462862~_GO=Generated~acl=/mumbai/4249667_english_hls_27a33faf8030697_1ta-di_h264/*~SessionID=fc-app_sportsguruand_watcho_bf944e12-58b9-4d~Signature=AZJsJWaG7u3JZlQJXW1N-EMidjyvT-wwJpWEzKOzJHMPN9g05ZYaW_hea5SCWnrFIPsrOtKR-qW7PDLhplnxu4XfqvQM",
+            "google_m3u8_hex": "234558544d33550a234558542d582d56455253494f4e3a330a234558542d582d53545245414d2d494e463a42414e4457494454483d3434363933362c415645524147452d42414e4457494454483d3434363933362c434f444543533d22617663312e3432653031352c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d343236783234302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f323430702e6d3375383f68646e746c3d457870697265733d313739323436323836327e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f62663934346531322d353862392d34647e5369676e61747572653d415a4a734a5761473775334a5a6c514a5857314e2d454d69646a7976542d77774a7057457a4b4f7a4a484d504e396730355a5961575f686561355343576e7246495073724f744b522d71573750444c68706c6e78753458667176514d0a234558542d582d53545245414d2d494e463a42414e4457494454483d3730323337362c415645524147452d42414e4457494454483d3730323337362c434f444543533d22617663312e3432653031652c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d363430783336302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f333630702e6d3375383f68646e746c3d457870697265733d313739323436323836327e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f62663934346531322d353862392d34647e5369676e61747572653d415a4a734a5761473775334a5a6c514a5857314e2d454d69646a7976542d77774a7057457a4b4f7a4a484d504e396730355a5961575f686561355343576e7246495073724f744b522d71573750444c68706c6e78753458667176514d0a234558542d582d53545245414d2d494e463a42414e4457494454483d313032333232342c415645524147452d42414e4457494454483d313032333232342c434f444543533d22617663312e3464343031652c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d383534783438302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f343830702e6d3375383f68646e746c3d457870697265733d313739323436323836327e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f62663934346531322d353862392d34647e5369676e61747572653d415a4a734a5761473775334a5a6c514a5857314e2d454d69646a7976542d77774a7057457a4b4f7a4a484d504e396730355a5961575f686561355343576e7246495073724f744b522d71573750444c68706c6e78753458667176514d0a234558542d582d53545245414d2d494e463a42414e4457494454483d313237383636342c415645524147452d42414e4457494454483d313237383636342c434f444543533d22617663312e3464343031662c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d393630783534302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f353430702e6d3375383f68646e746c3d457870697265733d313739323436323836327e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f62663934346531322d353862392d34647e5369676e61747572653d415a4a734a5761473775334a5a6c514a5857314e2d454d69646a7976542d77774a7057457a4b4f7a4a484d504e396730355a5961575f686561355343576e7246495073724f744b522d71573750444c68706c6e78753458667176514d0a234558542d582d53545245414d2d494e463a42414e4457494454483d313738393531322c415645524147452d42414e4457494454483d313738393531322c434f444543533d22617663312e3634303031662c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d31323830783732302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f373230702e6d3375383f68646e746c3d457870697265733d313739323436323836327e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f62663934346531322d353862392d34647e5369676e61747572653d415a4a734a5761473775334a5a6c514a5857314e2d454d69646a7976542d77774a7057457a4b4f7a4a484d504e396730355a5961575f686561355343576e7246495073724f744b522d71573750444c68706c6e78753458667176514d0a234558542d582d53545245414d2d494e463a42414e4457494454483d333332323132302c415645524147452d42414e4457494454483d333332323132302c434f444543533d22617663312e3634303032382c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d3139323078313038302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f31303830702e6d3375383f68646e746c3d457870697265733d313739323436323836327e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393636375f656e676c6973685f686c735f3237613333666166383033303639375f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f62663934346531322d353862392d34647e5369676e61747572653d415a4a734a5761473775334a5a6c514a5857314e2d454d69646a7976542d77774a7057457a4b4f7a4a484d504e396730355a5961575f686561355343576e7246495073724f744b522d71573750444c68706c6e78753458667176514d0a",
+            "akamai_m3u8_hex": null
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250118,
+            "title": "Nepal vs Oman (ICC CWC League 2 Oman, 2026)",
+            "match_name": "Nepal vs Oman",
+            "event_name": "ICC CWC League 2 Oman, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250118_53106_OMA_NEP_fc-web.png",
+            "team_1": "Nepal",
+            "team_2": "Oman",
+            "status": "UPCOMING",
+            "startTime": "11:00:00 AM 19-10-2026"
+        },
+        {
+            "event_category": "Cricket",
             "match_id": 4249782,
             "title": "South Africa vs Australia (Australia tour of South Africa, 2026)",
             "match_name": "South Africa vs Australia",
@@ -48,30 +77,6 @@
             "team_2": "Australia",
             "status": "PAUSED",
             "startTime": "01:30:00 PM 18-10-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4249667,
-            "title": "Western Australia vs New South Wales (Sheffield Shield, 2026/27)",
-            "match_name": "Western Australia vs New South Wales",
-            "event_name": "Sheffield Shield, 2026/27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249667_53087_WAU_NSW_FC-WEB_1791299730396.jpg",
-            "team_1": "Western Australia",
-            "team_2": "New South Wales",
-            "status": "UPCOMING",
-            "startTime": "08:00:00 AM 19-10-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4250118,
-            "title": "Oman vs Nepal (ICC CWC League 2 Oman, 2026)",
-            "match_name": "Oman vs Nepal",
-            "event_name": "ICC CWC League 2 Oman, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250118_53106_OMA_NEP_fc-web.png",
-            "team_1": "Oman",
-            "team_2": "Nepal",
-            "status": "UPCOMING",
-            "startTime": "11:00:00 AM 19-10-2026"
         },
         {
             "event_category": "Cricket",
@@ -91,7 +96,7 @@
             "title": "Sharjah vs Dubai (Emirates D20, 2026)",
             "match_name": "Sharjah vs Dubai",
             "event_name": "Emirates D20, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250474_53130_SHA_DUB_fc-web.jpg",
             "team_1": "Sharjah",
             "team_2": "Dubai",
             "status": "UPCOMING",
@@ -103,7 +108,7 @@
             "title": "Emirates Red vs Abu Dhabi (Emirates D20, 2026)",
             "match_name": "Emirates Red vs Abu Dhabi",
             "event_name": "Emirates D20, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250475_53130_EMR_ABD_fc-web.jpg",
             "team_1": "Emirates Red",
             "team_2": "Abu Dhabi",
             "status": "UPCOMING",
@@ -170,42 +175,6 @@
             "startTime": "09:00:00 AM 20-10-2026"
         },
         {
-            "event_category": "Tennis",
-            "match_id": 4249607,
-            "title": "ATP 250 - Almaty Open 2026 vs Almaty, Kazakhstan (ATP 250 - Almaty Open 2026)",
-            "match_name": "ATP 250 - Almaty Open 2026",
-            "event_name": "ATP 250 - Almaty Open 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Default_Tennis-old.jpg",
-            "team_1": "ATP 250 - Almaty Open 2026",
-            "team_2": "Almaty, Kazakhstan",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 PM 19-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4249614,
-            "title": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026 vs Lyon, France (ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026)",
-            "match_name": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
-            "event_name": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Grand-Prix-Auvergne-Rhone-Alpes_fc-web.jpg",
-            "team_1": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
-            "team_2": "Lyon, France",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 PM 19-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4249621,
-            "title": "ATP 250 - BNP Paribas Fortis European Open vs Brussels, Belgium (ATP 250 - BNP Paribas Fortis European Open)",
-            "match_name": "ATP 250 - BNP Paribas Fortis European Open",
-            "event_name": "ATP 250 - BNP Paribas Fortis European Open",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/BNP-Paribas-Fortis-European-Open_fc-web.jpg",
-            "team_1": "ATP 250 - BNP Paribas Fortis European Open",
-            "team_2": "Brussels, Belgium",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 PM 19-10-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4250162,
             "title": "Australia Women vs New Zealand Women (New Zealand Women tour of Australia, 2026)",
@@ -216,6 +185,42 @@
             "team_2": "New Zealand Women",
             "status": "UPCOMING",
             "startTime": "01:45:00 PM 20-10-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4249607,
+            "title": "World Feed vs Almaty, Kazakhstan (ATP 250 - Almaty Open 2026)",
+            "match_name": "World Feed",
+            "event_name": "ATP 250 - Almaty Open 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Default_Tennis-old.jpg",
+            "team_1": "World Feed",
+            "team_2": "Almaty, Kazakhstan",
+            "status": "UPCOMING",
+            "startTime": "12:00:00 PM 19-10-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4249621,
+            "title": "World Feed vs Brussels, Belgium (ATP 250 - BNP Paribas Fortis European Open)",
+            "match_name": "World Feed",
+            "event_name": "ATP 250 - BNP Paribas Fortis European Open",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/BNP-Paribas-Fortis-European-Open_fc-web.jpg",
+            "team_1": "World Feed",
+            "team_2": "Brussels, Belgium",
+            "status": "UPCOMING",
+            "startTime": "03:30:00 PM 19-10-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4249614,
+            "title": "World Feed vs Lyon, France (ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026)",
+            "match_name": "World Feed",
+            "event_name": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Grand-Prix-Auvergne-Rhone-Alpes_fc-web.jpg",
+            "team_1": "World Feed",
+            "team_2": "Lyon, France",
+            "status": "UPCOMING",
+            "startTime": "06:30:00 PM 19-10-2026"
         },
         {
             "event_category": "Cricket",
@@ -235,7 +240,7 @@
             "title": "Ajman vs Emirates Blues (Emirates D20, 2026)",
             "match_name": "Ajman vs Emirates Blues",
             "event_name": "Emirates D20, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250476_53130_AJM_EMB_fc-web.jpg",
             "team_1": "Ajman",
             "team_2": "Emirates Blues",
             "status": "UPCOMING",
@@ -264,6 +269,30 @@
             "team_2": "Gambia",
             "status": "UPCOMING",
             "startTime": "06:30:00 PM 20-10-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250477,
+            "title": "Emirates Red vs Sharjah (Emirates D20, 2026)",
+            "match_name": "Emirates Red vs Sharjah",
+            "event_name": "Emirates D20, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250477_53130_EMR_SHA_fc-web.jpg",
+            "team_1": "Emirates Red",
+            "team_2": "Sharjah",
+            "status": "UPCOMING",
+            "startTime": "10:00:00 PM 20-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4250215,
+            "title": "Al-Taawoun FC vs Al-Qadsiah FC (Roshn Saudi League 2026-2027)",
+            "match_name": "Al-Taawoun FC vs Al-Qadsiah FC",
+            "event_name": "Roshn Saudi League 2026-2027",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250215_53025_ALTW_ALQ_FC-Web.png",
+            "team_1": "Al-Taawoun FC",
+            "team_2": "Al-Qadsiah FC",
+            "status": "UPCOMING",
+            "startTime": "08:40:00 PM 20-10-2026"
         },
         {
             "event_category": "Tennis",
@@ -300,30 +329,6 @@
             "team_2": "Brussels, Belgium",
             "status": "UPCOMING",
             "startTime": "03:30:00 PM 20-10-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4250215,
-            "title": "Al-Taawoun FC vs Al-Qadsiah FC (Roshn Saudi League 2026-2027)",
-            "match_name": "Al-Taawoun FC vs Al-Qadsiah FC",
-            "event_name": "Roshn Saudi League 2026-2027",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250215_53025_ALTW_ALQ_FC-Web.png",
-            "team_1": "Al-Taawoun FC",
-            "team_2": "Al-Qadsiah FC",
-            "status": "UPCOMING",
-            "startTime": "08:40:00 PM 20-10-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4250477,
-            "title": "Emirates Red vs Sharjah (Emirates D20, 2026)",
-            "match_name": "Emirates Red vs Sharjah",
-            "event_name": "Emirates D20, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
-            "team_1": "Emirates Red",
-            "team_2": "Sharjah",
-            "status": "UPCOMING",
-            "startTime": "10:00:00 PM 20-10-2026"
         },
         {
             "event_category": "Football",
@@ -415,7 +420,7 @@
             "title": "Emirates Blues vs Dubai (Emirates D20, 2026)",
             "match_name": "Emirates Blues vs Dubai",
             "event_name": "Emirates D20, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250478_53130_EMB_DUB_fc-web.jpg",
             "team_1": "Emirates Blues",
             "team_2": "Dubai",
             "status": "UPCOMING",
@@ -487,7 +492,7 @@
             "title": "Ajman vs Abu Dhabi (Emirates D20, 2026)",
             "match_name": "Ajman vs Abu Dhabi",
             "event_name": "Emirates D20, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250479_53130_AJM_ABD_fc-web.jpg",
             "team_1": "Ajman",
             "team_2": "Abu Dhabi",
             "status": "UPCOMING",
