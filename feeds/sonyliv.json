@@ -1,20 +1,176 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "20:00:41 20-10-2026",
+    "last update time": "00:03:04 21-10-2026",
     "matches": [
         {
             "event_category": "Football",
             "isLive": true,
-            "contentId": "1090549193_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025832/1791097181496728_UYL26_Manchester_City_vs_Athens_live_landscape_thumb.jpg",
+            "contentId": "1090549204_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125044762019_UCL2627_MD3_PSG_vs_Barcelona_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
-            "event_name": "UEFA Youth League 2026-27",
-            "match_name": "Manchester City vs Athens - MD3 - 20 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120299/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792549841~acl=/*~id=89553241477399110485435164194560~hmac=8a85181dc80a2a3cab305f9c2f06e93d1cfc202009236eb3d89952a79fc21a37",
-            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120299/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792549841~acl=/*~id=89553241477399110485435164194560~hmac=8a85181dc80a2a3cab305f9c2f06e93d1cfc202009236eb3d89952a79fc21a37",
-            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120299/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792549841~acl=/*~id=89553241477399110485435164194560~hmac=8a85181dc80a2a3cab305f9c2f06e93d1cfc202009236eb3d89952a79fc21a37"
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "PSG vs Barcelona - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpchc857/cricodi_2010-eng-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpchc857/cricodi_2010-eng-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpchc857/cricodi_2010-eng-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549204_HIN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125044762019_UCL2627_MD3_PSG_vs_Barcelona_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "PSG vs Barcelona - 21 Oct 2026 [HIN]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2119921/cricodi_2010/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2119921/cricodi_2010/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2119921/cricodi_2010/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549204_TAM",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125044762019_UCL2627_MD3_PSG_vs_Barcelona_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "PSG vs Barcelona - 21 Oct 2026 [TAM]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2119951/cricodi_2010/TAM/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2119951/cricodi_2010/TAM/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2119951/cricodi_2010/TAM/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549204_TEL",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125044762019_UCL2627_MD3_PSG_vs_Barcelona_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "PSG vs Barcelona - 21 Oct 2026 [TEL]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpchc77b/cricodi_2010-tel-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpchc77b/cricodi_2010-tel-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpchc77b/cricodi_2010-tel-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549204_KAN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125044762019_UCL2627_MD3_PSG_vs_Barcelona_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "PSG vs Barcelona - 21 Oct 2026 [KAN]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpche169/cricodi_2010-kan-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpche169/cricodi_2010-kan-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/mpchgp431f/mpche169/cricodi_2010-kan-1-ts-hls/std-lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549209_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125064378219_UCL2627_MD3_Liverpool_vs_Villarreal_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Liverpool vs Villarreal - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120304/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549210_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125078739219_UCL2627_MD3_Man_City_vs_AEK_Athens_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Man City vs AEK Athens - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120306/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120306/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120306/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549200_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125022899319_UCL2627_MD3_Sabah_vs_Dortmund_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Sabah vs Dortmund - 20 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/20000094/cricodi_2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/20000094/cricodi_2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/20000094/cricodi_2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549199_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179124692857319_UCL2627_MD3_Fenerbahce_vs_Slavia_Praha_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Fenerbah\u00e7e vs Slavia Praha - MD 3 - 20 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120303/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549214_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125166244119_UCL2627_MD3_Stuttgart_vs_Atletico_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Stuttgart vs Atleti - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120302/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549211_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125103389219_UCL2627_MD3_Roma_vs_Bratislava_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Roma vs S. Bratislava - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120307/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120307/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120307/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549213_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125144501419_UCL2627_MD3_Napoli_vs_Bodo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Napoli vs Bod\u00f8/Glimt - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120308/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120308/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120308/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549212_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025901/179125123653519_UCL2627_MD3_Porto_vs_PSV_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Champions League 2026-27",
+            "match_name": "Porto vs PSV - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/2120300/Footlive2010/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792564379~acl=/*~id=98153227142177784593095241423630~hmac=7dfa3f9022136a0e86c657e2d6eb5f64cb67f28568e1f7151aead9b0bb9898e4"
         },
         {
             "event_category": "Cricket",
@@ -28,38 +184,11 @@
         {
             "event_category": "Football",
             "isLive": false,
-            "contentId": 1090549142,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026640/1792324419964500_UCL_liverpool_vill_psg_barca_promo_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Matchday 3 - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
             "contentId": 1090549143,
             "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026634/1792321097703198_matchday_3_landscape_thumbnail.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Matchday 3 - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090549144,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026424/1792060445825585_UCL26_PSG-vs-Barcelona_promo_Tonight_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Paris Saint-Germain vs Barcelona - UEFA Champions League 2026-27 "
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090549141,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026424/1792061606923585_UCL26_Liverpool-vs-Villareal_Tonight_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Liverpool vs Villarreal - UEFA Champions League 2026-27"
         },
         {
             "event_category": "Football",
@@ -71,6 +200,15 @@
             "event_name": "Upcoming - Bayern M\u00fcnchen vs Arsenal - UEFA Champions League 2026-27"
         },
         {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090548932,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026802/1792507041786654_NZvsIND_t20i_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - India Tour Of New Zealand 2026"
+        },
+        {
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090549145,
@@ -78,15 +216,6 @@
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Real Madrid vs Leipzig - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090548932,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026701/1792409825254715_IND_vs_NZ_1st_T20i_landscape_thumb_dated.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour Of New Zealand 2026"
         },
         {
             "event_category": "Football",
@@ -100,17 +229,17 @@
         {
             "event_category": "Football",
             "isLive": false,
-            "contentId": 1090549146,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026637/1792320926788446_vfb_stuttgart_vs_atletico_madrid_landscape_thumbnail.jpg",
+            "contentId": 1090549142,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026640/1792324419964500_UCL_liverpool_vill_psg_barca_promo_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
-            "event_name": "Upcoming - VfB Stuttgart vs Atl\u00e9tico de Madrid - UEFA Champions League 2026-27"
+            "event_name": "Upcoming - Matchday 3 - UEFA Champions League 2026-27"
         },
         {
             "event_category": "Cricket",
             "isLive": false,
             "contentId": 1090548747,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026701/1792409825254715_IND_vs_NZ_1st_T20i_landscape_thumb_dated.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026802/1792507025103654_NZvsIND_5t20i_promo_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour Of New Zealand 2026"
@@ -150,6 +279,33 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour of New Zealand 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090541320,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023378/178835785489135_Sunil_grover_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - India Tour of New Zealand "
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090548283,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026328/1791978466033872_STCL_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Salute Tiranga Cricket League (STCL) 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090549038,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026604/1792259527608635_ind_vs_nz_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "TAM",
+            "event_name": "Upcoming - India Tour Of New Zealand 2026"
         }
     ]
 }
