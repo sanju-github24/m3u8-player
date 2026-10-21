@@ -1,13 +1,26 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "09:59:33 21-10-2026",
+    "last update time": "14:52:17 21-10-2026",
     "matches": [
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090549320_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026725/1792417147157732_STCL_Rajasthan-Frontiers-vs-Haryana-Lions_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "Salute Tiranga Cricket League (STCL) 2026",
+            "match_name": "Rajasthan Frontiers vs Haryana Lions - 21 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaimenew.akamaized.net/hls/live/std_lrh-800300010.m3u8?hdnea=exp=1792617736~acl=/*~id=49204444657228131582038041241416~hmac=5fb61c104bbabbec59fae61bcb5db3a8cbb528234028050f58345454e2e35e7d",
+            "pub_url": "https://sonydaimenew.akamaized.net/hls/live/std_lrh-800300010.m3u8?hdnea=exp=1792617736~acl=/*~id=49204444657228131582038041241416~hmac=5fb61c104bbabbec59fae61bcb5db3a8cbb528234028050f58345454e2e35e7d",
+            "video_url": "https://sonydaimenew.akamaized.net/hls/live/std_lrh-800300010.m3u8?hdnea=exp=1792617736~acl=/*~id=49204444657228131582038041241416~hmac=5fb61c104bbabbec59fae61bcb5db3a8cbb528234028050f58345454e2e35e7d"
+        },
         {
             "event_category": "Cricket",
             "isLive": false,
             "contentId": 1090548837,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026701/1792409825254715_IND_vs_NZ_1st_T20i_landscape_thumb_dated.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026847/1792566439432595_IND_vs_NZ_1st_T20i_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour Of New Zealand 2026"
@@ -65,51 +78,6 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour Of New Zealand 2026"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090548865,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026514/1792170340571528_INDvsNZ_5t20i_promo_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour Of New Zealand 2026"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090546015,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025605/1790913888711779_ag_indvs_nz_promo_dated_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour Of New Zealand 2026"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090538916,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000022033/1786433246787561_NZ_vs_IND_DDT_Promo_landscape.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour of New Zealand "
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090542506,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023939/1789325459946480_IND_vs_NZ_landsacpe_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour of New Zealand 2026"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090541320,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000023378/178835785489135_Sunil_grover_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour of New Zealand "
         },
         {
             "event_category": "Cricket",
