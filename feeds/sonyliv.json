@@ -1,33 +1,46 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "20:34:34 22-10-2026",
+    "last update time": "00:37:16 23-10-2026",
     "matches": [
         {
-            "event_category": "Cricket",
+            "event_category": "Football",
             "isLive": true,
-            "contentId": "1090549594_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026937/179261767506469_STCL26_mumbai_vs_tamilnadu_landscape_thumb.jpg",
+            "contentId": "1090549712_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025900/1791244113649235_UEL2627_MD3_Bournemouth_vs_Milan_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Salute Tiranga Cricket League (STCL) 2026",
-            "match_name": "Mumbai Mavericks vs Tamilnadu Thunders - 22 Oct 2026 [HIN]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120305/criclive2210/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792724674~acl=/*~id=60941160836544671240706795603961~hmac=4de1aee7bc640d5ec100c722f604bbc3ff47f626860ea380876632e927b9353b",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120305/criclive2210/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792724674~acl=/*~id=60941160836544671240706795603961~hmac=4de1aee7bc640d5ec100c722f604bbc3ff47f626860ea380876632e927b9353b",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2120305/criclive2210/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792724674~acl=/*~id=60941160836544671240706795603961~hmac=4de1aee7bc640d5ec100c722f604bbc3ff47f626860ea380876632e927b9353b"
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Europa League 2026-27",
+            "match_name": "Bournemouth vs Milan - 23 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120302/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881",
+            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120302/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881",
+            "video_url": "https://sonydaime.akamaized.net/hls/live/2120302/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881"
         },
         {
             "event_category": "Football",
             "isLive": true,
-            "contentId": "1090549551_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026439/1792070243386375_UECL_26_MD2_Kairat-Almaty-vs-Panathinaikos_live_landscape_thumb.jpg",
+            "contentId": "1090549735_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000025900/1791245711395235_UEL2627_MD3_Besiktas_vs_Crystal_Palace_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Europa League 2026-27",
+            "match_name": "Be\u015fikta\u015f vs Crystal Palace - 23 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaime.akamaized.net/hls/live/2018458/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881",
+            "pub_url": "https://sonydaime.akamaized.net/hls/live/2018458/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881",
+            "video_url": "https://sonydaime.akamaized.net/hls/live/2018458/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090549910_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026498/1792147436477574_UECL_26_MD2_Ajax-vs-Atalanta_live_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "UEFA Conference League 2026-27",
-            "match_name": "Kairat Almaty vs Panathinaikos - 22 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2094588/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792724674~acl=/*~id=60941160836544671240706795603961~hmac=4de1aee7bc640d5ec100c722f604bbc3ff47f626860ea380876632e927b9353b",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2094588/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792724674~acl=/*~id=60941160836544671240706795603961~hmac=4de1aee7bc640d5ec100c722f604bbc3ff47f626860ea380876632e927b9353b",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2094588/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792724674~acl=/*~id=60941160836544671240706795603961~hmac=4de1aee7bc640d5ec100c722f604bbc3ff47f626860ea380876632e927b9353b"
+            "match_name": "Ajax vs Atalanta - 23 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaime.akamaized.net/hls/live/2118669/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881",
+            "pub_url": "https://sonydaime.akamaized.net/hls/live/2118669/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881",
+            "video_url": "https://sonydaime.akamaized.net/hls/live/2118669/footlive2210/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792739235~acl=/*~id=65330749129726854457375465536567~hmac=6871dde0c36dca4e029351f1b05e7b6e186f9b58afebb79642dcfe05a7061881"
         },
         {
             "event_category": "Football",
@@ -37,6 +50,15 @@
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - MG Indian Super League 2026-27"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090550079,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027058/1792690224910846_indvsnz_2nd_t20i_dated_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 2nd T20I - India Tour Of New Zealand 2026"
         },
         {
             "event_category": "Cricket",
@@ -82,6 +104,33 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Salute Tiranga Cricket League (STCL) 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090550084,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027049/1792686516383928_NZvsIND26_vaibhav_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 2nd T20I - India Tour Of New Zealand 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090550083,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027049/1792686594133928_NZvsIND26_blockbuster_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 2nd T20I - India Tour Of New Zealand 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090550080,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027049/1792686364520928_NZvsIND26_varma_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 2nd T20I - India Tour Of New Zealand 2026"
         }
     ]
 }
