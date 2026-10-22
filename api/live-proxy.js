@@ -251,9 +251,27 @@ export default async function handler(req, res) {
     return res.status(200).send(body);
   }
 
-  // Segments and keys: hand the bytes back with CORS added.
+  /* Segments and keys: hand the bytes back with CORS added. A public proxy
+     can die after sending headers, which throws here — that used to crash
+     the function into a bare 500. The segment is fetched once more through
+     another proxy instead, so the player sees a slow segment, not a failed one. */
+  let bytes;
+  try { bytes = Buffer.from(await upstream.arrayBuffer()); }
+  catch (e) {
+    if (!usedProxy) return res.status(502).send('Upstream dropped: ' + e.message);
+    if (known.get(targetUrl.hostname) === usedProxy) known.delete(targetUrl.hostname);
+    try {
+      const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname, usedProxy);
+      if (!hit) return res.status(502).send('Upstream dropped: ' + e.message);
+      upstream = hit.res;
+      bytes = Buffer.from(await upstream.arrayBuffer());
+      res.setHeader('X-Proxy-Via', hit.proxy);
+    } catch (e2) {
+      return res.status(502).send('Upstream dropped: ' + e2.message);
+    }
+  }
   res.setHeader('Content-Type', ct || 'application/octet-stream');
   res.setHeader('Cache-Control', upstream.headers.get('cache-control') || 'no-cache');
   for (const h of ['content-range', 'accept-ranges']) { const v = upstream.headers.get(h); if (v) res.setHeader(h, v); }
-  return res.status(upstream.status === 206 ? 206 : 200).send(Buffer.from(await upstream.arrayBuffer()));
+  return res.status(upstream.status === 206 ? 206 : 200).send(bytes);
 }
