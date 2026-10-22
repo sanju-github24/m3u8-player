@@ -31,6 +31,7 @@ const ALLOWED = ['fancode.com', 'akamaized.net', 'hotstar.com', 'jio.com', 'haku
    straight from Mumbai, which is faster and does not depend on a stranger. */
 const NEEDS_RESIDENTIAL = [
   'sonydaimenew.akamaized.net',
+  'sonydaime.akamaized.net',      // SonyLiv moved its live feeds here, 2026-10
   'live09p.hotstar.com',
   'hotstar.com',
 ];
@@ -51,7 +52,7 @@ let directOk = new Map();      // residential-host -> true (this address is acce
    refused, 2026-10): the paid Hotstar/Sony CDNs. Pre-marked so Star Sports
    and the other Digital channels go straight to the residential pool with
    no wasted direct probe. The learning path above still covers any new host. */
-for (const h of ['livetv.hotstar.com', 'live09p.hotstar.com', 'sonydaimenew.akamaized.net']) directOk.set(h, false);
+for (const h of ['livetv.hotstar.com', 'live09p.hotstar.com', 'sonydaimenew.akamaized.net', 'sonydaime.akamaized.net']) directOk.set(h, false);
 
 async function proxyList() {
   if (pool.list.length && Date.now() - pool.at < 15 * 60_000) return pool.list;
