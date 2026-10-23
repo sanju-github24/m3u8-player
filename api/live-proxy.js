@@ -34,13 +34,14 @@ const NEEDS_RESIDENTIAL = [
   'sonydaime.akamaized.net',      // SonyLiv moved its live feeds here, 2026-10
   'live09p.hotstar.com',
   'hotstar.com',
+  'v2-prime.akamaized.net',       // answers 475 to Mumbai and to the Delhi VPS, 2026-10
 ];
 
 const PROXY_LIST =
   'https://raw.githubusercontent.com/databay-labs/free-proxy-list/master/by-country/in/http.txt';
 
 const allowed = (h) => ALLOWED.some(s => h === s || h.endsWith('.' + s));
-const needsResidential = (h) => NEEDS_RESIDENTIAL.some(s => h === s || h.endsWith('.' + s));
+const needsResidential = (h) => directOk.get(h) === false || NEEDS_RESIDENTIAL.some(s => h === s || h.endsWith('.' + s));
 
 // ── the proxy pool ───────────────────────────────────────────
 /* Kept on the module, which on a warm instance survives between requests.
@@ -176,6 +177,15 @@ export default async function handler(req, res) {
       }
     } else {
       upstream = await get(targetUrl.toString(), headers, null, 15000);
+      /* 451, 452 and 475 are never about the link: they are an Akamai or
+         Fastly edge refusing this network after the token already passed. A
+         host that says so is sent to the pool like the listed ones, and
+         remembered, so the next request goes there without asking twice. */
+      if ([451, 452, 475].includes(upstream.status)) {
+        directOk.set(targetUrl.hostname, false);
+        const hit = await findProxy(targetUrl.toString(), headers, targetUrl.hostname);
+        if (hit) { upstream = hit.res; usedProxy = hit.proxy; }
+      }
     }
   } catch (e) {
     return res.status(502).send('Upstream failed: ' + e.message);
