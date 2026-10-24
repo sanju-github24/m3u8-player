@@ -1,0 +1,8 @@
+{
+  "name": "live-relay",
+  "private": true,
+  "type": "module",
+  "description": "The live proxy on the Delhi VPS — warm Indian-proxy pool, shared cache, prefetch",
+  "scripts": { "start": "node server.mjs" },
+  "dependencies": { "undici": "^6.21.0" }
+}

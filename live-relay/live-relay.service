@@ -1,0 +1,18 @@
+[Unit]
+Description=live-relay (SonyLiv/Hotstar live proxy with a warm pool and shared cache)
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/live-relay
+ExecStart=/usr/bin/node server.mjs
+Environment=PORT=8790
+Environment=PUBLIC_URL=https://live.1anchormovies.buzz
+Environment=HOME_PROXY=http://127.0.0.1:8899
+Environment=CACHE_MB=300
+Restart=always
+RestartSec=2
+DynamicUser=yes
+MemoryMax=900M
+
+[Install]
+WantedBy=multi-user.target
