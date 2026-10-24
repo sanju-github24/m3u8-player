@@ -1,7 +1,7 @@
 {
     "name": "Fancode Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "05:40:09 AM 24-10-2026",
+    "last update time": "10:02:28 AM 24-10-2026",
     "matches": [
         {
             "event_category": "Cricket",
@@ -21,7 +21,7 @@
             "akamai_m3u8_hex": null
         },
         {
-            "event_category": "MotoGP",
+            "event_category": null,
             "match_id": "139979_ENG",
             "title": "GRAND PRIX OF AUSTRALIA 2026 [English]",
             "match_name": "Day 2 [English]",
@@ -35,6 +35,23 @@
             "dai_url": "https://in-mc-flive.fancode.com/mumbai/139979_english_hls_c7aa6f758469211_1ta-di_h264/1080p5.m3u8?hdntl=Expires=1792877285~_GO=Generated~acl=/mumbai/139979_english_hls_c7aa6f758469211_1ta-di_h264/*~SessionID=fc-app_sportsguruand_watcho_12d37240-e5db-44~Signature=ASgJGVBpn-wZG24vBzclKTkD1pIOvVfhU6iETAP8BrDeJuX_3svcgH6vEHI6u7VrvWcruVU6w-3FAUnKUZ5MowiC2p8A",
             "adfree_url": "https://in-mc-flive.fancode.com/mumbai/139979_english_hls_c7aa6f758469211_1ta-di_h264/1080p5.m3u8?hdntl=Expires=1792877285~_GO=Generated~acl=/mumbai/139979_english_hls_c7aa6f758469211_1ta-di_h264/*~SessionID=fc-app_sportsguruand_watcho_12d37240-e5db-44~Signature=ASgJGVBpn-wZG24vBzclKTkD1pIOvVfhU6iETAP8BrDeJuX_3svcgH6vEHI6u7VrvWcruVU6w-3FAUnKUZ5MowiC2p8A",
             "google_m3u8_hex": "234558544d33550a234558542d582d56455253494f4e3a330a234558542d582d53545245414d2d494e463a42414e4457494454483d3434363933362c415645524147452d42414e4457494454483d3434363933362c434f444543533d22617663312e3432653031352c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d343236783234302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f323430702e6d3375383f68646e746c3d457870697265733d313739323837373238357e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f31326433373234302d653564622d34347e5369676e61747572653d4153674a475642706e2d775a47323476427a636c4b546b443170494f765666685536694554415038427244654a75585f337376636748367645484936753756727657637275565536772d334641556e4b555a354d6f776943327038410a234558542d582d53545245414d2d494e463a42414e4457494454483d3730323337362c415645524147452d42414e4457494454483d3730323337362c434f444543533d22617663312e3432653031652c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d363430783336302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f333630702e6d3375383f68646e746c3d457870697265733d313739323837373238357e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f31326433373234302d653564622d34347e5369676e61747572653d4153674a475642706e2d775a47323476427a636c4b546b443170494f765666685536694554415038427244654a75585f337376636748367645484936753756727657637275565536772d334641556e4b555a354d6f776943327038410a234558542d582d53545245414d2d494e463a42414e4457494454483d313032333232342c415645524147452d42414e4457494454483d313032333232342c434f444543533d22617663312e3464343031652c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d383534783438302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f343830702e6d3375383f68646e746c3d457870697265733d313739323837373238357e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f31326433373234302d653564622d34347e5369676e61747572653d4153674a475642706e2d775a47323476427a636c4b546b443170494f765666685536694554415038427244654a75585f337376636748367645484936753756727657637275565536772d334641556e4b555a354d6f776943327038410a234558542d582d53545245414d2d494e463a42414e4457494454483d313237383636342c415645524147452d42414e4457494454483d313237383636342c434f444543533d22617663312e3464343031662c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d393630783534302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f353430702e6d3375383f68646e746c3d457870697265733d313739323837373238357e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f31326433373234302d653564622d34347e5369676e61747572653d4153674a475642706e2d775a47323476427a636c4b546b443170494f765666685536694554415038427244654a75585f337376636748367645484936753756727657637275565536772d334641556e4b555a354d6f776943327038410a234558542d582d53545245414d2d494e463a42414e4457494454483d313738393531322c415645524147452d42414e4457494454483d313738393531322c434f444543533d22617663312e3634303031662c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d31323830783732302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f373230702e6d3375383f68646e746c3d457870697265733d313739323837373238357e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f31326433373234302d653564622d34347e5369676e61747572653d4153674a475642706e2d775a47323476427a636c4b546b443170494f765666685536694554415038427244654a75585f337376636748367645484936753756727657637275565536772d334641556e4b555a354d6f776943327038410a234558542d582d53545245414d2d494e463a42414e4457494454483d333332323132302c415645524147452d42414e4457494454483d333332323132302c434f444543533d22617663312e3634303032382c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d3139323078313038302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f31303830702e6d3375383f68646e746c3d457870697265733d313739323837373238357e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f31326433373234302d653564622d34347e5369676e61747572653d4153674a475642706e2d775a47323476427a636c4b546b443170494f765666685536694554415038427244654a75585f337376636748367645484936753756727657637275565536772d334641556e4b555a354d6f776943327038410a234558542d582d53545245414d2d494e463a42414e4457494454483d353430383733362c415645524147452d42414e4457494454483d353430383733362c434f444543533d22617663312e3634303032612c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d3139323078313038302c4652414d452d524154453d35302e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f3130383070352e6d3375383f68646e746c3d457870697265733d313739323837373238357e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f3133393937395f656e676c6973685f686c735f6337616136663735383436393231315f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f31326433373234302d653564622d34347e5369676e61747572653d4153674a475642706e2d775a47323476427a636c4b546b443170494f765666685536694554415038427244654a75585f337376636748367645484936753756727657637275565536772d334641556e4b555a354d6f776943327038410a",
+            "akamai_m3u8_hex": null
+        },
+        {
+            "event_category": "Football",
+            "match_id": "4249841_ENG",
+            "title": "A-League 2026-27 [English]",
+            "match_name": "Newcastle Jets vs Macarthur [English]",
+            "event_name": "A-League 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249841_53101_NJ_MAC_fc-Web_1792223292297.jpg",
+            "team_1": "Newcastle Jets",
+            "team_2": "Macarthur",
+            "status": "LIVE",
+            "startTime": "09:30:00 AM 24-10-2026",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+            "dai_url": "https://in-mc-flive.fancode.com/mumbai/4249841_english_hls_865a5ca7c073916_1ta-di_h264/1080p.m3u8?hdntl=Expires=1792900330~_GO=Generated~acl=/mumbai/4249841_english_hls_865a5ca7c073916_1ta-di_h264/*~SessionID=fc-app_sportsguruand_watcho_f3b16c5f-8776-47~Signature=ASgJGVDuEfHRJxMS1rykv8irVXsoIrWkGIzm0PxTHuTEdAmWfsafjwfrTQ_umVV87o9CvVub_uW1xJPVfrTSkxrdRhUA",
+            "adfree_url": "https://in-mc-flive.fancode.com/mumbai/4249841_english_hls_865a5ca7c073916_1ta-di_h264/1080p.m3u8?hdntl=Expires=1792900330~_GO=Generated~acl=/mumbai/4249841_english_hls_865a5ca7c073916_1ta-di_h264/*~SessionID=fc-app_sportsguruand_watcho_f3b16c5f-8776-47~Signature=ASgJGVDuEfHRJxMS1rykv8irVXsoIrWkGIzm0PxTHuTEdAmWfsafjwfrTQ_umVV87o9CvVub_uW1xJPVfrTSkxrdRhUA",
+            "google_m3u8_hex": "234558544d33550a234558542d582d56455253494f4e3a330a234558542d582d53545245414d2d494e463a42414e4457494454483d3434363933362c415645524147452d42414e4457494454483d3434363933362c434f444543533d22617663312e3432653031352c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d343236783234302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f323430702e6d3375383f68646e746c3d457870697265733d313739323930303333307e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f66336231366335662d383737362d34377e5369676e61747572653d4153674a47564475456648524a784d533172796b763869725658736f4972576b47497a6d305078544875544564416d57667361666a77667254515f756d565638376f3943765675625f755731784a5056667254536b787264526855410a234558542d582d53545245414d2d494e463a42414e4457494454483d3730323337362c415645524147452d42414e4457494454483d3730323337362c434f444543533d22617663312e3432653031652c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d363430783336302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f333630702e6d3375383f68646e746c3d457870697265733d313739323930303333307e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f66336231366335662d383737362d34377e5369676e61747572653d4153674a47564475456648524a784d533172796b763869725658736f4972576b47497a6d305078544875544564416d57667361666a77667254515f756d565638376f3943765675625f755731784a5056667254536b787264526855410a234558542d582d53545245414d2d494e463a42414e4457494454483d313032333232342c415645524147452d42414e4457494454483d313032333232342c434f444543533d22617663312e3464343031652c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d383534783438302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f343830702e6d3375383f68646e746c3d457870697265733d313739323930303333307e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f66336231366335662d383737362d34377e5369676e61747572653d4153674a47564475456648524a784d533172796b763869725658736f4972576b47497a6d305078544875544564416d57667361666a77667254515f756d565638376f3943765675625f755731784a5056667254536b787264526855410a234558542d582d53545245414d2d494e463a42414e4457494454483d313237383636342c415645524147452d42414e4457494454483d313237383636342c434f444543533d22617663312e3464343031662c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d393630783534302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f353430702e6d3375383f68646e746c3d457870697265733d313739323930303333307e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f66336231366335662d383737362d34377e5369676e61747572653d4153674a47564475456648524a784d533172796b763869725658736f4972576b47497a6d305078544875544564416d57667361666a77667254515f756d565638376f3943765675625f755731784a5056667254536b787264526855410a234558542d582d53545245414d2d494e463a42414e4457494454483d313738393531322c415645524147452d42414e4457494454483d313738393531322c434f444543533d22617663312e3634303031662c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d31323830783732302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f373230702e6d3375383f68646e746c3d457870697265733d313739323930303333307e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f66336231366335662d383737362d34377e5369676e61747572653d4153674a47564475456648524a784d533172796b763869725658736f4972576b47497a6d305078544875544564416d57667361666a77667254515f756d565638376f3943765675625f755731784a5056667254536b787264526855410a234558542d582d53545245414d2d494e463a42414e4457494454483d333332323132302c415645524147452d42414e4457494454483d333332323132302c434f444543533d22617663312e3634303032382c6d7034612e34302e32222c50524f4752414d2d49443d312c5245534f4c5554494f4e3d3139323078313038302c4652414d452d524154453d32352e3030300a68747470733a2f2f696e2d6d632d666c6976652e66616e636f64652e636f6d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f31303830702e6d3375383f68646e746c3d457870697265733d313739323930303333307e5f474f3d47656e6572617465647e61636c3d2f6d756d6261692f343234393834315f656e676c6973685f686c735f3836356135636137633037333931365f3174612d64695f683236342f2a7e53657373696f6e49443d66632d6170705f73706f72747367757275616e645f77617463686f5f66336231366335662d383737362d34377e5369676e61747572653d4153674a47564475456648524a784d533172796b763869725658736f4972576b47497a6d305078544875544564416d57667361666a77667254515f756d565638376f3943765675625f755731784a5056667254536b787264526855410a",
             "akamai_m3u8_hex": null
         },
         {
@@ -230,6 +247,18 @@
             "startTime": "05:15:00 PM 24-10-2026"
         },
         {
+            "event_category": "Cricket",
+            "match_id": 4250516,
+            "title": "United Arab Emirates vs Netherlands (ICC CWC League 2 UAE, 2026)",
+            "match_name": "United Arab Emirates vs Netherlands",
+            "event_name": "ICC CWC League 2 UAE, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/ICC-CWC-League_Web-match-card.png",
+            "team_1": "United Arab Emirates",
+            "team_2": "Netherlands",
+            "status": "UPCOMING",
+            "startTime": "11:00:00 AM 25-10-2026"
+        },
+        {
             "event_category": "Football",
             "match_id": 4250108,
             "title": "Leganes vs RCD Mallorca (LALIGA Hypermotion 2026-27)",
@@ -267,102 +296,6 @@
         },
         {
             "event_category": "Cricket",
-            "match_id": 4250516,
-            "title": "United Arab Emirates vs Netherlands (ICC CWC League 2 UAE, 2026)",
-            "match_name": "United Arab Emirates vs Netherlands",
-            "event_name": "ICC CWC League 2 UAE, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/ICC-CWC-League_Web-match-card.png",
-            "team_1": "United Arab Emirates",
-            "team_2": "Netherlands",
-            "status": "UPCOMING",
-            "startTime": "11:00:00 AM 25-10-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4249841,
-            "title": "Newcastle Jets vs Macarthur (A-League 2026-27)",
-            "match_name": "Newcastle Jets vs Macarthur",
-            "event_name": "A-League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249841_53101_NJ_MAC_fc-Web_1792223292297.jpg",
-            "team_1": "Newcastle Jets",
-            "team_2": "Macarthur",
-            "status": "UPCOMING",
-            "startTime": "09:30:00 AM 24-10-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4249842,
-            "title": "Western Sydney Wanderers vs Auckland (A-League 2026-27)",
-            "match_name": "Western Sydney Wanderers vs Auckland",
-            "event_name": "A-League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249842_53101_SYW_AFC_fc-Web_1792223292033.jpg",
-            "team_1": "Western Sydney Wanderers",
-            "team_2": "Auckland",
-            "status": "UPCOMING",
-            "startTime": "11:30:00 AM 24-10-2026"
-        },
-        {
-            "event_category": "Badminton",
-            "match_id": 4250158,
-            "title": "Semi-Final vs France (BWF Super 750 - French Open 2026)",
-            "match_name": "Semi-Final",
-            "event_name": "BWF Super 750 - French Open 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Yonex-French-Open-2026_FC-WEB.jpg",
-            "team_1": "Semi-Final",
-            "team_2": "France",
-            "status": "UPCOMING",
-            "startTime": "01:00:00 PM 24-10-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4249843,
-            "title": "Melbourne Victory vs Melbourne City (A-League 2026-27)",
-            "match_name": "Melbourne Victory vs Melbourne City",
-            "event_name": "A-League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249843_53101_MLV_MLC_fc-Web_1792223292104.jpg",
-            "team_1": "Melbourne Victory",
-            "team_2": "Melbourne City",
-            "status": "UPCOMING",
-            "startTime": "02:10:00 PM 24-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4249612,
-            "title": "Day 6 - World Feed vs Almaty, Kazakhstan (ATP 250 - Almaty Open 2026)",
-            "match_name": "Day 6 - World Feed",
-            "event_name": "ATP 250 - Almaty Open 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Tennis_FC-Web_1792479545067.png",
-            "team_1": "Day 6 - World Feed",
-            "team_2": "Almaty, Kazakhstan",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 PM 24-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4249619,
-            "title": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026 vs Lyon, France (ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026)",
-            "match_name": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
-            "event_name": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Grand-Prix-Auvergne-Rhone-Alpes_fc-web.jpg",
-            "team_1": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
-            "team_2": "Lyon, France",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 PM 24-10-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4249626,
-            "title": "Day 6 - World Feed vs Brussels, Belgium (ATP 250 - BNP Paribas Fortis European Open)",
-            "match_name": "Day 6 - World Feed",
-            "event_name": "ATP 250 - BNP Paribas Fortis European Open",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/BNP-Paribas-Fortis-European-Open_fc-web.jpg",
-            "team_1": "Day 6 - World Feed",
-            "team_2": "Brussels, Belgium",
-            "status": "UPCOMING",
-            "startTime": "07:30:00 PM 24-10-2026"
-        },
-        {
-            "event_category": "Cricket",
             "match_id": 4250341,
             "title": "Jersey vs Kenya (ICC CWC Challenge League A 2026)",
             "match_name": "Jersey vs Kenya",
@@ -386,7 +319,79 @@
             "startTime": "12:15:00 PM 25-10-2026"
         },
         {
-            "event_category": "Golf",
+            "event_category": "Football",
+            "match_id": 4249842,
+            "title": "Western Sydney Wanderers vs Auckland (A-League 2026-27)",
+            "match_name": "Western Sydney Wanderers vs Auckland",
+            "event_name": "A-League 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249842_53101_SYW_AFC_fc-Web_1792223292033.jpg",
+            "team_1": "Western Sydney Wanderers",
+            "team_2": "Auckland",
+            "status": "UPCOMING",
+            "startTime": "11:30:00 AM 24-10-2026"
+        },
+        {
+            "event_category": null,
+            "match_id": 4250158,
+            "title": "Semi-Final vs France (BWF Super 750 - French Open 2026)",
+            "match_name": "Semi-Final",
+            "event_name": "BWF Super 750 - French Open 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Yonex-French-Open-2026_FC-WEB.jpg",
+            "team_1": "Semi-Final",
+            "team_2": "France",
+            "status": "UPCOMING",
+            "startTime": "01:00:00 PM 24-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249843,
+            "title": "Melbourne Victory vs Melbourne City (A-League 2026-27)",
+            "match_name": "Melbourne Victory vs Melbourne City",
+            "event_name": "A-League 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249843_53101_MLV_MLC_fc-Web_1792223292104.jpg",
+            "team_1": "Melbourne Victory",
+            "team_2": "Melbourne City",
+            "status": "UPCOMING",
+            "startTime": "02:10:00 PM 24-10-2026"
+        },
+        {
+            "event_category": null,
+            "match_id": 4249612,
+            "title": "Day 6 - World Feed vs Almaty, Kazakhstan (ATP 250 - Almaty Open 2026)",
+            "match_name": "Day 6 - World Feed",
+            "event_name": "ATP 250 - Almaty Open 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Tennis_FC-Web_1792479545067.png",
+            "team_1": "Day 6 - World Feed",
+            "team_2": "Almaty, Kazakhstan",
+            "status": "UPCOMING",
+            "startTime": "03:30:00 PM 24-10-2026"
+        },
+        {
+            "event_category": null,
+            "match_id": 4249619,
+            "title": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026 vs Lyon, France (ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026)",
+            "match_name": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
+            "event_name": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Grand-Prix-Auvergne-Rhone-Alpes_fc-web.jpg",
+            "team_1": "ATP 250 - Grand Prix Auvergne-Rhone-Alpes 2026",
+            "team_2": "Lyon, France",
+            "status": "UPCOMING",
+            "startTime": "03:30:00 PM 24-10-2026"
+        },
+        {
+            "event_category": null,
+            "match_id": 4249626,
+            "title": "Day 6 - World Feed vs Brussels, Belgium (ATP 250 - BNP Paribas Fortis European Open)",
+            "match_name": "Day 6 - World Feed",
+            "event_name": "ATP 250 - BNP Paribas Fortis European Open",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/BNP-Paribas-Fortis-European-Open_fc-web.jpg",
+            "team_1": "Day 6 - World Feed",
+            "team_2": "Brussels, Belgium",
+            "status": "UPCOMING",
+            "startTime": "07:30:00 PM 24-10-2026"
+        },
+        {
+            "event_category": null,
             "match_id": 4250353,
             "title": "Day 3 - World Feed vs Port Royal Golf Course - Southampton, Bermuda (Butterfield Bermuda Championship 2026)",
             "match_name": "Day 3 - World Feed",
@@ -398,7 +403,7 @@
             "startTime": "09:30:00 PM 24-10-2026"
         },
         {
-            "event_category": "Formula 1",
+            "event_category": null,
             "match_id": 139504,
             "title": "Practice 3 vs Circuit of the Americas (F1 MSC CRUISES UNITED STATES GRAND PRIX 2026)",
             "match_name": "Practice 3",
@@ -408,54 +413,6 @@
             "team_2": "Circuit of the Americas",
             "status": "UPCOMING",
             "startTime": "11:00:00 PM 24-10-2026"
-        },
-        {
-            "event_category": "Formula 1",
-            "match_id": 139505,
-            "title": "Qualifying vs Circuit of the Americas (F1 MSC CRUISES UNITED STATES GRAND PRIX 2026)",
-            "match_name": "Qualifying",
-            "event_name": "F1 MSC CRUISES UNITED STATES GRAND PRIX 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Old_Match_Card1.png",
-            "team_1": "Qualifying",
-            "team_2": "Circuit of the Americas",
-            "status": "UPCOMING",
-            "startTime": "02:30:00 AM 25-10-2026"
-        },
-        {
-            "event_category": "MotoGP",
-            "match_id": 139980,
-            "title": "Race Day vs Phillip Island (GRAND PRIX OF AUSTRALIA 2026)",
-            "match_name": "Race Day",
-            "event_name": "GRAND PRIX OF AUSTRALIA 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Grand-Prix-of-Australiaold-match-card.png",
-            "team_1": "Race Day",
-            "team_2": "Phillip Island",
-            "status": "UPCOMING",
-            "startTime": "03:30:00 AM 25-10-2026"
-        },
-        {
-            "event_category": "Motorsports",
-            "match_id": 139698,
-            "title": "Reverse Grid Race vs Austin (F1 ACADEMY AUSTIN 2026)",
-            "match_name": "Reverse Grid Race",
-            "event_name": "F1 ACADEMY AUSTIN 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/F2_Canada_web_1792770153782.jpg",
-            "team_1": "Reverse Grid Race",
-            "team_2": "Austin",
-            "status": "UPCOMING",
-            "startTime": "04:30:00 AM 25-10-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4249844,
-            "title": "Wellington Phoenix vs Central Coast Mariners (A-League 2026-27)",
-            "match_name": "Wellington Phoenix vs Central Coast Mariners",
-            "event_name": "A-League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249844_53101_WEL_CCM_fc-Web_1792223292135.jpg",
-            "team_1": "Wellington Phoenix",
-            "team_2": "Central Coast Mariners",
-            "status": "UPCOMING",
-            "startTime": "07:30:00 AM 25-10-2026"
         },
         {
             "event_category": "Cricket",
@@ -482,16 +439,64 @@
             "startTime": "02:00:00 PM 25-10-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4249845,
-            "title": "Sydney FC vs Adelaide United (A-League 2026-27)",
-            "match_name": "Sydney FC vs Adelaide United",
-            "event_name": "A-League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249845_53101_SYD_ADL_fc-Web_1792223294286.jpg",
-            "team_1": "Sydney FC",
-            "team_2": "Adelaide United",
+            "event_category": null,
+            "match_id": 139505,
+            "title": "Qualifying vs Circuit of the Americas (F1 MSC CRUISES UNITED STATES GRAND PRIX 2026)",
+            "match_name": "Qualifying",
+            "event_name": "F1 MSC CRUISES UNITED STATES GRAND PRIX 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Old_Match_Card1.png",
+            "team_1": "Qualifying",
+            "team_2": "Circuit of the Americas",
             "status": "UPCOMING",
-            "startTime": "09:30:00 AM 25-10-2026"
+            "startTime": "02:30:00 AM 25-10-2026"
+        },
+        {
+            "event_category": null,
+            "match_id": 139980,
+            "title": "Race Day vs Phillip Island (GRAND PRIX OF AUSTRALIA 2026)",
+            "match_name": "Race Day",
+            "event_name": "GRAND PRIX OF AUSTRALIA 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Grand-Prix-of-Australiaold-match-card.png",
+            "team_1": "Race Day",
+            "team_2": "Phillip Island",
+            "status": "UPCOMING",
+            "startTime": "03:30:00 AM 25-10-2026"
+        },
+        {
+            "event_category": null,
+            "match_id": 139698,
+            "title": "Reverse Grid Race vs Austin (F1 ACADEMY AUSTIN 2026)",
+            "match_name": "Reverse Grid Race",
+            "event_name": "F1 ACADEMY AUSTIN 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/F2_Canada_web_1792770153782.jpg",
+            "team_1": "Reverse Grid Race",
+            "team_2": "Austin",
+            "status": "UPCOMING",
+            "startTime": "04:30:00 AM 25-10-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250486,
+            "title": "Emirates Red vs Emirates Blues (Emirates D20, 2026)",
+            "match_name": "Emirates Red vs Emirates Blues",
+            "event_name": "Emirates D20, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250486_53130_EMR_EMB_fc-web_1792412929389.jpg",
+            "team_1": "Emirates Red",
+            "team_2": "Emirates Blues",
+            "status": "UPCOMING",
+            "startTime": "06:00:00 PM 25-10-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249844,
+            "title": "Wellington Phoenix vs Central Coast Mariners (A-League 2026-27)",
+            "match_name": "Wellington Phoenix vs Central Coast Mariners",
+            "event_name": "A-League 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249844_53101_WEL_CCM_fc-Web_1792223292135.jpg",
+            "team_1": "Wellington Phoenix",
+            "team_2": "Central Coast Mariners",
+            "status": "UPCOMING",
+            "startTime": "07:30:00 AM 25-10-2026"
         }
     ]
 }
