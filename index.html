@@ -4897,8 +4897,10 @@
         else { localStorage.setItem('fc_local_proxy', _lp); }
       }
       LOCAL_PROXY = localStorage.getItem('fc_local_proxy') || '';
-      IN_PROXY = localStorage.getItem('in_proxy')
-        || (location.protocol.startsWith('http') ? location.origin + '/api/live-proxy' : '');
+      /* The Delhi VPS relay (live-relay/) keeps a warm pool of Indian home
+         proxies and a shared cache, so it no longer waits ~20 s on a cold
+         Vercel function. /api/live-proxy stays deployed as the fallback. */
+      IN_PROXY = localStorage.getItem('in_proxy') || 'https://live.1anchormovies.buzz/';
     } catch { }
     function viaLocalProxy(url) { return LOCAL_PROXY + '?url=' + encodeURIComponent(url); }
     function isLocalUrl(u) { return /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(u); }
