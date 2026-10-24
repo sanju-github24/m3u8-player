@@ -23,3 +23,18 @@ while the home tunnel is up:
 node ~/anchor-ingest/scripts/home-proxy.js            # on the Mac
 ssh -N -R 8899:127.0.0.1:8899 -i ~/.ssh/vps_deploy root@138.252.100.28
 ```
+
+## Edge cache (Cloudflare Workers free plan)
+
+The VPS has 1 TB a month, and segments are nearly all of it. The relay links
+every segment under `/s/`, which `edge-cache/worker.js` caches per Cloudflare
+data centre for two minutes — so a segment leaves the box about once per city,
+not once per viewer. Playlists stay on `/`, uncached.
+
+Free plan only — 100k requests/day, nothing billable. Set the route's request
+limit failure mode to **Fail open**, so past the limit requests go straight to
+the relay instead of erroring.
+
+The relay meters its own bytes (`/health` → `bandwidth`). Past
+`SEGMENT_FALLBACK_GB` (default 850) playlists link segments to the Vercel proxy
+instead, so the box stops spending its allowance on video.

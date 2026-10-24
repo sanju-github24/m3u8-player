@@ -12,6 +12,7 @@ Environment=CACHE_MB=300
 Restart=always
 RestartSec=2
 DynamicUser=yes
+StateDirectory=live-relay
 MemoryMax=900M
 
 [Install]

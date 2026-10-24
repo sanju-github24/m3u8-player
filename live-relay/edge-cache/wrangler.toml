@@ -1,0 +1,10 @@
+# Cloudflare Workers FREE plan — do not add a paid plan or usage_model here.
+name = "live-edge-cache"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+
+# Segments only. Playlists on live.1anchormovies.buzz/ stay uncached.
+routes = [
+  { pattern = "live.1anchormovies.buzz/s/*", zone_name = "1anchormovies.buzz" }
+]

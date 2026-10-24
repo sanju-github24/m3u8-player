@@ -31,6 +31,8 @@
 import http from "node:http";
 import net from "node:net";
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { ProxyAgent, Agent } from "undici";
 
 const PORT = Number(process.env.PORT) || 8790;
@@ -42,6 +44,29 @@ const HOME_PROXY = (process.env.HOME_PROXY || "").trim();
 const FIXED = (process.env.FIXED_PROXIES || "").split(",").map((x) => x.trim()).filter(Boolean);
 const ours = (p) => p === HOME_PROXY || FIXED.includes(p);
 const CACHE_BYTES = Number(process.env.CACHE_MB || 300) * 1024 * 1024;
+
+/* The VPS has 1 TB a month. Segments — nearly all of the bytes — are linked
+   under /s/, where a free-plan Cloudflare Worker (edge-cache/) caches them per
+   data centre, so each one leaves this box about once per city rather than
+   once per viewer. What still gets through is metered here, in and out, and
+   past SEGMENT_FALLBACK_GB the playlists start linking segments to the Vercel
+   proxy instead: slower, but none of it on this box's allowance. */
+const SEG_FALLBACK = (process.env.SEGMENT_FALLBACK || "https://m3u8-player-orcin.vercel.app/api/live-proxy").replace(/\/$/, "");
+const SEG_FALLBACK_GB = Number(process.env.SEGMENT_FALLBACK_GB || 850);
+const STATE = process.env.STATE_DIRECTORY || process.env.STATE_DIR || "/tmp/live-relay";
+const USAGE_FILE = path.join(STATE, "usage.json");
+const month = () => new Date().toISOString().slice(0, 7);
+let usage = { month: month(), inBytes: 0, outBytes: 0 };
+try { const u = JSON.parse(fs.readFileSync(USAGE_FILE, "utf8")); if (u.month === usage.month) usage = u; } catch { /* first run */ }
+function meter(inB = 0, outB = 0) {
+  if (usage.month !== month()) usage = { month: month(), inBytes: 0, outBytes: 0 };
+  usage.inBytes += inB; usage.outBytes += outB;
+}
+setInterval(() => {
+  try { fs.mkdirSync(STATE, { recursive: true }); fs.writeFileSync(USAGE_FILE, JSON.stringify(usage)); } catch { /* next time */ }
+}, 60_000).unref();
+const usedGB = () => (usage.inBytes + usage.outBytes) / 1024 ** 3;
+const overBudget = () => usedGB() >= SEG_FALLBACK_GB;
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
 
 const DEFAULT_UA =
@@ -137,6 +162,7 @@ async function get(url, headers, via, ms) {
   const t = Date.now();
   const r = await fetch(url, { headers, dispatcher: agentFor(via), signal: AbortSignal.timeout(ms), redirect: "follow" });
   const body = Buffer.from(await r.arrayBuffer());
+  meter(body.length, 0);
   return { status: r.status, ok: r.ok, ct: r.headers.get("content-type") || "", body, via, ms: Date.now() - t,
     range: r.headers.get("content-range"), };
 }
@@ -306,6 +332,8 @@ http.createServer(async (req, res) => {
   const q = new URL(req.url, "http://x");
   if (q.pathname === "/health") {
     const out = { home: HOME_PROXY ? homeUp : "not configured", fixed: FIXED.length, candidates: all.length,
+      bandwidth: { month: usage.month, inGB: +(usage.inBytes / 1024 ** 3).toFixed(2), outGB: +(usage.outBytes / 1024 ** 3).toFixed(2),
+        fallbackAtGB: SEG_FALLBACK_GB, segmentsVia: overBudget() ? "vercel (over budget)" : "edge cache → this box" },
       cacheMB: +(cacheSize / 1048576).toFixed(1), hosts: {} };
     for (const [h, st] of hosts) out.hosts[h] = { pool: st.good.size, best: ranked(st).slice(0, 3).map((p) => `${p} ${st.good.get(p).ms}ms`),
       watched: st.sample ? `${Math.round((Date.now() - st.sample.at) / 1000)}s ago` : null, sweeping: !!st.sweeping };
@@ -336,6 +364,8 @@ http.createServer(async (req, res) => {
   res.setHeader("X-Cache", up.cached ? "HIT" : "MISS");
   if (!up.ok) {
     res.setHeader("X-Proxy-Upstream", String(up.status));
+    /* A refusal must not be cached at the edge: the next try may well work. */
+    res.setHeader("Cache-Control", "no-store");
     res.writeHead(up.status).end(up.body.subarray(0, 2000));
     return;
   }
@@ -350,6 +380,7 @@ http.createServer(async (req, res) => {
     let xml = up.body.toString("utf8");
     const dir = t.href.slice(0, t.href.lastIndexOf("/") + 1);
     if (!/<BaseURL>\s*https?:/i.test(xml)) xml = xml.replace(/(<MPD\b[^>]*>)/i, `$1<BaseURL>${dir}</BaseURL>`);
+    meter(0, Buffer.byteLength(xml));
     res.writeHead(200, { "Content-Type": "application/dash+xml", "Cache-Control": "no-cache" }).end(xml);
     return;
   }
@@ -361,7 +392,13 @@ http.createServer(async (req, res) => {
     /* A child with no query inherits the parent's: FanCode and SonyLiv sign
        the folder in the query, and a relative reference drops it. */
     const toAbs = (r) => { const u = new URL(r, t); if (!u.search && t.search) u.search = t.search; return u.href; };
-    const wrap = (abs) => `${base}/?url=${encodeURIComponent(abs)}${extras}`;
+    /* A child playlist stays here (small, and must be fresh); a segment or a
+       key goes under /s/ for the edge cache — or to Vercel once over budget. */
+    const wrap = (abs) => looksPlaylist(abs)
+      ? `${base}/?url=${encodeURIComponent(abs)}${extras}`
+      : overBudget()
+        ? `${SEG_FALLBACK}?url=${encodeURIComponent(abs)}${extras}`
+        : `${base}/s/?url=${encodeURIComponent(abs)}${extras}`;
     const text = up.body.toString("utf8");
     const segs = [];
     const body = text.split("\n").map((line) => {
@@ -372,6 +409,7 @@ http.createServer(async (req, res) => {
       segs.push(abs);
       return wrap(abs);
     }).join("\n");
+    meter(0, Buffer.byteLength(body));
     res.writeHead(200, { "Content-Type": "application/vnd.apple.mpegurl", "Cache-Control": "no-cache" }).end(body);
 
     /* A media playlist's newest segments are what the player asks for next.
@@ -380,8 +418,13 @@ http.createServer(async (req, res) => {
     return;
   }
 
-  const out = { "Content-Type": up.ct || "application/octet-stream", "Cache-Control": "public, max-age=60" };
+  /* A live segment never changes once published, and stays in the playlist
+     for a minute or two — the edge may keep it that long. A byte range is not
+     cached anywhere. */
+  const out = { "Content-Type": up.ct || "application/octet-stream",
+    "Cache-Control": up.range ? "no-store" : "public, max-age=120" };
   if (up.range) out["Content-Range"] = up.range;
+  meter(0, up.body.length);
   res.writeHead(up.status, out).end(up.body);
 }).listen(PORT, "127.0.0.1", () => log(`live-relay on 127.0.0.1:${PORT}${HOME_PROXY ? ` · home ${HOME_PROXY}` : ""}`));
 
