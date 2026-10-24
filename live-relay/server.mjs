@@ -121,8 +121,10 @@ async function refreshLists() {
 /* One keep-alive agent per proxy: a new one per request is a new TCP + CONNECT
    + TLS each segment, which through a stranger's line is most of the wait. */
 const agents = new Map();
+const agentUsed = new Map();
 const agentFor = (p) => {
   if (p === "direct") return directAgent;
+  agentUsed.set(p, Date.now());
   if (!agents.has(p)) agents.set(p, new ProxyAgent({ uri: p.includes("://") ? p : `http://${p}`,
     connectTimeout: 6000, keepAliveTimeout: 30000 }));
   return agents.get(p);
@@ -137,15 +139,45 @@ const hostState = (h) => {
   return hosts.get(h);
 };
 const ranked = (st) => [...st.good.entries()].sort((a, b) => a[1].ms - b[1].ms).map(([p]) => p);
-function credit(st, p, ms) {
+/* A proxy that answers a playlist in 100 ms can still take 13 s over a 1 MB
+   segment — and a 4-second segment that takes 13 s is a stream that stalls.
+   So segments are routed by measured throughput (bytes per ms), not by how
+   fast a small playlist came back. Unmeasured proxies sit between the proven
+   fast and the proven slow, so they get tried and measured. */
+const FAST_BPMS = 500;                       // ~4 Mbps: comfortably more than 1080p needs
+function rankedForSegments(st) {
+  const rows = [...st.good.entries()];
+  const score = ([, g]) => g.bpms == null ? FAST_BPMS * 0.8 : g.bpms;
+  return rows.sort((a, b) => score(b) - score(a) || a[1].ms - b[1].ms).map(([p]) => p);
+}
+function credit(st, p, ms, bytes = 0) {
   const prev = st.good.get(p);
-  st.good.set(p, { ms: prev ? Math.round(prev.ms * 0.6 + ms * 0.4) : ms, at: Date.now() });
+  const g = { ms: prev ? Math.round(prev.ms * 0.6 + ms * 0.4) : ms, at: Date.now(), bpms: prev?.bpms ?? null };
+  if (bytes >= 100_000) {
+    const bpms = bytes / Math.max(ms, 1);
+    g.bpms = g.bpms == null ? bpms : g.bpms * 0.5 + bpms * 0.5;
+  }
+  st.good.set(p, g);
   st.bad.delete(p);
 }
 function blame(st, p) {
   st.good.delete(p);
   st.bad.set(p, Date.now());
 }
+/* Every proxy tried keeps a keep-alive agent with open sockets. Five hundred
+   of them, swept for four hosts, held the box at 127% CPU — slow enough that
+   a segment already in cache took 12 s to leave. Once a minute, an agent no
+   host counts as good and nobody has used for a minute is closed. Not at the
+   moment of blame: the four hosts sweep the same proxies at once, and closing
+   one host's reject cut another host's check off mid-flight. */
+setInterval(() => {
+  const now = Date.now();
+  for (const [p, a] of agents) {
+    if (ours(p) || now - (agentUsed.get(p) || 0) < 60_000) continue;
+    if ([...hosts.values()].some((st) => st.good.has(p))) continue;
+    agents.delete(p); agentUsed.delete(p); a.close().catch(() => {});
+  }
+}, 60_000).unref();
 
 let homeUp = false;
 function checkHome() {
@@ -181,26 +213,44 @@ function real(url, r) {
 function sweep(host) {
   const st = hostState(host);
   if (st.sweeping) return st.firstWin;
+  /* A sweep that found nobody is not repeated straight away: it waits, longer
+     each time, so a host that takes few free proxies does not keep the CPU
+     busy proving that again and again. */
+  if (Date.now() < (st.nextSweep || 0) && st.good.size) return Promise.resolve(null);
   const sample = st.sample;
   if (!sample || !all.length) return Promise.resolve(null);
-  const recentBad = (p) => Date.now() - (st.bad.get(p) || 0) < 10 * 60_000;
-  const queue = all.filter((p) => !st.good.has(p) && !recentBad(p));
+  /* Free proxies fail on and off, so a failure benches one for a minute, not
+     ten — with ten, one sweep benched nearly the whole list and the next
+     sweeps found "0 of 0" while the pool dwindled to one slow proxy. The
+     longest-benched are tried first. */
+  const queue = all.filter((p) => !st.good.has(p) && Date.now() - (st.bad.get(p) || 0) > 60_000)
+    .sort((a, b) => (st.bad.get(a) || 0) - (st.bad.get(b) || 0));
+  if (!queue.length) return Promise.resolve(null);
   let settle;
   st.firstWin = new Promise((ok) => { settle = ok; });
-  let i = 0, found = 0;
+  let i = 0, found = 0, refused = 0;
+  const marked = [];
   const lane = async () => {
     while (i < queue.length) {
       const p = queue[i++];
       try {
         const r = await get(sample.url, sample.headers, p, 6000);
         if (r.ok && real(sample.url, r)) { credit(st, p, r.ms); found++; settle(p); }
-        else blame(st, p);
-      } catch { blame(st, p); }
+        else { if (r.status >= 400 && r.status < 500) refused++; blame(st, p); marked.push(p); }
+      } catch { blame(st, p); marked.push(p); }
     }
   };
-  st.sweeping = Promise.all(Array.from({ length: 48 }, lane)).then(() => {
+  st.sweeping = Promise.all(Array.from({ length: 24 }, lane)).then(() => {
     log(`sweep ${host}: ${found} of ${queue.length} answered — ${st.good.size} in pool`);
-    if (!found && !st.good.size) st.starvedUntil = Date.now() + 60_000;
+    st.backoff = found >= 3 ? 20_000 : Math.min((st.backoff || 20_000) * 2, 5 * 60_000);
+    st.nextSweep = Date.now() + st.backoff;
+    /* Nobody at all, and many reached the CDN only to be told no: the test
+       link is dead, not five hundred proxies. Undo the marks, drop the link. */
+    if (!found && refused >= 5) {
+      for (const p of marked) st.bad.delete(p);
+      if (st.sample === sample) st.sample = null;
+      log(`sweep ${host}: ${refused} proxies reached the CDN and were refused — the test link is dead, not them`);
+    } else if (!found && !st.good.size) st.starvedUntil = Date.now() + 60_000;
     st.sweeping = null;
     settle(null);
   });
@@ -211,40 +261,63 @@ function sweep(host) {
    one has not answered in a moment, and the first good answer wins. */
 async function viaPool(url, headers, host, isPlaylist) {
   const st = hostState(host);
-  if (isPlaylist) st.sample = { url, headers, at: Date.now() };
-  const routes = [...FIXED, ...(homeUp ? [HOME_PROXY] : []), ...ranked(st).slice(0, 5)];
+  const routes = [...FIXED, ...(homeUp ? [HOME_PROXY] : []),
+    ...(isPlaylist ? ranked(st) : rankedForSegments(st)).slice(0, 5)];
   if (st.good.size < 3 && Date.now() > st.starvedUntil) sweep(host);   // grow the pool in the background
   const timeout = isPlaylist ? 6000 : 15000;
-  const hedge = isPlaylist ? 900 : 2500;
+  /* A segment that has not finished in 2 s is already losing to the clock:
+     the next proxy starts alongside it, and whichever lands first wins. */
+  const hedge = isPlaylist ? 900 : 2000;
 
+  /* A refusal is only the proxy's fault if another proxy got the same URL
+     through. When every route is refused, the link itself is dead (SonyLiv's
+     Tamil, an expired token) — blaming each proxy for it emptied the pool and
+     took every other commentary down with it. */
   const attempt = (list) => new Promise((resolve) => {
     let pending = 0, done = false, idx = 0, lastBad = null;
+    const refusedBy = [];
     const next = () => {
       if (done || idx >= list.length) { if (!pending && !done) { done = true; resolve(lastBad); } return; }
       const p = list[idx++]; pending++;
       const timer = setTimeout(next, hedge);
+      const started = Date.now();
       get(url, headers, p, timeout).then((r) => {
         if (r.ok && !real(url, r)) { r = { ...r, ok: false, status: 502 }; }
         if (r.ok) {
-          if (!ours(p)) credit(st, p, r.ms);
+          if (!ours(p)) credit(st, p, r.ms, r.body.length);
+          for (const q of refusedBy.splice(0)) blame(st, q);
           if (!done) { done = true; resolve(r); }
         } else {
-          if (!ours(p) && (REFUSALS.includes(r.status) || r.status === 502)) blame(st, p);
+          if (!ours(p) && r.status === 502) blame(st, p);            // a page of its own, not the CDN's
+          else if (!ours(p) && REFUSALS.includes(r.status)) refusedBy.push(p);
           lastBad = r; clearTimeout(timer); next();
         }
-      }).catch(() => { if (!ours(p)) blame(st, p); clearTimeout(timer); next(); })
+      }).catch(() => {
+        /* Lost the race on a segment it was still downloading: slow, not
+           dead. Marked slow, so it stops being chosen for segments. */
+        if (!ours(p)) { const g = st.good.get(p); if (g && done && !isPlaylist && Date.now() - started < timeout) g.bpms = Math.min(g.bpms ?? FAST_BPMS, 50); else blame(st, p); }
+        clearTimeout(timer); next();
+      })
         .finally(() => { pending--; if (!pending && !done && idx >= list.length) { done = true; resolve(lastBad); } });
     };
     next();
   });
 
-  let r = routes.length ? await attempt(routes) : null;
+  /* Only a playlist that loaded becomes the sample the pool is tested
+     against. A dead link as the sample (SonyLiv's Tamil) failed every proxy
+     in the background check and emptied the pool for every other language. */
+  const keep = (res) => { if (res?.ok && isPlaylist) st.sample = { url, headers, at: Date.now() }; return res; };
+  if (isPlaylist && !st.sample) st.sample = { url, headers, at: Date.now(), unproven: true };
+  let r = routes.length ? keep(await attempt(routes)) : null;
   if (r?.ok) return r;
+  /* Every proxy in hand reached the CDN and was told no (or 4xx): the link is
+     the problem, and a sweep for more proxies would only make the viewer wait. */
+  if (r && r.status >= 400 && r.status < 500 && r.status !== 407) return r;
   /* Nothing in hand worked. If a sweep can find one, wait for its first
      winner — but not for a host already shown to have none. */
   if (Date.now() > st.starvedUntil) {
     const p = await Promise.race([sweep(host), new Promise((ok) => setTimeout(() => ok(null), 20000))]);
-    if (p) { const again = await attempt([p, ...ranked(st).filter((x) => x !== p).slice(0, 3)]); if (again?.ok) return again; r = again || r; }
+    if (p) { const again = keep(await attempt([p, ...ranked(st).filter((x) => x !== p).slice(0, 3)])); if (again?.ok) return again; r = again || r; }
   }
   return r || await get(url, headers, "direct", 8000);       // the refusal, so the player sees why
 }
@@ -256,11 +329,21 @@ setInterval(() => {
     if (!st.sample || Date.now() - st.sample.at > 10 * 60_000) continue;
     /* Free proxies die within minutes, so the best few are asked again every
        round: a dead one leaves the pool before a viewer finds it dead. */
-    for (const p of ranked(st).slice(0, 8)) {
-      get(st.sample.url, st.sample.headers, p, 6000)
-        .then((r) => (r.ok && real(st.sample.url, r) ? credit(st, p, r.ms) : blame(st, p)))
-        .catch(() => blame(st, p));
-    }
+    /* Checked together, judged together: if not one of them can load the
+       sample, the sample has died (its token expired, the feed moved), not
+       eight proxies at once — so it is dropped and the proxies are kept. */
+    const sample = st.sample;
+    const checks = ranked(st).slice(0, 8).map((p) => get(sample.url, sample.headers, p, 6000)
+      .then((r) => ({ p, ok: r.ok && real(sample.url, r), ms: r.ms, status: r.status }))
+      .catch(() => ({ p, ok: false, status: 0 })));
+    Promise.all(checks).then((rs) => {
+      if (rs.length && !rs.some((x) => x.ok) && rs.some((x) => x.status >= 400)) {
+        if (st.sample === sample) st.sample = null;
+        log(`${host}: the pool's test link stopped loading through every proxy — dropping the link, keeping the proxies`);
+        return;
+      }
+      for (const x of rs) x.ok ? credit(st, x.p, x.ms) : blame(st, x.p);
+    });
     if (st.good.size < 8 && Date.now() > st.starvedUntil) sweep(host);
     for (const [p, g] of st.good) if (Date.now() - g.at > 3 * 60_000) st.good.delete(p);
   }
@@ -287,7 +370,53 @@ function cachePut(k, r, ttl) {
 
 const looksPlaylist = (u) => /\.(m3u8|mpd)$/i.test(new URL(u).pathname);
 
-async function fetchUpstream(url, headers, { range } = {}) {
+/* SonyLiv signs every child and segment with an Akamai token in the PATH —
+   ".../ENG/hdntl=exp=…~hmac=…/7-448206182.ts" — and mints a new one on each
+   playlist refresh. The same segment then has a new URL every few seconds,
+   so no cache anywhere (here, the prefetch, the Cloudflare edge) could ever
+   reuse it: every viewer fetched every segment afresh through a free proxy.
+   Links handed out carry a fixed placeholder instead; the newest token for
+   that directory is put back when the segment is actually fetched. */
+const PATH_TOKEN = /\/(hdntl=[^/]*?~hmac=[0-9a-f]+)\//i;
+const PLACEHOLDER = "/__tok__/";
+const tokens = new Map();                    // dir before the token -> newest token
+function canonical(url) {
+  const m = PATH_TOKEN.exec(url);
+  if (!m) return url;
+  tokens.set(url.slice(0, m.index), m[1]);
+  return url.slice(0, m.index) + PLACEHOLDER + url.slice(m.index + m[0].length);
+}
+function resolveToken(url) {
+  const at = url.indexOf(PLACEHOLDER);
+  if (at < 0) return url;
+  const tok = tokens.get(url.slice(0, at));
+  return tok ? `${url.slice(0, at)}/${tok}/${url.slice(at + PLACEHOLDER.length)}` : null;
+}
+
+/* The SonyLiv feed has listed a commentary under the wrong event name — Hindi
+   as ".../criclive2410/HIN/master.m3u8" when the stream is at
+   ".../cricodi_2410/HIN/…" (404 at the feed's spelling, from every address).
+   A 404 on one spelling tries the other, and the answer is remembered. */
+const ALIASES = new Map();                   // url -> the url that worked
+function altSpelling(url) {
+  if (!/sonydaime/i.test(url)) return null;
+  if (/\/criclive(\d+)\//.test(url)) return url.replace(/\/criclive(\d+)\//, "/cricodi_$1/");
+  if (/\/cricodi_(\d+)\//.test(url)) return url.replace(/\/cricodi_(\d+)\//, "/criclive$1/");
+  return null;
+}
+
+async function fetchUpstream(url, headers, opts = {}) {
+  url = ALIASES.get(url) || url;
+  const r = await fetchOnce(url, headers, opts);
+  const alt = r.status === 404 && looksPlaylist(url) && altSpelling(url);
+  if (alt) {
+    const again = await fetchOnce(alt, headers, opts);
+    if (again.ok) { ALIASES.set(url, alt); log(`404 at the feed's spelling — ${alt.split("?")[0]} works, using that`); return { ...again, aliasOf: alt }; }
+  }
+  return r;
+}
+
+async function fetchOnce(url, headers, { range } = {}) {
   const host = new URL(url).hostname;
   const isPlaylist = looksPlaylist(url);
   const h = range ? { ...headers, Range: range } : headers;
@@ -302,7 +431,9 @@ async function fetchUpstream(url, headers, { range } = {}) {
 
 function shared(url, headers, opts = {}) {
   if (opts.range) return fetchUpstream(url, headers, opts);   // a byte range is not cached
-  const key = crypto.createHash("sha1").update(url + "\n" + (headers.Cookie || "")).digest("hex");
+  /* Keyed by the link as handed out (token placeholder in), so a prefetch and
+     every viewer's later request for the same segment meet here. */
+  const key = crypto.createHash("sha1").update(canonical(url) + "\n" + (headers.Cookie || "")).digest("hex");
   const hit = cacheGet(key);
   if (hit) return Promise.resolve({ ...hit, cached: true });
   if (inflight.has(key)) return inflight.get(key);
@@ -347,8 +478,10 @@ http.createServer(async (req, res) => {
   const ref = q.searchParams.get("ref") || "";
   const ua = q.searchParams.get("ua") || "";
   if (!target) { res.writeHead(400).end("Missing ?url="); return; }
+  const real_ = resolveToken(target);
+  if (!real_) { res.setHeader("Cache-Control", "no-store"); res.writeHead(410).end("token not seen yet — reload the playlist"); return; }
   let t;
-  try { t = new URL(target); } catch { res.writeHead(400).end("Invalid url"); return; }
+  try { t = new URL(real_); } catch { res.writeHead(400).end("Invalid url"); return; }
   if (!allowed(t.hostname)) { res.writeHead(403).end("Host not allowed"); return; }
 
   let refOrigin = t.origin;
@@ -391,14 +524,15 @@ http.createServer(async (req, res) => {
       + (ref ? "&ref=" + encodeURIComponent(ref) : "") + (ua ? "&ua=" + encodeURIComponent(ua) : "");
     /* A child with no query inherits the parent's: FanCode and SonyLiv sign
        the folder in the query, and a relative reference drops it. */
-    const toAbs = (r) => { const u = new URL(r, t); if (!u.search && t.search) u.search = t.search; return u.href; };
+    const from = up.aliasOf ? new URL(up.aliasOf) : t;
+    const toAbs = (r) => { const u = new URL(r, from); if (!u.search && from.search) u.search = from.search; return u.href; };
     /* A child playlist stays here (small, and must be fresh); a segment or a
        key goes under /s/ for the edge cache — or to Vercel once over budget. */
     const wrap = (abs) => looksPlaylist(abs)
-      ? `${base}/?url=${encodeURIComponent(abs)}${extras}`
+      ? `${base}/?url=${encodeURIComponent(canonical(abs))}${extras}`
       : overBudget()
-        ? `${SEG_FALLBACK}?url=${encodeURIComponent(abs)}${extras}`
-        : `${base}/s/?url=${encodeURIComponent(abs)}${extras}`;
+        ? `${SEG_FALLBACK}?url=${encodeURIComponent(abs)}${extras}`          // Vercel knows no placeholder
+        : `${base}/s/?url=${encodeURIComponent(canonical(abs))}${extras}`;
     const text = up.body.toString("utf8");
     const segs = [];
     const body = text.split("\n").map((line) => {
