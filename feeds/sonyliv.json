@@ -1,52 +1,61 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "11:37:54 25-10-2026",
+    "last update time": "16:50:50 25-10-2026",
     "matches": [
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090550558_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026665/1792351011297172_ISL26_Churchill_BrothersSC_vs_PFC_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "MG Indian Super League 2026-27",
+            "match_name": "Churchill Brothers SC vs Punjab FC - 25 Oct 2026 [ENG]",
+            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120304/footlive2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e",
+            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120304/footlive2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e",
+            "video_url": "https://sonydaime.akamaized.net/hls/live/2120304/footlive2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e"
+        },
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090550558_HIN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026665/1792351011297172_ISL26_Churchill_BrothersSC_vs_PFC_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "HIN",
+            "event_name": "MG Indian Super League 2026-27",
+            "match_name": "Churchill Brothers SC vs Punjab FC - 25 Oct 2026 [HIN]",
+            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120305/footlive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e",
+            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120305/footlive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e",
+            "video_url": "https://sonydaime.akamaized.net/hls/live/2120305/footlive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e"
+        },
         {
             "event_category": "Cricket",
             "isLive": true,
             "contentId": "1090550567_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026942/1792622523106954_STCL26_delhi_vs_mumbai_landscape_thumb.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026766/1792484827162767_Tamilnadu_Thunders_vs_Gujarat_royals_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Salute Tiranga Cricket League (STCL) 2026",
-            "match_name": "Delhi Leaders vs Mumbai Mavericks - 25 Oct 2026 [HIN]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120306/criclive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120306/criclive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2120306/criclive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e"
+            "match_name": "Tamilnadu Thunders vs Gujarat royals - 25 Oct 2026 [HIN]",
+            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120306/criclive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e",
+            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120306/criclive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e",
+            "video_url": "https://sonydaime.akamaized.net/hls/live/2120306/criclive2510/HIN/std_lrh-800300010.m3u8?hdnea=exp=1792970449~acl=/*~id=88099171843928384415199511591714~hmac=dd127a236ff000ea64594385b596dbe01ddac189dd78fdedd7fdc9d98ff4f71e"
         },
         {
-            "event_category": "Golf",
-            "isLive": true,
-            "contentId": "1090550568_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026410/1792055378971141_Asian-Tour_LINK-Hong-Kong-Open_D4_live_landscape_thumb.jpg",
-            "broadcast_channel": "LIV",
-            "audioLanguageName": "ENG",
-            "event_name": "Asian Tour 2026",
-            "match_name": "LINK Hong Kong Open - Day 4 - 25 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120307/Golf_LIN2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120307/Golf_LIN2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2120307/Golf_LIN2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e"
-        },
-        {
-            "event_category": "Golf",
-            "isLive": true,
-            "contentId": "1090550570_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026929/1792611466128924_DP-World_Genesis-Championship_D4_live_landscape_thumb.jpg",
-            "broadcast_channel": "LIV",
-            "audioLanguageName": "ENG",
-            "event_name": "DP World Tour",
-            "match_name": "Genesis Championship - Day 4 - 25 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2094588/Golf_Gen2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2094588/Golf_Gen2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2094588/Golf_Gen2510/ENG/std_lrh-800300010.m3u8?hdnea=exp=1792951673~acl=/*~id=91584154725996447754035709472857~hmac=2defb54b46ca609cad93435e05f33e9ea3fca0a41e5877ee2c7ce4447961926e"
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090550641,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027296/1792867384276495_coc_NZvsIND26_3rd_t20i_dated_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 3rd T20I - India Tour Of New Zealand 2026"
         },
         {
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090547508,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027002/1792661123769446_ISL_Kerala-Blasters-FC-vs-Mumbai-City-FC_promo_DDT_landscape_thumb.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027002/1792661140911446_ISL_Kerala-Blasters-FC-vs-Mumbai-City-FC_promo_Tonight_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - MG Indian Super League 2026-27"
@@ -54,8 +63,26 @@
         {
             "event_category": "Cricket",
             "isLive": false,
-            "contentId": 1090549928,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026951/179264549504218_NZ_vs_IND_promo_thumb_landscape_thumb.jpg",
+            "contentId": 1090550579,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027307/1792911545258131_NZ_Vs_Ind_3rd_t20_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 3rd T20I - India Tour Of New Zealand 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090550642,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027307/1792911545258131_NZ_Vs_Ind_3rd_t20_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 3rd T20I - India Tour Of New Zealand 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090548932,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026802/1792507041786654_NZvsIND_t20i_promo_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour Of New Zealand 2026"
@@ -63,8 +90,8 @@
         {
             "event_category": "Cricket",
             "isLive": false,
-            "contentId": 1090548932,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026802/1792507041786654_NZvsIND_t20i_promo_landscape_thumb.jpg",
+            "contentId": 1090549928,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026951/179264549504218_NZ_vs_IND_promo_thumb_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour Of New Zealand 2026"
