@@ -457,10 +457,111 @@ function cors(res) {
   res.setHeader("Access-Control-Expose-Headers", "X-Proxy-Via, X-Proxy-Upstream, X-Cache");
 }
 
+// ── What is live on JioHotstar's sports page ───────────────────────────────
+/* Metadata only — the matches, their posters, tournaments and official
+   pages. No stream: Hotstar's own players need a paid login, and that is not
+   something this does. Read the way hotstar.com/in/sports reads it as a
+   guest: POST /bff/v2/freshstart mints a guest token (x-hs-updatedusertoken),
+   which /bff/v2/slugs/in/sports accepts. Akamai answers 475 to this box, so
+   both go through the Indian home proxies the pool already holds for
+   Hotstar's hosts (or the home tunnel, or a fixed proxy, when there is one).
+   Kept 90 s; a failed refresh serves the last list for ten minutes. */
+const HS = "https://www.hotstar.com";
+const HS_IMG = "https://img10.hotstar.com/image/upload/";
+let hsCache = { at: 0, data: null };
+let hsBusy = null;
+const uuid = () => crypto.randomUUID();
+function hsHeaders(token) {
+  return { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+    "x-country-code": "in", "x-platform-code": "web", "x-client-code": "LR", "x-hs-platform": "web",
+    "x-hs-device-id": uuid(), "x-request-id": uuid(), "content-type": "application/json",
+    origin: HS, referer: `${HS}/in/sports`, ...(token ? { "x-hs-usertoken": token } : {}) };
+}
+async function hsVia(p) {
+  const fs = await fetch(`${HS}/api/internal/bff/v2/freshstart`, { method: "POST", body: "{}", headers: hsHeaders(),
+    dispatcher: agentFor(p), signal: AbortSignal.timeout(12000) });
+  await fs.arrayBuffer().catch(() => {});
+  const token = fs.headers.get("x-hs-updatedusertoken");
+  if (!token) throw new Error(`freshstart ${fs.status}`);
+  const r = await fetch(`${HS}/api/internal/bff/v2/slugs/in/sports`, { headers: hsHeaders(token),
+    dispatcher: agentFor(p), signal: AbortSignal.timeout(15000) });
+  const text = await r.text();
+  if (!r.ok || !text.startsWith("{")) throw new Error(`sports ${r.status}`);
+  return JSON.parse(text);
+}
+/* Every card on the page: anything with content_info.title and a sports
+   page under it. Live = a live-video page, or a LIVE badge. */
+function hsCards(tree) {
+  const out = [], seen = new Set();
+  const walk = (n) => {
+    if (Array.isArray(n)) { n.forEach(walk); return; }
+    if (!n || typeof n !== "object") return;
+    const ci = n.content_info;
+    if (ci && typeof ci === "object" && ci.title) {
+      const s = JSON.stringify(n);
+      const slug = (s.match(/"page_slug":\s*"(\/in\/sports\/[^"?]+)"/) || [])[1];
+      if (slug) {
+        const id = (slug.match(/\/(\d{6,})\//) || [])[1] || slug;
+        if (!seen.has(id)) {
+          seen.add(id);
+          const img = n.hero_img?.src || n.thumbnail?.src || (s.match(/"src":\s*"(sources\/[^"]+)"/) || [])[1] || "";
+          const tags = (ci.tags || []).map((t) => t.value || t.text_tag?.value).filter(Boolean);
+          out.push({
+            id, title: ci.title, description: ci.description || "",
+            sport: (slug.match(/^\/in\/sports\/([^/]+)/) || [])[1] || "",
+            tournament: tags.find((t) => !/^(baseball|cricket|football|kabaddi|tennis|hockey|badminton|basketball|motorsport|f1|golf|boxing|wwe)$/i.test(t)) || "",
+            tags,
+            live: /\/video\/live\//.test(slug) || /"(LIVE|Live)"/.test(s),
+            kind: (slug.match(/\/video\/([a-z]+)\//) || [])[1] || "",
+            poster: img ? HS_IMG + img : null,
+            cutout: ci.title_cutout?.src ? HS_IMG + ci.title_cutout.src : null,
+            hotstarUrl: HS + slug,
+          });
+        }
+      }
+      return;
+    }
+    for (const v of Object.values(n)) walk(v);
+  };
+  walk(tree);
+  return out;
+}
+async function hotstarSports() {
+  if (hsCache.data && Date.now() - hsCache.at < 90_000) return hsCache.data;
+  if (hsBusy) return hsBusy;
+  hsBusy = (async () => {
+    const pooled = ["jcevents.hotstar.com", "livetv.hotstar.com", "live09p.hotstar.com"]
+      .flatMap((h) => (hosts.has(h) ? ranked(hosts.get(h)) : []));
+    const routes = [...new Set([...FIXED, ...(homeUp ? [HOME_PROXY] : []), ...pooled])].slice(0, 12);
+    for (const p of routes) {
+      try {
+        const cards = hsCards(await hsVia(p));
+        if (!cards.length) continue;
+        hsCache = { at: Date.now(), data: { updatedAt: new Date().toISOString(), live: cards.filter((c) => c.live), cards } };
+        return hsCache.data;
+      } catch { /* the next proxy */ }
+    }
+    if (hsCache.data && Date.now() - hsCache.at < 10 * 60_000) return { ...hsCache.data, stale: true };
+    throw new Error(routes.length ? "no proxy reached Hotstar just now" : "the Hotstar proxy pool is still warming up");
+  })().finally(() => { hsBusy = null; });
+  return hsBusy;
+}
+
 http.createServer(async (req, res) => {
   cors(res);
   if (req.method === "OPTIONS") { res.writeHead(204).end(); return; }
   const q = new URL(req.url, "http://x");
+  if (q.pathname === "/hotstar/sports") {
+    try {
+      const data = await hotstarSports();
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "public, max-age=60" });
+      res.end(JSON.stringify(data));
+    } catch (e) {
+      res.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+      res.end(JSON.stringify({ error: e.message, live: [], cards: [] }));
+    }
+    return;
+  }
   if (q.pathname === "/health") {
     const out = { home: HOME_PROXY ? homeUp : "not configured", fixed: FIXED.length, candidates: all.length,
       bandwidth: { month: usage.month, inGB: +(usage.inBytes / 1024 ** 3).toFixed(2), outGB: +(usage.outBytes / 1024 ** 3).toFixed(2),
