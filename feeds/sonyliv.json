@@ -1,8 +1,30 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "00:05:23 01-11-2026",
+    "last update time": "03:16:48 01-11-2026",
     "matches": [
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090551577_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027940/1793474597073145_NZ_A_vs_IND_A_2nd_Unofficial_Test_Day2_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "India A Tour of New Zealand",
+            "match_name": "2nd Unofficial Test - Day 2 - 1 Nov 2026 [ENG]",
+            "dai_url": "https://sonydaime.akamaized.net/hls/live/2018457/criclive3110/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793526408~acl=/*~id=40487477103923696471971770636196~hmac=87143ad8c745ef6ca5665ec41979ecb39412638a66d0ad1886e63d20dd8ca5b8",
+            "pub_url": "https://sonydaime.akamaized.net/hls/live/2018457/criclive3110/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793526408~acl=/*~id=40487477103923696471971770636196~hmac=87143ad8c745ef6ca5665ec41979ecb39412638a66d0ad1886e63d20dd8ca5b8",
+            "video_url": "https://sonydaime.akamaized.net/hls/live/2018457/criclive3110/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793526408~acl=/*~id=40487477103923696471971770636196~hmac=87143ad8c745ef6ca5665ec41979ecb39412638a66d0ad1886e63d20dd8ca5b8"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090551725,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027942/1793475724872880_UCL_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": " Upcoming - Matchday 4 - UEFA Champions League 2026-27"
+        },
         {
             "event_category": "Cricket",
             "isLive": false,
