@@ -1,46 +1,16 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "20:13:14 31-10-2026",
+    "last update time": "00:05:23 01-11-2026",
     "matches": [
         {
-            "event_category": "Football",
-            "isLive": true,
-            "contentId": "1090551190_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026665/1792355587210172_ISL26_MohunBaganSG_vs_punjabFC_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "MG Indian Super League 2026-27",
-            "match_name": "Mohun Bagan Super Giant vs Punjab FC - 31 Oct 2026 [ENG]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120302/footlive3110/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120302/footlive3110/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2120302/footlive3110/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac"
-        },
-        {
-            "event_category": "Football",
-            "isLive": true,
-            "contentId": "1090551190_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026665/1792355587210172_ISL26_MohunBaganSG_vs_punjabFC_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090551225,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027683/179327126246643_NZvsIND_1st_ODI_dated_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "MG Indian Super League 2026-27",
-            "match_name": "Mohun Bagan Super Giant vs Punjab FC - 31 Oct 2026 [HIN]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120305/footlive3110/HIN/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120305/footlive3110/HIN/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2120305/footlive3110/HIN/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac"
-        },
-        {
-            "event_category": "Football",
-            "isLive": true,
-            "contentId": "1090551190_BEN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026665/1792355587210172_ISL26_MohunBaganSG_vs_punjabFC_live_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "BEN",
-            "event_name": "MG Indian Super League 2026-27",
-            "match_name": "Mohun Bagan Super Giant vs Punjab FC - 31 Oct 2026 [BEN]",
-            "dai_url": "https://sonydaime.akamaized.net/hls/live/2120308/footlive3110/BEN/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac",
-            "pub_url": "https://sonydaime.akamaized.net/hls/live/2120308/footlive3110/BEN/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac",
-            "video_url": "https://sonydaime.akamaized.net/hls/live/2120308/footlive3110/BEN/std_lrh-800300010.m3u8?hdnea=exp=1793500993~acl=/*~id=78364952431084959061617689900157~hmac=e7d91c702cb39fca9815bdf5f75d844574e71fb292acf9b432a708436d7623ac"
+            "event_name": "Upcoming - India Tour Of New Zealand 2026"
         },
         {
             "event_category": "Football",
@@ -54,11 +24,11 @@
         {
             "event_category": "Cricket",
             "isLive": false,
-            "contentId": 1090551225,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027683/179327126246643_NZvsIND_1st_ODI_dated_landscape_thumb.jpg",
+            "contentId": 1090551489,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027867/1793371269918937_NZvsIND26_5th_T20I_today_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour Of New Zealand 2026"
+            "event_name": "Upcoming - 5th T20I - India Tour Of New Zealand 2026"
         },
         {
             "event_category": "Football",
@@ -79,15 +49,6 @@
             "event_name": "Upcoming - Atletico Madrid vs Bayern Munich - UEFA Champions League 2026-27"
         },
         {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090551489,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027867/1793371291590937_NZvsIND26_5th_T20I_dated_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - 5th T20I - India Tour Of New Zealand 2026"
-        },
-        {
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090551499,
@@ -95,6 +56,15 @@
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Manchester United vs Roma - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090551500,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027914/1793426651789321_UCL_26_MD4_Villarreal-vs-PSG_Promo_DDT_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Villarreal vs PSG - UEFA Champions League 2026-27"
         },
         {
             "event_category": "Cricket",
