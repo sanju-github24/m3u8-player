@@ -1,8 +1,21 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "12:52:57 03-11-2026",
+    "last update time": "20:47:55 03-11-2026",
     "matches": [
+        {
+            "event_category": "Football",
+            "isLive": true,
+            "contentId": "1090551682_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027304/1792890253126359_UYL26_MD4_Atletico_vs_Bayern_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Youth League 2026-27",
+            "match_name": "Atletico de Madrid vs FC Bayern Munich - 3 Nov 2026 [ENG]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120301/footlive0311/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793762275~acl=/*~id=54086785119285638882120710466495~hmac=82dcc71434c3f9bcb4370cb958cb85b3cf563a98570e348216296d07789570dc",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120301/footlive0311/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793762275~acl=/*~id=54086785119285638882120710466495~hmac=82dcc71434c3f9bcb4370cb958cb85b3cf563a98570e348216296d07789570dc",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120301/footlive0311/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793762275~acl=/*~id=54086785119285638882120710466495~hmac=82dcc71434c3f9bcb4370cb958cb85b3cf563a98570e348216296d07789570dc"
+        },
         {
             "event_category": "Football",
             "isLive": false,
@@ -67,6 +80,24 @@
             "event_name": "Upcoming - MG Indian Super League 2026-27"
         },
         {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090552187,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028141/1793704726559299_fenerbahce_Vs_liverpool_Fc_And_aek_vs_real_madrid_landscape_thumbnail.png",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Matchday 4 - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090552149,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028135/1793695506618986_Europe_league_matchday_4_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Matchday 4 - UEFA Europa League 2026-27"
+        },
+        {
             "event_category": "Cricket",
             "isLive": false,
             "contentId": 1090551228,
@@ -83,6 +114,15 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - ACC Men's U19 Asia Cup 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090552324,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028158/1793710937367937_Asia_cup_Ind_vs_nepal_landscape_thumbnail.png",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - India vs Nepal - ACC Men's U19 Asia Cup 2026"
         },
         {
             "event_category": "Cricket",
@@ -112,15 +152,6 @@
             "event_name": "Upcoming - 1st ODI - India Tour Of New Zealand 2026"
         },
         {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090551143,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000026802/1792507041786654_NZvsIND_t20i_promo_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India Tour Of New Zealand 2026"
-        },
-        {
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090551497,
@@ -128,15 +159,6 @@
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Dortmund vs Real Betis - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090551498,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027845/179336646551186_champion_league_matchday_4_landscape_thumbnail.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Matchday 4 - UEFA Champions League 2026-27"
         }
     ]
 }
