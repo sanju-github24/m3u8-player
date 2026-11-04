@@ -1,72 +1,33 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "12:43:04 04-11-2026",
+    "last update time": "21:02:45 04-11-2026",
     "matches": [
         {
-            "event_category": "Cricket",
+            "event_category": "Football",
             "isLive": true,
-            "contentId": "1090552110_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028131/1793689445603200_NZvsIND_1st_odi_landscape_thumb.jpg",
+            "contentId": "1090551922_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027332/1792958081045483_UEL26_MD4_Stade_RennaisFC_vs_OlympiacosFC_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "ENG",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st ODI - 4 Nov 2026 [ENG]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_0311/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_0311/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_0311/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31"
+            "event_name": "UEFA Europa League 2026-27",
+            "match_name": "Stade Rennais FC vs Olympiacos FC - 4 Nov 2026 [ENG]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120299/footlive0411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793849564~acl=/*~id=31882845602052304138861507477115~hmac=095e1e738474963fac0984d9f6ef59dec29e29d7a603164ffb43a0ddd98cc886",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120299/footlive0411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793849564~acl=/*~id=31882845602052304138861507477115~hmac=095e1e738474963fac0984d9f6ef59dec29e29d7a603164ffb43a0ddd98cc886",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120299/footlive0411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793849564~acl=/*~id=31882845602052304138861507477115~hmac=095e1e738474963fac0984d9f6ef59dec29e29d7a603164ffb43a0ddd98cc886"
         },
         {
-            "event_category": "Cricket",
+            "event_category": "Football",
             "isLive": true,
-            "contentId": "1090552110_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028131/1793689445603200_NZvsIND_1st_odi_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st ODI - 4 Nov 2026 [HIN]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_0311/HIN/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_0311/HIN/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_0311/HIN/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090552110_TAM",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028131/1793689445603200_NZvsIND_1st_odi_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "TAM",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st ODI - 4 Nov 2026 [TAM]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_0311/TAM/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_0311/TAM/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_0311/TAM/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090552110_TEL",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028131/1793689445603200_NZvsIND_1st_odi_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "TEL",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st ODI - 4 Nov 2026 [TEL]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_0311/TEL/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_0311/TEL/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_0311/TEL/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090552110_KAN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028131/1793689445603200_NZvsIND_1st_odi_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "KAN",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st ODI - 4 Nov 2026 [KAN]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_0311/KAN/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_0311/KAN/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_0311/KAN/std_lrh-800300010.m3u8?hdnea=exp=1793819582~acl=/*~id=14376316660763345326514332565868~hmac=04f2384d43175813319aea787aff68ee7ad2cd35641166a15a2bd3e65f8d2f31"
+            "contentId": "1090552123_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027304/1792891167048359_UYL26_MD4_Dortmund_vs_Real_Betis_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "UEFA Youth League 2026-27",
+            "match_name": "Dortmund vs Real Betis - 4 Nov 2026 [ENG]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2018458/footlive0411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793849564~acl=/*~id=31882845602052304138861507477115~hmac=095e1e738474963fac0984d9f6ef59dec29e29d7a603164ffb43a0ddd98cc886",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2018458/footlive0411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793849564~acl=/*~id=31882845602052304138861507477115~hmac=095e1e738474963fac0984d9f6ef59dec29e29d7a603164ffb43a0ddd98cc886",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2018458/footlive0411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1793849564~acl=/*~id=31882845602052304138861507477115~hmac=095e1e738474963fac0984d9f6ef59dec29e29d7a603164ffb43a0ddd98cc886"
         },
         {
             "event_category": "Football",
@@ -80,11 +41,29 @@
         {
             "event_category": "Football",
             "isLive": false,
-            "contentId": 1090547508,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027573/1793126835273973_ISL_Mohun_Bagan_SG_vs_Odisha_FC_promo_landscape_thumb_dated.jpg",
+            "contentId": 1090551498,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027592/1793176988369484_UCL_26_MD4_RB-Leipzig-vs-man-city_Promo_Tonight_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Matchday 4 - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090550846,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028228/1793772259971876_Asia_Cup_U19_Bangladesh-vs-Afghanistan_Promo_DDT_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - MG Indian Super League 2026-27"
+            "event_name": "Upcoming - ACC Men's U19 Asia Cup 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090552324,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028228/1793773960156876_Asia_Cup_U19_IND-vs-NEP_Promo_DDT_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - India vs Nepal - ACC Men's U19 Asia Cup 2026"
         },
         {
             "event_category": "Football",
@@ -107,20 +86,20 @@
         {
             "event_category": "Cricket",
             "isLive": false,
-            "contentId": 1090550846,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027363/1793009798550733_promo_landscape.jpg",
+            "contentId": 1090551225,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027597/179318077717911_ind_vs_nz_roko_is_back_landscape_thumbnail.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - ACC Men's U19 Asia Cup 2026"
+            "event_name": "Upcoming - India Tour Of New Zealand 2026"
         },
         {
-            "event_category": "Cricket",
+            "event_category": "Football",
             "isLive": false,
-            "contentId": 1090552324,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028158/1793710937367937_Asia_cup_Ind_vs_nepal_landscape_thumbnail.png",
-            "broadcast_channel": "Sony Sports Ten 5",
+            "contentId": 1090547508,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027573/1793126835273973_ISL_Mohun_Bagan_SG_vs_Odisha_FC_promo_landscape_thumb_dated.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India vs Nepal - ACC Men's U19 Asia Cup 2026"
+            "event_name": "Upcoming - MG Indian Super League 2026-27"
         },
         {
             "event_category": "Football",
@@ -130,15 +109,6 @@
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Dortmund vs Real Betis - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090551498,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027592/1793176988369484_UCL_26_MD4_RB-Leipzig-vs-man-city_Promo_Tonight_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Matchday 4 - UEFA Champions League 2026-27"
         },
         {
             "event_category": "Cricket",
