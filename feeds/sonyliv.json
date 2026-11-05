@@ -1,26 +1,8 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "06:59:03 05-11-2026",
+    "last update time": "22:00:57 05-11-2026",
     "matches": [
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090552478,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028324/1793819016177781_NZvsIND_2nd_ODI_Promo_dated_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - 2nd ODI - India Tour Of New Zealand 2026"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090550846,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028228/1793772272611876_Asia_Cup_U19_Bangladesh-vs-Afghanistan_Promo_Today_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - ACC Men's U19 Asia Cup 2026"
-        },
         {
             "event_category": "Cricket",
             "isLive": false,
@@ -31,10 +13,28 @@
             "event_name": "Upcoming - India vs Nepal - ACC Men's U19 Asia Cup 2026"
         },
         {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090552478,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028324/1793819016177781_NZvsIND_2nd_ODI_Promo_dated_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 2nd ODI - India Tour Of New Zealand 2026"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090552149,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028297/1793796343913833_UEL25_26_AC-Milan-vs-Ferencvarosi-TC_promo_Tonight_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Matchday 4 - UEFA Europa League 2026-27"
+        },
+        {
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090547508,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000027573/1793126841250973_ISL_Mohun_Bagan_SG_vs_Odisha_FC_promo_landscape_thumb_tonight.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028378/1793866199704860_ISL26_FC-GOA-vs-Bengaluru-FC_promo_DDT_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - MG Indian Super League 2026-27"
@@ -47,15 +47,6 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - ACC Men's Asia Cup Rising Stars 2026"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090552149,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028135/1793695506618986_Europe_league_matchday_4_landscape_thumbnail.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Matchday 4 - UEFA Europa League 2026-27"
         },
         {
             "event_category": "Cricket",
@@ -97,7 +88,7 @@
             "event_category": "Cricket",
             "isLive": false,
             "contentId": 1090552481,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028191/1793759105413697_ACRS26_INDvsPAK_promo_landscape_thumb.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028373/1793864472359710_india_cricket_promo_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Cricket Non-Stop Combo"
