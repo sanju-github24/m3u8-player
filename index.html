@@ -5016,18 +5016,13 @@
       });
       hlsInst.loadSource(url);
       hlsInst.attachMedia(vid);
+      /* Gate playback until LEVEL_LOADED confirms the stream is real content
+         (≥ 180 s) — for both movies and episodes. Live streams are let
+         through immediately. This prevents the MovieBox notice from ever
+         flashing on screen. */
+      var _durationOk = false;
+
       hlsInst.on(Hls.Events.MANIFEST_PARSED, (_evt, parsed) => {
-        /* The sample clip. Recognising it is fiddlier than it looks: these
-           providers call the real stream tiles.m3u8 too, so the name proves
-           nothing on its own — what the decoy has is NOTHING beside it, no
-           alternate audio and no subtitles, where a real one carries seven or
-           eleven languages.
-         *
-           And the tracks must be read from the event, not from the instance.
-           hlsInst.audioTracks is filled on its own event, which lands after
-           this one, so asking the instance here says zero for every stream —
-           which is how a perfectly good eleven-language master got mistaken
-           for a decoy and thrown away. */
         const levels = (parsed && parsed.levels) || hlsInst.levels || [];
         const alt = ((parsed && parsed.audioTracks) || []).length
           + ((parsed && parsed.subtitleTracks) || []).length;
@@ -5044,8 +5039,8 @@
           return;
         }
         buildHLSQual(); buildAudio();
-        spin.classList.remove('on');
-        vid.play().catch(() => { });
+        /* Stay on spinner — LEVEL_LOADED will unlock once duration is
+           confirmed or the stream is detected as live. */
       });
       /* The renditions are published on their own event, and on these
          playlists it lands after MANIFEST_PARSED — built only there, the menu
@@ -5054,6 +5049,26 @@
       hlsInst.on(Hls.Events.AUDIO_TRACK_SWITCHED, () => buildAudio());
       hlsInst.on(Hls.Events.LEVEL_LOADED, (_e, d) => {
         if (d.details && d.details.live && !isLiveStream) { isLiveStream = true; updateLiveBadge(); }
+        var dur = (d.details && d.details.totalduration) || 0;
+        var live = d.details && d.details.live;
+        /* Short notice stream — destroy without ever playing. */
+        if (!live && dur > 0 && dur < 180) {
+          console.warn('[StreamX] Blocked short notice stream (' + Math.round(dur) + 's)');
+          hlsInst.destroy(); hlsInst = null;
+          tryNextProvider('that source was a short notice clip').then(function(moved) {
+            if (moved) return;
+            spin.classList.remove('on');
+            errMsg.textContent = 'Every source offered only a notice clip for this title.';
+            err.style.display = 'flex';
+          });
+          return;
+        }
+        /* Duration confirmed real, or live — unlock playback (once). */
+        if (!_durationOk) {
+          _durationOk = true;
+          spin.classList.remove('on');
+          vid.play().catch(function() { });
+        }
       });
       hlsInst.on(Hls.Events.ERROR, (_e, d) => {
         if (!d.fatal) return;
@@ -5096,6 +5111,23 @@
       const tracks = (m3u8.match(/#EXT-X-MEDIA:/g) || []).length;
       const variants = (m3u8.match(/#EXT-X-STREAM-INF:/g) || []).length;
       return hasTiles && tracks === 0 && variants <= 1;
+    }
+
+    /* MovieBox notice / warning stream detection. Matches the raw URL, a
+       worker-wrapped URL (where the original is URL-encoded in a query
+       parameter), and known CDN hosts. */
+    function isNoticeUrl(u) {
+      if (!u) return false;
+      var s = String(u);
+      var decoded = s;
+      try { decoded = decodeURIComponent(s); } catch {}
+      function chk(v) {
+        return /index_4\d\d\.m3u8/i.test(v)
+          || /flonub\.com/i.test(v)
+          || /(?:notice|warning|interstitial|anti[_-]?piracy)/i.test(v)
+          || /hls_mps\/[a-f0-9]{20,}\//i.test(v);
+      }
+      return chk(s) || (decoded !== s && chk(decoded));
     }
 
     // TMDB & FILMU M3U8 STREAM FETCHER
@@ -5296,7 +5328,10 @@
         for (let i = 0; i < chain.length && !chosen; i++) {
           let got = null;
           try { got = await chain[i](); } catch (pe) { console.warn('tmdb provider ' + i + ':', pe); }
-          const list = (Array.isArray(got) ? got : [got]).filter(c => c && c.url);
+          /* Filter out notice / warning URLs from every provider's response.
+             A provider may return the 25 s MovieBox notice as a valid-looking
+             stream; blocking it here prevents it from reaching the player. */
+          const list = (Array.isArray(got) ? got : [got]).filter(c => c && c.url && !isNoticeUrl(c.url));
           if (list.length) {
             chosen = list[0];
             /* The rest of this provider's sources first — they are already
