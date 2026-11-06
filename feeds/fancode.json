@@ -1,7 +1,7 @@
 {
     "name": "Fancode Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "10:11:06 PM 06-11-2026",
+    "last update time": "03:07:11 AM 07-11-2026",
     "matches": [
         {
             "event_category": "Cricket",
@@ -33,7 +33,7 @@
             "title": "Western Australia vs England (Western Australia vs England One-Day 2026)",
             "match_name": "Western Australia vs England",
             "event_name": "Western Australia vs England One-Day 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Cricket_FC-Web2.png",
             "team_1": "Western Australia",
             "team_2": "England",
             "status": "UPCOMING",
@@ -76,30 +76,6 @@
             "startTime": "04:45:00 PM 07-11-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4247687,
-            "title": "Sevilla FC vs Deportivo Alaves (LALIGA 2026-27)",
-            "match_name": "Sevilla FC vs Deportivo Alaves",
-            "event_name": "LALIGA 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247687_53004_SEV_ALA_FC-Web.png",
-            "team_1": "Sevilla FC",
-            "team_2": "Deportivo Alaves",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 AM 07-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4250008,
-            "title": "Derby County Football Club vs Bolton Wanderers (EFL Championship 2026-27)",
-            "match_name": "Derby County Football Club vs Bolton Wanderers",
-            "event_name": "EFL Championship 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250008_52993_DER_BOL_fc-web.jpg",
-            "team_1": "Derby County Football Club",
-            "team_2": "Bolton Wanderers",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 AM 07-11-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4250745,
             "title": "Paratus Jets vs Pupkewitz Wildcats (Namibia Super 50, 2026)",
@@ -137,6 +113,30 @@
         },
         {
             "event_category": "Football",
+            "match_id": 4250010,
+            "title": "Birmingham City F.C. vs Swansea City A.F.C. (EFL Championship 2026-27)",
+            "match_name": "Birmingham City F.C. vs Swansea City A.F.C.",
+            "event_name": "EFL Championship 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250010_52993_BIR_SWA_fc-web.jpg",
+            "team_1": "Birmingham City F.C.",
+            "team_2": "Swansea City A.F.C.",
+            "status": "UPCOMING",
+            "startTime": "08:30:00 PM 07-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4247681,
+            "title": "RCD Espanyol vs Deportivo de La Coruna (LALIGA 2026-27)",
+            "match_name": "RCD Espanyol vs Deportivo de La Coruna",
+            "event_name": "LALIGA 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247681_53004_ESL_COR_FC-Web.png",
+            "team_1": "RCD Espanyol",
+            "team_2": "Deportivo de La Coruna",
+            "status": "UPCOMING",
+            "startTime": "08:45:00 PM 07-11-2026"
+        },
+        {
+            "event_category": "Football",
             "match_id": 4250252,
             "title": "Naegohyang Women's FC vs INAC Kobe Leonessa Women (AFC Women's Champions League 2026-27)",
             "match_name": "Naegohyang Women's FC vs INAC Kobe Leonessa Women",
@@ -161,6 +161,30 @@
         },
         {
             "event_category": "Football",
+            "match_id": 4247680,
+            "title": "CA Osasuna vs Athletic Club (LALIGA 2026-27)",
+            "match_name": "CA Osasuna vs Athletic Club",
+            "event_name": "LALIGA 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247680_53004_OSN_ATH_FC-Web.png",
+            "team_1": "CA Osasuna",
+            "team_2": "Athletic Club",
+            "status": "UPCOMING",
+            "startTime": "11:00:00 PM 07-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250206,
+            "title": "West Indies A vs England Lions (England Lions tour of West Indies, 2026)",
+            "match_name": "West Indies A vs England Lions",
+            "event_name": "England Lions tour of West Indies, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Cricket_FC-Mini.png",
+            "team_1": "West Indies A",
+            "team_2": "England Lions",
+            "status": "UPCOMING",
+            "startTime": "11:30:00 PM 07-11-2026"
+        },
+        {
+            "event_category": "Football",
             "match_id": 4250264,
             "title": "Melbourne City Women vs Beijing Jingtan FC Women (AFC Women's Champions League 2026-27)",
             "match_name": "Melbourne City Women vs Beijing Jingtan FC Women",
@@ -170,30 +194,6 @@
             "team_2": "Beijing Jingtan FC Women",
             "status": "UPCOMING",
             "startTime": "04:00:00 PM 07-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4250010,
-            "title": "Birmingham City F.C. vs Swansea City A.F.C. (EFL Championship 2026-27)",
-            "match_name": "Birmingham City F.C. vs Swansea City A.F.C.",
-            "event_name": "EFL Championship 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250010_52993_BIR_SWA_fc-web.jpg",
-            "team_1": "Birmingham City F.C.",
-            "team_2": "Swansea City A.F.C.",
-            "status": "UPCOMING",
-            "startTime": "08:30:00 PM 07-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4247681,
-            "title": "RCD Espanyol vs Deportivo de La Coruna (LALIGA 2026-27)",
-            "match_name": "RCD Espanyol vs Deportivo de La Coruna",
-            "event_name": "LALIGA 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247681_53004_ESL_COR_FC-Web.png",
-            "team_1": "RCD Espanyol",
-            "team_2": "Deportivo de La Coruna",
-            "status": "UPCOMING",
-            "startTime": "08:45:00 PM 07-11-2026"
         },
         {
             "event_category": "Football",
@@ -233,30 +233,6 @@
         },
         {
             "event_category": "Football",
-            "match_id": 4247680,
-            "title": "CA Osasuna vs Athletic Club (LALIGA 2026-27)",
-            "match_name": "CA Osasuna vs Athletic Club",
-            "event_name": "LALIGA 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247680_53004_OSN_ATH_FC-Web.png",
-            "team_1": "CA Osasuna",
-            "team_2": "Athletic Club",
-            "status": "UPCOMING",
-            "startTime": "11:00:00 PM 07-11-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4250206,
-            "title": "West Indies A vs England Lions (England Lions tour of West Indies, 2026)",
-            "match_name": "West Indies A vs England Lions",
-            "event_name": "England Lions tour of West Indies, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Cricket_FC-Mini.png",
-            "team_1": "West Indies A",
-            "team_2": "England Lions",
-            "status": "UPCOMING",
-            "startTime": "11:30:00 PM 07-11-2026"
-        },
-        {
-            "event_category": "Football",
             "match_id": 4250589,
             "title": "Cadiz vs Real Oviedo (LALIGA Hypermotion 2026-27)",
             "match_name": "Cadiz vs Real Oviedo",
@@ -268,28 +244,28 @@
             "startTime": "08:45:00 PM 07-11-2026"
         },
         {
-            "event_category": "Formula 1",
-            "match_id": 139513,
-            "title": "Practice 2 vs Autodromo Jose Carlos Pace (F1 MSC CRUISES GRANDE PREMIO DE SAO PAULO 2026)",
-            "match_name": "Practice 2",
-            "event_name": "F1 MSC CRUISES GRANDE PREMIO DE SAO PAULO 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/F1_Sao-Paulo_web_1793258815657.jpg",
-            "team_1": "Practice 2",
-            "team_2": "Autodromo Jose Carlos Pace",
+            "event_category": "Football",
+            "match_id": 4247682,
+            "title": "Valencia CF vs Real Madrid (LALIGA 2026-27)",
+            "match_name": "Valencia CF vs Real Madrid",
+            "event_name": "LALIGA 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247682_53004_VAL_RM_FC-Web.png",
+            "team_1": "Valencia CF",
+            "team_2": "Real Madrid",
             "status": "UPCOMING",
-            "startTime": "12:30:00 AM 07-11-2026"
+            "startTime": "01:30:00 AM 08-11-2026"
         },
         {
-            "event_category": "Golf",
-            "match_id": 4250598,
-            "title": "Day 2 vs  Los Cabos, Mexico (World Wide Technology Championship 2026)",
-            "match_name": "Day 2",
-            "event_name": "World Wide Technology Championship 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_Golf-old.jpg",
-            "team_1": "Day 2",
-            "team_2": " Los Cabos, Mexico",
+            "event_category": "Cricket",
+            "match_id": 4250401,
+            "title": "Sydney Sixers Women vs Sydney Thunder Women (Women's Big Bash League, 2026)",
+            "match_name": "Sydney Sixers Women vs Sydney Thunder Women",
+            "event_name": "Women's Big Bash League, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250401_53125_SS-W_ST-W_fc-web_1793352701343.jpg",
+            "team_1": "Sydney Sixers Women",
+            "team_2": "Sydney Thunder Women",
             "status": "UPCOMING",
-            "startTime": "01:30:00 AM 07-11-2026"
+            "startTime": "08:10:00 AM 08-11-2026"
         },
         {
             "event_category": "Badminton",
@@ -326,18 +302,6 @@
             "team_2": "Mission Hills, China",
             "status": "UPCOMING",
             "startTime": "11:00:00 AM 07-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4247682,
-            "title": "Valencia CF vs Real Madrid (LALIGA 2026-27)",
-            "match_name": "Valencia CF vs Real Madrid",
-            "event_name": "LALIGA 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247682_53004_VAL_RM_FC-Web.png",
-            "team_1": "Valencia CF",
-            "team_2": "Real Madrid",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 AM 08-11-2026"
         },
         {
             "event_category": "Football",
@@ -434,6 +398,42 @@
             "team_2": "Autodromo Jose Carlos Pace",
             "status": "UPCOMING",
             "startTime": "08:00:00 PM 07-11-2026"
+        },
+        {
+            "event_category": "Formula 1",
+            "match_id": 139515,
+            "title": "Qualifying vs Autodromo Jose Carlos Pace (F1 MSC CRUISES GRANDE PREMIO DE SAO PAULO 2026)",
+            "match_name": "Qualifying",
+            "event_name": "F1 MSC CRUISES GRANDE PREMIO DE SAO PAULO 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/F1_Sao-Paulo_web_1793258815657.jpg",
+            "team_1": "Qualifying",
+            "team_2": "Autodromo Jose Carlos Pace",
+            "status": "UPCOMING",
+            "startTime": "11:30:00 PM 07-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250402,
+            "title": "Perth Scorchers Women vs Melbourne Stars Women (Women's Big Bash League, 2026)",
+            "match_name": "Perth Scorchers Women vs Melbourne Stars Women",
+            "event_name": "Women's Big Bash League, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250402_53125_PS-W_MS-W_fc-web_1793352702019.jpg",
+            "team_1": "Perth Scorchers Women",
+            "team_2": "Melbourne Stars Women",
+            "status": "UPCOMING",
+            "startTime": "11:40:00 AM 08-11-2026"
+        },
+        {
+            "event_category": "Golf",
+            "match_id": 4250599,
+            "title": "Day 4 vs  Los Cabos, Mexico (World Wide Technology Championship 2026)",
+            "match_name": "Day 4",
+            "event_name": "World Wide Technology Championship 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/World-Wide-Technology-Championship_Web-match-card_1793992817308.png",
+            "team_1": "Day 4",
+            "team_2": " Los Cabos, Mexico",
+            "status": "UPCOMING",
+            "startTime": "01:30:00 AM 08-11-2026"
         }
     ]
 }

@@ -1,16 +1,20 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "22:08:12 06-11-2026",
+    "last update time": "03:10:47 07-11-2026",
     "matches": [
         {
             "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090552478,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028324/1793819016177781_NZvsIND_2nd_ODI_Promo_dated_landscape_thumb.jpg",
+            "isLive": true,
+            "contentId": "1090552778_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028450/1793948514324809_NZ_A_vs_IND_A_3rd_Unofficial_Test_Day1_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - 2nd ODI - India Tour Of New Zealand 2026"
+            "audioLanguageName": "ENG",
+            "event_name": "India A Tour of New Zealand",
+            "match_name": "3rd Unofficial Test - Day 1 - 7 Nov 2026 [ENG]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120304/Criclive0611/ENG/std_lrh-800300010.m3u8?hdnea=exp=1794044447~acl=/*~id=83275997026512380162817285161129~hmac=25a986c14991cb25cb8407f1c2fa0c26cfb4e2f75545b983cdf9b345e7d4d37e",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120304/Criclive0611/ENG/std_lrh-800300010.m3u8?hdnea=exp=1794044447~acl=/*~id=83275997026512380162817285161129~hmac=25a986c14991cb25cb8407f1c2fa0c26cfb4e2f75545b983cdf9b345e7d4d37e",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120304/Criclive0611/ENG/std_lrh-800300010.m3u8?hdnea=exp=1794044447~acl=/*~id=83275997026512380162817285161129~hmac=25a986c14991cb25cb8407f1c2fa0c26cfb4e2f75545b983cdf9b345e7d4d37e"
         },
         {
             "event_category": "Cricket",
@@ -20,6 +24,15 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India vs Pakistan - ACC Men's U19 Asia Cup 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090552478,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028324/1793819033201781_NZvsIND_2nd_ODI_Promo_today_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - 2nd ODI - India Tour Of New Zealand 2026"
         },
         {
             "event_category": "Football",
@@ -37,7 +50,7 @@
             "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028318/1793812415099811_ACC_U19_promo_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - ACC Men's Asia Cup Rising Stars 2026"
+            "event_name": "Upcoming - DP World Asia Cup Rising Stars Men's 2026"
         },
         {
             "event_category": "Cricket",
@@ -56,6 +69,15 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India Tour Of New Zealand 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090552952,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028493/1793984092067637_Asia_Cup_Rising_Stars_IND_vs_PAK_promo_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - India vs Pakistan - DP World Asia Cup Rising Stars Men's 2026"
         },
         {
             "event_category": "Cricket",
