@@ -92,11 +92,31 @@ async function tmdbTitle(id, type) {
   throw new Error("TMDB has no title with that id");
 }
 
+/* Manual overrides for titles MoviBox lists under a different name than
+   TMDB's. Keyed by TMDB id (string). Each value is the detailPath and
+   subjectId taken straight from a working MoviBox URL. When a match is
+   here the search is skipped entirely — no risk of hitting the wrong one.
+
+   To add a new one: open the title on movibox.net, copy the URL, then:
+     detailPath  = the slug after /detail/  (before the ?),
+     subjectId   = the `id` query parameter.
+   Example URL:
+     https://movibox.net/detail/student-of-the-year-3-Ol6BuNQgDga?id=8618161652330021112
+     → detailPath: "student-of-the-year-3-Ol6BuNQgDga", subjectId: "8618161652330021112" */
+const MB_OVERRIDES = {
+  // "Student of the Year: After Dark" (TMDB TV 334412) → "Student of the Year 3" (MoviBox)
+  // https://www.1anchormovies.buzz/watch/student-of-the-year-after-dark-2026
+  "334412": { detailPath: "student-of-the-year-3-Ol6BuNQgDga", subjectId: "8618161652330021112", title: "Student of the Year 3" },
+};
+
 /* The MoviBox title that is this one: the same name, spaces aside (any
    language's version — they all list the others), and for a film the same
    year give or take one. A series is listed once a season with that
    season's date, so its year only breaks a tie. */
-async function findSubject(titles, year, type) {
+async function findSubject(titles, year, type, tmdbId) {
+  // Check manual overrides first — exact match, no searching needed.
+  const ov = MB_OVERRIDES[String(tmdbId)];
+  if (ov) return { detailPath: ov.detailPath, subjectId: ov.subjectId, title: ov.title };
   const want = new Set(titles.map(compact).filter(Boolean));
   // Searched as plain letters too: their search does not see "ā" as "a".
   const keywords = [...new Set(titles.flatMap((t) => [splitWords(t), t, norm(splitWords(t))]))].slice(0, 4);
@@ -125,7 +145,7 @@ export default async function handler(req, res) {
 
   try {
     const t = await tmdbTitle(tmdb, type);
-    const subject = await findSubject(t.titles, t.year, t.type);
+    const subject = await findSubject(t.titles, t.year, t.type, tmdb);
     if (!subject) {
       res.setHeader("Cache-Control", "public, s-maxage=3600");
       return res.status(404).json({ error: "MoviBox has no title by that name", title: t.titles[0], year: t.year });
