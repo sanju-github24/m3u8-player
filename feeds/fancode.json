@@ -1,19 +1,31 @@
 {
     "name": "Fancode Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "03:04:34 PM 15-11-2026",
+    "last update time": "10:01:24 PM 15-11-2026",
     "matches": [
         {
             "event_category": "Cricket",
-            "match_id": 4250382,
-            "title": "Pokhara Avengers vs Kathmandu Gorkhas (Nepal Premier League Season 3, 2026)",
-            "match_name": "Pokhara Avengers vs Kathmandu Gorkhas",
-            "event_name": "Nepal Premier League Season 3, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250382_53124_PKA_KMG_fc-Web_1793616701615.jpg",
-            "team_1": "Pokhara Avengers",
-            "team_2": "Kathmandu Gorkhas",
-            "status": "UPCOMING",
-            "startTime": "04:45:00 PM 15-11-2026"
+            "match_id": 4249773,
+            "title": "Zimbabwe vs Afghanistan (Zimbabwe Tour of Afghanistan in UAE, 2026)",
+            "match_name": "Zimbabwe vs Afghanistan",
+            "event_name": "Zimbabwe Tour of Afghanistan in UAE, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/AFG-vs-ZIM_Test_fc-web.jpg",
+            "team_1": "Zimbabwe",
+            "team_2": "Afghanistan",
+            "status": "PAUSED",
+            "startTime": "11:30:00 AM 13-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250650,
+            "title": "Bangladesh vs South Africa (Bangladesh tour of South Africa, 2026)",
+            "match_name": "Bangladesh vs South Africa",
+            "event_name": "Bangladesh tour of South Africa, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/BAN-vs-SA_Test_fc-web_1794644019035.jpg",
+            "team_1": "Bangladesh",
+            "team_2": "South Africa",
+            "status": "PAUSED",
+            "startTime": "01:30:00 PM 15-11-2026"
         },
         {
             "event_category": "Cricket",
@@ -112,66 +124,6 @@
             "startTime": "02:45:00 PM 16-11-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4250766,
-            "title": "Aston Villa Women vs Birmingham City F.C. Women (Barclays Women's Super League 2026-27)",
-            "match_name": "Aston Villa Women vs Birmingham City F.C. Women",
-            "event_name": "Barclays Women's Super League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250766_53038_AST-W_BIR-W_fc-web.jpg",
-            "team_1": "Aston Villa Women",
-            "team_2": "Birmingham City F.C. Women",
-            "status": "UPCOMING",
-            "startTime": "07:30:00 PM 15-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4250767,
-            "title": "West Ham United Women vs Charlton Athletic F.C Women (Barclays Women's Super League 2026-27)",
-            "match_name": "West Ham United Women vs Charlton Athletic F.C Women",
-            "event_name": "Barclays Women's Super League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250767_53038_WHU-W_CHL-W_fc-web.jpg",
-            "team_1": "West Ham United Women",
-            "team_2": "Charlton Athletic F.C Women",
-            "status": "UPCOMING",
-            "startTime": "07:30:00 PM 15-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4250595,
-            "title": "Granada vs Las Palmas (LALIGA Hypermotion 2026-27)",
-            "match_name": "Granada vs Las Palmas",
-            "event_name": "LALIGA Hypermotion 2026-27",
-            "src": "https://images.fancode.com/aig/match/v1794380803708/4250595_CASACARDS_APP.png",
-            "team_1": "Granada",
-            "team_2": "Las Palmas",
-            "status": "UPCOMING",
-            "startTime": "08:45:00 PM 15-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4250768,
-            "title": "Arsenal Women vs London City Lionesses (Barclays Women's Super League 2026-27)",
-            "match_name": "Arsenal Women vs London City Lionesses",
-            "event_name": "Barclays Women's Super League 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250768_53038_ARS-W_LCL_fc-web.jpg",
-            "team_1": "Arsenal Women",
-            "team_2": "London City Lionesses",
-            "status": "UPCOMING",
-            "startTime": "10:00:00 PM 15-11-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4250725,
-            "title": "Men's Doubles vs Turin, Italy (Nitto ATP Finals 2026)",
-            "match_name": "Men's Doubles",
-            "event_name": "Nitto ATP Finals 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Nitto-ATP-Finals-Web.png",
-            "team_1": "Men's Doubles",
-            "team_2": "Turin, Italy",
-            "status": "UPCOMING",
-            "startTime": "04:00:00 PM 15-11-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4250950,
             "title": "South Asia vs Europe (Test Twenty Championship 2026)",
@@ -182,18 +134,6 @@
             "team_2": "Europe",
             "status": "UPCOMING",
             "startTime": "02:30:00 PM 16-11-2026"
-        },
-        {
-            "event_category": "Tennis",
-            "match_id": 4250927,
-            "title": "Zverev vs Jodar vs Italy (Nitto ATP Finals 2026)",
-            "match_name": "Zverev vs Jodar",
-            "event_name": "Nitto ATP Finals 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Zverev-vs-Jodar_FC-WEB.jpg",
-            "team_1": "Zverev vs Jodar",
-            "team_2": "Italy",
-            "status": "UPCOMING",
-            "startTime": "06:30:00 PM 15-11-2026"
         },
         {
             "event_category": "Tennis",
@@ -220,6 +160,18 @@
             "startTime": "11:00:00 PM 15-11-2026"
         },
         {
+            "event_category": "Cricket",
+            "match_id": 4250210,
+            "title": "West Indies A vs England Lions (England Lions tour of West Indies, 2026)",
+            "match_name": "West Indies A vs England Lions",
+            "event_name": "England Lions tour of West Indies, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Cricket_FC-Mini.png",
+            "team_1": "West Indies A",
+            "team_2": "England Lions",
+            "status": "UPCOMING",
+            "startTime": "11:30:00 PM 16-11-2026"
+        },
+        {
             "event_category": "Tennis",
             "match_id": 4250929,
             "title": "Shelton vs Fils vs Italy (Nitto ATP Finals 2026)",
@@ -242,18 +194,6 @@
             "team_2": "Turin, Italy",
             "status": "UPCOMING",
             "startTime": "04:00:00 PM 16-11-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4250210,
-            "title": "West Indies A vs England Lions (England Lions tour of West Indies, 2026)",
-            "match_name": "West Indies A vs England Lions",
-            "event_name": "England Lions tour of West Indies, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Cricket_FC-Mini.png",
-            "team_1": "West Indies A",
-            "team_2": "England Lions",
-            "status": "UPCOMING",
-            "startTime": "11:30:00 PM 16-11-2026"
         },
         {
             "event_category": "Tennis",
@@ -386,6 +326,126 @@
             "team_2": "England",
             "status": "UPCOMING",
             "startTime": "09:00:00 AM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250675,
+            "title": "Papua New Guinea Women vs United Arab Emirates Women (ICC Women's Emerging Nations Trophy, 2026)",
+            "match_name": "Papua New Guinea Women vs United Arab Emirates Women",
+            "event_name": "ICC Women's Emerging Nations Trophy, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250675_53149_PNG-W_UAE-W_FC-WEB.jpg",
+            "team_1": "Papua New Guinea Women",
+            "team_2": "United Arab Emirates Women",
+            "status": "UPCOMING",
+            "startTime": "10:30:00 AM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250676,
+            "title": "Ireland Women vs Scotland Women (ICC Women's Emerging Nations Trophy, 2026)",
+            "match_name": "Ireland Women vs Scotland Women",
+            "event_name": "ICC Women's Emerging Nations Trophy, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250676_53149_IRE-W_SCO-W_FC-WEB.jpg",
+            "team_1": "Ireland Women",
+            "team_2": "Scotland Women",
+            "status": "UPCOMING",
+            "startTime": "10:30:00 AM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250677,
+            "title": "Netherlands Women vs Zimbabwe Women (ICC Women's Emerging Nations Trophy, 2026)",
+            "match_name": "Netherlands Women vs Zimbabwe Women",
+            "event_name": "ICC Women's Emerging Nations Trophy, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250677_53149_NED-W_ZIM-W_FC-WEB.jpg",
+            "team_1": "Netherlands Women",
+            "team_2": "Zimbabwe Women",
+            "status": "UPCOMING",
+            "startTime": "02:45:00 PM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250678,
+            "title": "Bangladesh Women vs Thailand Women (ICC Women's Emerging Nations Trophy, 2026)",
+            "match_name": "Bangladesh Women vs Thailand Women",
+            "event_name": "ICC Women's Emerging Nations Trophy, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250678_53149_BAN-W_THA-W_FC-WEB.jpg",
+            "team_1": "Bangladesh Women",
+            "team_2": "Thailand Women",
+            "status": "UPCOMING",
+            "startTime": "02:45:00 PM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250951,
+            "title": "South Asia vs Australasia (Test Twenty Championship 2026)",
+            "match_name": "South Asia vs Australasia",
+            "event_name": "Test Twenty Championship 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Test_Twenty_2026FC-WEB.jpg",
+            "team_1": "South Asia",
+            "team_2": "Australasia",
+            "status": "UPCOMING",
+            "startTime": "02:30:00 PM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250384,
+            "title": "TBC vs TBC (Nepal Premier League Season 3, 2026)",
+            "match_name": "TBC vs TBC",
+            "event_name": "Nepal Premier League Season 3, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "team_1": "TBC",
+            "team_2": "TBC",
+            "status": "UPCOMING",
+            "startTime": "04:45:00 PM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250896,
+            "title": "Muscat Thunders Women vs Muscat Shaheens  Women (Oman Women's D20, 2026)",
+            "match_name": "Muscat Thunders Women vs Muscat Shaheens  Women",
+            "event_name": "Oman Women's D20, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "team_1": "Muscat Thunders Women",
+            "team_2": "Muscat Shaheens  Women",
+            "status": "UPCOMING",
+            "startTime": "04:00:00 PM 18-11-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4250728,
+            "title": "Match 4 vs Turin, Italy (Nitto ATP Finals 2026)",
+            "match_name": "Match 4",
+            "event_name": "Nitto ATP Finals 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Nitto-ATP-Finals-Web.png",
+            "team_1": "Match 4",
+            "team_2": "Turin, Italy",
+            "status": "UPCOMING",
+            "startTime": "04:00:00 PM 18-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250897,
+            "title": "Sohar Smashers Women vs Ghubra Giants Women (Oman Women's D20, 2026)",
+            "match_name": "Sohar Smashers Women vs Ghubra Giants Women",
+            "event_name": "Oman Women's D20, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/FC_Sports_Default_cricket-old.jpg",
+            "team_1": "Sohar Smashers Women",
+            "team_2": "Ghubra Giants Women",
+            "status": "UPCOMING",
+            "startTime": "08:30:00 PM 18-11-2026"
+        },
+        {
+            "event_category": "Tennis",
+            "match_id": 4250936,
+            "title": "Nitto ATP Finals 2026 vs Turin, Italy (Nitto ATP Finals 2026)",
+            "match_name": "Nitto ATP Finals 2026",
+            "event_name": "Nitto ATP Finals 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Nitto-ATP-Finals-Web.png",
+            "team_1": "Nitto ATP Finals 2026",
+            "team_2": "Turin, Italy",
+            "status": "UPCOMING",
+            "startTime": "06:30:00 PM 18-11-2026"
         }
     ]
 }
