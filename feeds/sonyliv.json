@@ -1,17 +1,8 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "23:13:30 17-11-2026",
+    "last update time": "05:17:04 18-11-2026",
     "matches": [
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090554424,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029194/1794818485190474_UNL2627_wales_vs_portugal_tonight_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Matchday 6 - UEFA Nations League 2026-27"
-        },
         {
             "event_category": "Cricket",
             "isLive": false,
