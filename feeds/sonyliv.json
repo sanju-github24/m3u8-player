@@ -1,39 +1,13 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "17:40:17 19-11-2026",
+    "last update time": "01:55:25 20-11-2026",
     "matches": [
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090554810_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029388/1795079673412862_ACRS26_SLvsAFG_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "ENG",
-            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
-            "match_name": "Sri Lanka A vs Afghanistan A - 19 Nov 2026 [ENG]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120301/criclive1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795133417~acl=/*~id=33457897643299653229595843945465~hmac=49344c29d1a3f809777dbdef6f88d10086eb980a4b89ac4deb447c36de193cfc",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120301/criclive1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795133417~acl=/*~id=33457897643299653229595843945465~hmac=49344c29d1a3f809777dbdef6f88d10086eb980a4b89ac4deb447c36de193cfc",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120301/criclive1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795133417~acl=/*~id=33457897643299653229595843945465~hmac=49344c29d1a3f809777dbdef6f88d10086eb980a4b89ac4deb447c36de193cfc"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090554805_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029365/1795067857037235_ACRS26_BANvsHKC_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "ENG",
-            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
-            "match_name": "Bangladesh A vs Hong Kong, China - 19 Nov 2026 [ENG]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120300/criclive1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795133417~acl=/*~id=33457897643299653229595843945465~hmac=49344c29d1a3f809777dbdef6f88d10086eb980a4b89ac4deb447c36de193cfc",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120300/criclive1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795133417~acl=/*~id=33457897643299653229595843945465~hmac=49344c29d1a3f809777dbdef6f88d10086eb980a4b89ac4deb447c36de193cfc",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120300/criclive1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795133417~acl=/*~id=33457897643299653229595843945465~hmac=49344c29d1a3f809777dbdef6f88d10086eb980a4b89ac4deb447c36de193cfc"
-        },
         {
             "event_category": "Cricket",
             "isLive": false,
             "contentId": 1090554758,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029175/1794773086486687_ACC_Rising_Stars_India_vs_Nepal_landscape_thumb_dated.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029175/1794773101009687_ACC_Rising_Stars_India_vs_Nepal_landscape_thumb_today.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India A vs Nepal - DP World Asia Cup Rising Stars Men's 2026"
@@ -84,13 +58,76 @@
             "event_name": "Upcoming - MG Indian Super League 2026-27"
         },
         {
-            "event_category": "Cricket",
+            "event_category": "Football",
             "isLive": false,
-            "contentId": 1090552481,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000028373/1793864472359710_india_cricket_promo_landscape_thumb.jpg",
+            "contentId": 1090555085,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029390/1795080314217240_champion_league_match_day_5_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Matchday 5 - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555086,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083958432816_Arsenal_vs_dortmund_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Arsenal vs Dortmund - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555087,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083901253816_club_brugge_Vs_liverpool_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Club Brugge vs Liverpool - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555088,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083851329816_losc_vs_bayrn_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Lille vs Bayern Munich - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555089,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083798416816_Man_city_vs_napoli_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Man City vs Napoli - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555090,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083750612816_psg_vs_roma_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - PSG vs Roma - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555091,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083710760816_sporting_vs_man_united_landscape_thumbnail.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Sporting vs Manchester United - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555134,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029405/1795096404105290_uefa_league_matchday_5_landscape_thumbnail.png",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Cricket Non-Stop Combo"
+            "event_name": "Upcoming - Matchday 5 - UEFA Europa League 2026-27"
         }
     ]
 }
