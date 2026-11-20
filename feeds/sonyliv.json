@@ -1,72 +1,20 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "07:19:40 20-11-2026",
+    "last update time": "14:35:26 20-11-2026",
     "matches": [
         {
             "event_category": "Cricket",
             "isLive": true,
-            "contentId": "1090554803_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029396/1795085973106996_NZvsIND_1st_Test_Day2_landscape_thumb.jpg",
+            "contentId": "1090555008_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029419/1795110984337206_ACRS_PAK_vs_UAE_live_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "ENG",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st Test - Day 2 - 20 Nov 2026 [ENG]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_1911/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090554803_HIN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029396/1795085973106996_NZvsIND_1st_Test_Day2_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st Test - Day 2 - 20 Nov 2026 [HIN]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_1911/HIN/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_1911/HIN/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_1911/HIN/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090554803_TAM",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029396/1795085973106996_NZvsIND_1st_Test_Day2_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "TAM",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st Test - Day 2 - 20 Nov 2026 [TAM]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_1911/TAM/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_1911/TAM/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_1911/TAM/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090554803_TEL",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029396/1795085973106996_NZvsIND_1st_Test_Day2_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "TEL",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st Test - Day 2 - 20 Nov 2026 [TEL]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_1911/TEL/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_1911/TEL/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_1911/TEL/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c"
-        },
-        {
-            "event_category": "Cricket",
-            "isLive": true,
-            "contentId": "1090554803_KAN",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029396/1795085973106996_NZvsIND_1st_Test_Day2_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "KAN",
-            "event_name": "India Tour of New Zealand 2026",
-            "match_name": "1st Test - Day 2 - 20 Nov 2026 [KAN]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_1911/KAN/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_1911/KAN/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_1911/KAN/std_lrh-800300010.m3u8?hdnea=exp=1795182577~acl=/*~id=67670062323773163087980185767885~hmac=ce88f9fb43ce0988bad20d68aad8bd647d76b5bba044c3938822aaff10c2694c"
+            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
+            "match_name": "Pakistan Shaheens vs UAE - 20 Nov 2026 [ENG]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120306/Criclive2011/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795208726~acl=/*~id=07227682218808700132790439430304~hmac=178508d50fd7b1d95c1ce65fe6de00058cf29453a976569b70c1907209f7b1be",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120306/Criclive2011/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795208726~acl=/*~id=07227682218808700132790439430304~hmac=178508d50fd7b1d95c1ce65fe6de00058cf29453a976569b70c1907209f7b1be",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120306/Criclive2011/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795208726~acl=/*~id=07227682218808700132790439430304~hmac=178508d50fd7b1d95c1ce65fe6de00058cf29453a976569b70c1907209f7b1be"
         },
         {
             "event_category": "Cricket",
@@ -76,6 +24,15 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - India A vs Nepal - DP World Asia Cup Rising Stars Men's 2026"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": false,
+            "contentId": 1090554767,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029172/1794766062920497_ACC_Rising_Stars_India_vs_Pakistan_landscape_thumb_dated.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "HIN",
+            "event_name": "Upcoming - India A vs Pakistan Shaheens - DP World Asia Cup Rising Stars Men's 2026"
         },
         {
             "event_category": "Cricket",
@@ -105,15 +62,6 @@
             "event_name": "Upcoming - DP World Asia Cup Rising Stars Men's 2026"
         },
         {
-            "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090554767,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029172/1794766062920497_ACC_Rising_Stars_India_vs_Pakistan_landscape_thumb_dated.jpg",
-            "broadcast_channel": "Sony Sports Ten 5",
-            "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India A vs Pakistan Shaheens - DP World Asia Cup Rising Stars Men's 2026"
-        },
-        {
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090547508,
@@ -135,7 +83,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555086,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083958432816_Arsenal_vs_dortmund_landscape_thumbnail.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795119521514174_UCL26_MD5_Arsenal_vs_Dortmund_Promo_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Arsenal vs Dortmund - UEFA Champions League 2026-27"
@@ -144,7 +92,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555087,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083901253816_club_brugge_Vs_liverpool_landscape_thumbnail.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795121889201174_UCL26_MD5_Club_Brugge_vs_Liverpool_Promo_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Club Brugge vs Liverpool - UEFA Champions League 2026-27"
@@ -153,7 +101,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555088,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083851329816_losc_vs_bayrn_landscape_thumbnail.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795122921709174_UCL26_MD5_Lille_vs_Bayern_Munich_Promo_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Lille vs Bayern Munich - UEFA Champions League 2026-27"
@@ -162,7 +110,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555089,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083798416816_Man_city_vs_napoli_landscape_thumbnail.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795123999144174_UCL26_MD5_ManCity_vs_Napoli_Promo_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Man City vs Napoli - UEFA Champions League 2026-27"
@@ -171,7 +119,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555090,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083750612816_psg_vs_roma_landscape_thumbnail.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795124816432174_UCL26_MD5_PSG_vs_AS_Roma_Promo_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - PSG vs Roma - UEFA Champions League 2026-27"
@@ -180,7 +128,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555091,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029394/1795083710760816_sporting_vs_man_united_landscape_thumbnail.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795125561396174_UCL26_MD5_Sporting_CP_vs_ManUnited_Promo_landscape_thumb_dated.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Sporting vs Manchester United - UEFA Champions League 2026-27"
