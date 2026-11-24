@@ -1,16 +1,85 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "07:10:17 24-11-2026",
+    "last update time": "16:57:58 24-11-2026",
     "matches": [
         {
             "event_category": "Cricket",
-            "isLive": false,
-            "contentId": 1090555981,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029548/1795238033166761_ASIACUP_INDvsUAE_promo_today_landscape_thumb.jpg",
+            "isLive": true,
+            "contentId": "1090556007_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029712/1795394747843314_ACRS_India_A_vs_UAE_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
+            "match_name": "India A vs UAE - 24 Nov 2026 [ENG]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_2411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_2411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119931/cricodi_2411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090556007_HIN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029712/1795394747843314_ACRS_India_A_vs_UAE_live_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
-            "event_name": "Upcoming - India A vs UAE - DP World Asia Cup Rising Stars Men's 2026"
+            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
+            "match_name": "India A vs UAE - 24 Nov 2026 [HIN]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_2411/HIN/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_2411/HIN/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119921/cricodi_2411/HIN/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090556007_TAM",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029712/1795394747843314_ACRS_India_A_vs_UAE_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "TAM",
+            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
+            "match_name": "India A vs UAE - 24 Nov 2026 [TAM]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_2411/TAM/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_2411/TAM/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119951/cricodi_2411/TAM/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090556007_TEL",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029712/1795394747843314_ACRS_India_A_vs_UAE_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "TEL",
+            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
+            "match_name": "India A vs UAE - 24 Nov 2026 [TEL]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_2411/TEL/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_2411/TEL/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119941/cricodi_2411/TEL/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090556007_KAN",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029712/1795394747843314_ACRS_India_A_vs_UAE_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "KAN",
+            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
+            "match_name": "India A vs UAE - 24 Nov 2026 [KAN]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_2411/KAN/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_2411/KAN/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2119782/cricodi_2411/KAN/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e"
+        },
+        {
+            "event_category": "Cricket",
+            "isLive": true,
+            "contentId": "1090556042_ENG",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029724/1795410670843751_ACRS26_PAK_A_vs_NEPAL_live_landscape_thumb.jpg",
+            "broadcast_channel": "Sony Sports Ten 5",
+            "audioLanguageName": "ENG",
+            "event_name": "ACC Men's Asia Cup Rising Stars 2026",
+            "match_name": "Pakistan A vs Nepal - 24 Nov 2026 [ENG]",
+            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120299/Criclive2411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120299/Criclive2411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e",
+            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120299/Criclive2411/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795562872~acl=/*~id=23300387746720940339360668113837~hmac=b6dd1e635be8148837fd8cfd91df771218037f828862364c4be75eab624bf03e"
         },
         {
             "event_category": "Football",
@@ -34,7 +103,7 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555086,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795119521514174_UCL26_MD5_Arsenal_vs_Dortmund_Promo_landscape_thumb_dated.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795119532192174_UCL26_MD5_Arsenal_vs_Dortmund_Promo_landscape_thumb_tonight.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Arsenal vs Dortmund - UEFA Champions League 2026-27"
@@ -43,28 +112,10 @@
             "event_category": "Football",
             "isLive": false,
             "contentId": 1090555089,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795123999144174_UCL26_MD5_ManCity_vs_Napoli_Promo_landscape_thumb_dated.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795124011219174_UCL26_MD5_ManCity_vs_Napoli_Promo_landscape_thumb_tonight.jpg",
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Man City vs Napoli - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555090,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795124816432174_UCL26_MD5_PSG_vs_AS_Roma_Promo_landscape_thumb_dated.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - PSG vs Roma - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555087,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795121889201174_UCL26_MD5_Club_Brugge_vs_Liverpool_Promo_landscape_thumb_dated.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Club Brugge vs Liverpool - UEFA Champions League 2026-27"
         },
         {
             "event_category": "Cricket",
@@ -83,6 +134,24 @@
             "broadcast_channel": "Sony Sports Ten 2",
             "audioLanguageName": "ENG",
             "event_name": "Upcoming - Matchday 5 - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555090,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795124816432174_UCL26_MD5_PSG_vs_AS_Roma_Promo_landscape_thumb_dated.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - PSG vs Roma - UEFA Champions League 2026-27"
+        },
+        {
+            "event_category": "Football",
+            "isLive": false,
+            "contentId": 1090555087,
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795121889201174_UCL26_MD5_Club_Brugge_vs_Liverpool_Promo_landscape_thumb_dated.jpg",
+            "broadcast_channel": "Sony Sports Ten 2",
+            "audioLanguageName": "ENG",
+            "event_name": "Upcoming - Club Brugge vs Liverpool - UEFA Champions League 2026-27"
         },
         {
             "event_category": "Football",
