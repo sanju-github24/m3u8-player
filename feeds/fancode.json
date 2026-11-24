@@ -1,20 +1,8 @@
 {
     "name": "Fancode Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "07:37:05 PM 23-11-2026",
+    "last update time": "07:06:09 AM 24-11-2026",
     "matches": [
-        {
-            "event_category": "Cricket",
-            "match_id": 4249674,
-            "title": "Queensland vs New South Wales (Sheffield Shield, 2026/27)",
-            "match_name": "Queensland vs New South Wales",
-            "event_name": "Sheffield Shield, 2026/27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249674_53087_NSW_QUN_FC-WEB.jpg",
-            "team_1": "Queensland",
-            "team_2": "New South Wales",
-            "status": "PAUSED",
-            "startTime": "05:00:00 AM 22-11-2026"
-        },
         {
             "event_category": "Cricket",
             "match_id": 4249675,
@@ -29,15 +17,15 @@
         },
         {
             "event_category": "Cricket",
-            "match_id": 4249676,
-            "title": "South Australia vs Victoria (Sheffield Shield, 2026/27)",
-            "match_name": "South Australia vs Victoria",
-            "event_name": "Sheffield Shield, 2026/27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249676_53087_SAU_VCT_FC-WEB.jpg",
-            "team_1": "South Australia",
-            "team_2": "Victoria",
-            "status": "UPCOMING",
-            "startTime": "05:30:00 AM 24-11-2026"
+            "match_id": 4250651,
+            "title": "Bangladesh vs South Africa (Bangladesh tour of South Africa, 2026)",
+            "match_name": "Bangladesh vs South Africa",
+            "event_name": "Bangladesh tour of South Africa, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/BAN-vs-SA_Test_fc-web_1794644019035.jpg",
+            "team_1": "Bangladesh",
+            "team_2": "South Africa",
+            "status": "PAUSED",
+            "startTime": "01:30:00 PM 23-11-2026"
         },
         {
             "event_category": "Cricket",
@@ -64,78 +52,6 @@
             "startTime": "04:30:00 PM 24-11-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4248745,
-            "title": "Al Ain vs Esteghlal FC (AFC Champions League Elite 2026-27)",
-            "match_name": "Al Ain vs Esteghlal FC",
-            "event_name": "AFC Champions League Elite 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4248745_53053_AAI_ESG_fc-web.jpg",
-            "team_1": "Al Ain",
-            "team_2": "Esteghlal FC",
-            "status": "UPCOMING",
-            "startTime": "09:30:00 PM 23-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4248746,
-            "title": "Tractor vs Al Wasl F.C. (AFC Champions League Elite 2026-27)",
-            "match_name": "Tractor vs Al Wasl F.C.",
-            "event_name": "AFC Champions League Elite 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4248746_53053_TFC_AWS_fc-web.jpg",
-            "team_1": "Tractor",
-            "team_2": "Al Wasl F.C.",
-            "status": "UPCOMING",
-            "startTime": "09:30:00 PM 23-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4248747,
-            "title": "Al Shamal vs Al-Ahli Saudi FC (AFC Champions League Elite 2026-27)",
-            "match_name": "Al Shamal vs Al-Ahli Saudi FC",
-            "event_name": "AFC Champions League Elite 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4248747_53053_ALS_AAS_fc-web.jpg",
-            "team_1": "Al Shamal",
-            "team_2": "Al-Ahli Saudi FC",
-            "status": "UPCOMING",
-            "startTime": "09:30:00 PM 23-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4248748,
-            "title": "Al-Ittihad vs Pakhtakor Tashkent (AFC Champions League Elite 2026-27)",
-            "match_name": "Al-Ittihad vs Pakhtakor Tashkent",
-            "event_name": "AFC Champions League Elite 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4248748_53053_ITT_PT_fc-web.jpg",
-            "team_1": "Al-Ittihad",
-            "team_2": "Pakhtakor Tashkent",
-            "status": "UPCOMING",
-            "startTime": "11:45:00 PM 23-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4248749,
-            "title": "Air Force SC vs Al Gharafa (AFC Champions League Elite 2026-27)",
-            "match_name": "Air Force SC vs Al Gharafa",
-            "event_name": "AFC Champions League Elite 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4248749_53053_AFSC_AGH_fc-web.jpg",
-            "team_1": "Air Force SC",
-            "team_2": "Al Gharafa",
-            "status": "UPCOMING",
-            "startTime": "11:45:00 PM 23-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4247690,
-            "title": "Levante vs Elche CF (LALIGA 2026-27)",
-            "match_name": "Levante vs Elche CF",
-            "event_name": "LALIGA 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4247690_53004_LET_ELC_FC-Web.png",
-            "team_1": "Levante",
-            "team_2": "Elche CF",
-            "status": "UPCOMING",
-            "startTime": "01:30:00 AM 24-11-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4251143,
             "title": "Brescia Lions vs Venice Livewires (Italia T10 2026)",
@@ -146,18 +62,6 @@
             "team_2": "Venice Livewires",
             "status": "UPCOMING",
             "startTime": "06:45:00 PM 24-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4248752,
-            "title": "Newcastle Jets vs Kashiwa Reysol (AFC Champions League Elite 2026-27)",
-            "match_name": "Newcastle Jets vs Kashiwa Reysol",
-            "event_name": "AFC Champions League Elite 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4248752_53053_NJ_REY_fc-web.jpg",
-            "team_1": "Newcastle Jets",
-            "team_2": "Kashiwa Reysol",
-            "status": "UPCOMING",
-            "startTime": "01:15:00 PM 24-11-2026"
         },
         {
             "event_category": "Cricket",
@@ -173,15 +77,15 @@
         },
         {
             "event_category": "Football",
-            "match_id": 4250754,
-            "title": "Ceuta vs Almer\u00eda (LALIGA Hypermotion 2026-27)",
-            "match_name": "Ceuta vs Almer\u00eda",
-            "event_name": "LALIGA Hypermotion 2026-27",
-            "src": "https://images.fancode.com/aig/match/v1794380803724/4250754_CASACARDS_APP.png",
-            "team_1": "Ceuta",
-            "team_2": "Almer\u00eda",
+            "match_id": 4248752,
+            "title": "Newcastle Jets vs Kashiwa Reysol (AFC Champions League Elite 2026-27)",
+            "match_name": "Newcastle Jets vs Kashiwa Reysol",
+            "event_name": "AFC Champions League Elite 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4248752_53053_NJ_REY_fc-web.jpg",
+            "team_1": "Newcastle Jets",
+            "team_2": "Kashiwa Reysol",
             "status": "UPCOMING",
-            "startTime": "01:00:00 AM 24-11-2026"
+            "startTime": "01:15:00 PM 24-11-2026"
         },
         {
             "event_category": "Football",
@@ -244,18 +148,6 @@
             "startTime": "05:45:00 PM 24-11-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4249023,
-            "title": "East Bengal FC vs Al Hussein (AFC Champions League Two 2026-27)",
-            "match_name": "East Bengal FC vs Al Hussein",
-            "event_name": "AFC Champions League Two 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249023_53057_EBFC_HUS_fc-web_1789025065613.jpg",
-            "team_1": "East Bengal FC",
-            "team_2": "Al Hussein",
-            "status": "UPCOMING",
-            "startTime": "07:15:00 PM 24-11-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4251053,
             "title": "Gulf Giants vs MI Emirates (DP World ILT20 2026)",
@@ -266,6 +158,18 @@
             "team_2": "MI Emirates",
             "status": "UPCOMING",
             "startTime": "08:00:00 PM 24-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249023,
+            "title": "East Bengal FC vs Al Hussein (AFC Champions League Two 2026-27)",
+            "match_name": "East Bengal FC vs Al Hussein",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249023_53057_EBFC_HUS_fc-web_1789025065613.jpg",
+            "team_1": "East Bengal FC",
+            "team_2": "Al Hussein",
+            "status": "UPCOMING",
+            "startTime": "07:15:00 PM 24-11-2026"
         },
         {
             "event_category": "Football",
@@ -328,18 +232,6 @@
             "startTime": "10:30:00 AM 25-11-2026"
         },
         {
-            "event_category": "Golf",
-            "match_id": 4250615,
-            "title": "ATL vs BOS vs Palm Beach Gardens, FL (WTGL 2026)",
-            "match_name": "ATL vs BOS",
-            "event_name": "WTGL 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4_web.png",
-            "team_1": "ATL vs BOS",
-            "team_2": "Palm Beach Gardens, FL",
-            "status": "UPCOMING",
-            "startTime": "06:30:00 AM 25-11-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4250419,
             "title": "Melbourne Renegades Women vs Brisbane Heat Women (Women's Big Bash League, 2026)",
@@ -364,16 +256,16 @@
             "startTime": "01:15:00 PM 25-11-2026"
         },
         {
-            "event_category": "Cricket",
-            "match_id": 4250956,
-            "title": "Europe vs Australasia (Test Twenty Championship 2026)",
-            "match_name": "Europe vs Australasia",
-            "event_name": "Test Twenty Championship 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/Test_Twenty_2026FC-WEB.jpg",
-            "team_1": "Europe",
-            "team_2": "Australasia",
+            "event_category": "Golf",
+            "match_id": 4250615,
+            "title": "ATL vs BOS vs Palm Beach Gardens, FL (WTGL 2026)",
+            "match_name": "ATL vs BOS",
+            "event_name": "WTGL 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4_web.png",
+            "team_1": "ATL vs BOS",
+            "team_2": "Palm Beach Gardens, FL",
             "status": "UPCOMING",
-            "startTime": "02:30:00 PM 25-11-2026"
+            "startTime": "06:30:00 AM 25-11-2026"
         },
         {
             "event_category": "Cricket",
@@ -386,6 +278,18 @@
             "team_2": "TBC",
             "status": "UPCOMING",
             "startTime": "04:30:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250956,
+            "title": "Europe vs Australasia (Test Twenty Championship 2026)",
+            "match_name": "Europe vs Australasia",
+            "event_name": "Test Twenty Championship 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/Test_Twenty_2026FC-WEB.jpg",
+            "team_1": "Europe",
+            "team_2": "Australasia",
+            "status": "UPCOMING",
+            "startTime": "02:30:00 PM 25-11-2026"
         },
         {
             "event_category": "Football",
@@ -434,6 +338,126 @@
             "team_2": "TBC",
             "status": "UPCOMING",
             "startTime": "06:45:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249026,
+            "title": "Persib Bandung vs Seoul (AFC Champions League Two 2026-27)",
+            "match_name": "Persib Bandung vs Seoul",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249026_53057_PER_SE_fc-web_1789025066265.jpg",
+            "team_1": "Persib Bandung",
+            "team_2": "Seoul",
+            "status": "UPCOMING",
+            "startTime": "05:45:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249017,
+            "title": "PFC Nasaf vs Al Khaldiya SC (AFC Champions League Two 2026-27)",
+            "match_name": "PFC Nasaf vs Al Khaldiya SC",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249017_53057_NAS_ALK_fc-web_1789025066869.jpg",
+            "team_1": "PFC Nasaf",
+            "team_2": "Al Khaldiya SC",
+            "status": "UPCOMING",
+            "startTime": "07:15:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250909,
+            "title": "OCA Invincibles Women vs Muscat Shaheens  Women (Oman Women's D20, 2026)",
+            "match_name": "OCA Invincibles Women vs Muscat Shaheens  Women",
+            "event_name": "Oman Women's D20, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/IMG_7278.jpeg",
+            "team_1": "OCA Invincibles Women",
+            "team_2": "Muscat Shaheens  Women",
+            "status": "UPCOMING",
+            "startTime": "08:00:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4251054,
+            "title": "Dubai Capitals vs Desert Vipers (DP World ILT20 2026)",
+            "match_name": "Dubai Capitals vs Desert Vipers",
+            "event_name": "DP World ILT20 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4251054_53162_DC_DV_FC-WEB.jpg",
+            "team_1": "Dubai Capitals",
+            "team_2": "Desert Vipers",
+            "status": "UPCOMING",
+            "startTime": "08:00:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249018,
+            "title": "Kuwait SC vs Al Wahda (AFC Champions League Two 2026-27)",
+            "match_name": "Kuwait SC vs Al Wahda",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249018_53057_KSC_ALW_fc-web_1789025066666.jpg",
+            "team_1": "Kuwait SC",
+            "team_2": "Al Wahda",
+            "status": "UPCOMING",
+            "startTime": "09:30:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249019,
+            "title": "Al Jazira vs Golgohar Sirjan SC (AFC Champions League Two 2026-27)",
+            "match_name": "Al Jazira vs Golgohar Sirjan SC",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249019_53057_ALJ_GGS_fc-web_1789025065901.jpg",
+            "team_1": "Al Jazira",
+            "team_2": "Golgohar Sirjan SC",
+            "status": "UPCOMING",
+            "startTime": "09:30:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249020,
+            "title": "Al Muharraq vs FK Arkadag (AFC Champions League Two 2026-27)",
+            "match_name": "Al Muharraq vs FK Arkadag",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249020_53057_ALM_ARK_fc-web_1789025065762.jpg",
+            "team_1": "Al Muharraq",
+            "team_2": "FK Arkadag",
+            "status": "UPCOMING",
+            "startTime": "09:30:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249021,
+            "title": "Al Faisaly vs Al Rayyan (AFC Champions League Two 2026-27)",
+            "match_name": "Al Faisaly vs Al Rayyan",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249021_53057_ALF_RAY_fc-web_1789025065904.jpg",
+            "team_1": "Al Faisaly",
+            "team_2": "Al Rayyan",
+            "status": "UPCOMING",
+            "startTime": "09:30:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249022,
+            "title": "Al-Taawoun FC vs Al-Nahda Club (AFC Champions League Two 2026-27)",
+            "match_name": "Al-Taawoun FC vs Al-Nahda Club",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249022_53057_ALTW_ALN_fc-web_1789025065804.jpg",
+            "team_1": "Al-Taawoun FC",
+            "team_2": "Al-Nahda Club",
+            "status": "UPCOMING",
+            "startTime": "11:45:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4250015,
+            "title": "Stoke City F.C. vs Millwall F.C. (EFL Championship 2026-27)",
+            "match_name": "Stoke City F.C. vs Millwall F.C.",
+            "event_name": "EFL Championship 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4250015_52993_STK_MLW_fc-web.jpg",
+            "team_1": "Stoke City F.C.",
+            "team_2": "Millwall F.C.",
+            "status": "UPCOMING",
+            "startTime": "01:30:00 AM 26-11-2026"
         }
     ]
 }
