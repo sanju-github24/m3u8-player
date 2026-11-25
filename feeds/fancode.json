@@ -1,31 +1,19 @@
 {
     "name": "Fancode Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "02:42:27 AM 25-11-2026",
+    "last update time": "09:45:20 AM 25-11-2026",
     "matches": [
         {
             "event_category": "Cricket",
-            "match_id": 4249674,
-            "title": "Queensland vs New South Wales (Sheffield Shield, 2026/27)",
-            "match_name": "Queensland vs New South Wales",
-            "event_name": "Sheffield Shield, 2026/27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249674_53087_NSW_QUN_FC-WEB.jpg",
-            "team_1": "Queensland",
-            "team_2": "New South Wales",
-            "status": "PAUSED",
-            "startTime": "05:00:00 AM 22-11-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4249675,
-            "title": "Tasmania vs Western Australia (Sheffield Shield, 2026/27)",
-            "match_name": "Tasmania vs Western Australia",
-            "event_name": "Sheffield Shield, 2026/27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249675_53087_WAU_TAS_FC-WEB.jpg",
-            "team_1": "Tasmania",
-            "team_2": "Western Australia",
-            "status": "PAUSED",
-            "startTime": "08:00:00 AM 23-11-2026"
+            "match_id": 4250688,
+            "title": "Sri Lanka Women vs Ireland Women (ICC Women's Emerging Nations Trophy, 2026)",
+            "match_name": "Sri Lanka Women vs Ireland Women",
+            "event_name": "ICC Women's Emerging Nations Trophy, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/IMG_7367.jpeg",
+            "team_1": "Sri Lanka Women",
+            "team_2": "Ireland Women",
+            "status": "UPCOMING",
+            "startTime": "10:30:00 AM 25-11-2026"
         },
         {
             "event_category": "Cricket",
@@ -38,30 +26,6 @@
             "team_2": "South Africa",
             "status": "PAUSED",
             "startTime": "01:30:00 PM 23-11-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4249676,
-            "title": "South Australia vs Victoria (Sheffield Shield, 2026/27)",
-            "match_name": "South Australia vs Victoria",
-            "event_name": "Sheffield Shield, 2026/27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249676_53087_SAU_VCT_FC-WEB.jpg",
-            "team_1": "South Australia",
-            "team_2": "Victoria",
-            "status": "PAUSED",
-            "startTime": "05:30:00 AM 24-11-2026"
-        },
-        {
-            "event_category": "Cricket",
-            "match_id": 4250688,
-            "title": "Sri Lanka Women vs Ireland Women (ICC Women's Emerging Nations Trophy, 2026)",
-            "match_name": "Sri Lanka Women vs Ireland Women",
-            "event_name": "ICC Women's Emerging Nations Trophy, 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/ICC_Womens_Emerging_2026_FC-WEB.jpg",
-            "team_1": "Sri Lanka Women",
-            "team_2": "Ireland Women",
-            "status": "UPCOMING",
-            "startTime": "10:30:00 AM 25-11-2026"
         },
         {
             "event_category": "Cricket",
@@ -112,18 +76,6 @@
             "startTime": "02:30:00 PM 25-11-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4249025,
-            "title": "Melbourne Victory vs The Cong - Viettel FC (AFC Champions League Two 2026-27)",
-            "match_name": "Melbourne Victory vs The Cong - Viettel FC",
-            "event_name": "AFC Champions League Two 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249025_53057_MLV_CV_fc-web_1789025065668.jpg",
-            "team_1": "Melbourne Victory",
-            "team_2": "The Cong - Viettel FC",
-            "status": "UPCOMING",
-            "startTime": "01:15:00 PM 25-11-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4250908,
             "title": "Ghubra Giants Women vs Muscat Thunders Women (Oman Women's D20, 2026)",
@@ -134,6 +86,18 @@
             "team_2": "Muscat Thunders Women",
             "status": "UPCOMING",
             "startTime": "04:00:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249025,
+            "title": "Melbourne Victory vs The Cong - Viettel FC (AFC Champions League Two 2026-27)",
+            "match_name": "Melbourne Victory vs The Cong - Viettel FC",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249025_53057_MLV_CV_fc-web_1789025065668.jpg",
+            "team_1": "Melbourne Victory",
+            "team_2": "The Cong - Viettel FC",
+            "status": "UPCOMING",
+            "startTime": "01:15:00 PM 25-11-2026"
         },
         {
             "event_category": "Football",
@@ -160,30 +124,6 @@
             "startTime": "03:30:00 PM 25-11-2026"
         },
         {
-            "event_category": "Football",
-            "match_id": 4249026,
-            "title": "Persib Bandung vs Seoul (AFC Champions League Two 2026-27)",
-            "match_name": "Persib Bandung vs Seoul",
-            "event_name": "AFC Champions League Two 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249026_53057_PER_SE_fc-web_1789025066265.jpg",
-            "team_1": "Persib Bandung",
-            "team_2": "Seoul",
-            "status": "UPCOMING",
-            "startTime": "05:45:00 PM 25-11-2026"
-        },
-        {
-            "event_category": "Football",
-            "match_id": 4249017,
-            "title": "PFC Nasaf vs Al Khaldiya SC (AFC Champions League Two 2026-27)",
-            "match_name": "PFC Nasaf vs Al Khaldiya SC",
-            "event_name": "AFC Champions League Two 2026-27",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249017_53057_NAS_ALK_fc-web_1789025066869.jpg",
-            "team_1": "PFC Nasaf",
-            "team_2": "Al Khaldiya SC",
-            "status": "UPCOMING",
-            "startTime": "07:15:00 PM 25-11-2026"
-        },
-        {
             "event_category": "Cricket",
             "match_id": 4250909,
             "title": "OCA Invincibles Women vs Muscat Shaheens  Women (Oman Women's D20, 2026)",
@@ -206,6 +146,30 @@
             "team_2": "Desert Vipers",
             "status": "UPCOMING",
             "startTime": "08:00:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249026,
+            "title": "Persib Bandung vs Seoul (AFC Champions League Two 2026-27)",
+            "match_name": "Persib Bandung vs Seoul",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249026_53057_PER_SE_fc-web_1789025066265.jpg",
+            "team_1": "Persib Bandung",
+            "team_2": "Seoul",
+            "status": "UPCOMING",
+            "startTime": "05:45:00 PM 25-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4249017,
+            "title": "PFC Nasaf vs Al Khaldiya SC (AFC Champions League Two 2026-27)",
+            "match_name": "PFC Nasaf vs Al Khaldiya SC",
+            "event_name": "AFC Champions League Two 2026-27",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/4249017_53057_NAS_ALK_fc-web_1789025066869.jpg",
+            "team_1": "PFC Nasaf",
+            "team_2": "Al Khaldiya SC",
+            "status": "UPCOMING",
+            "startTime": "07:15:00 PM 25-11-2026"
         },
         {
             "event_category": "Football",
@@ -278,18 +242,6 @@
             "team_2": "Millwall F.C.",
             "status": "UPCOMING",
             "startTime": "01:30:00 AM 26-11-2026"
-        },
-        {
-            "event_category": "Golf",
-            "match_id": 4250615,
-            "title": "ATL vs BOS vs Palm Beach Gardens, FL (WTGL 2026)",
-            "match_name": "ATL vs BOS",
-            "event_name": "WTGL 2026",
-            "src": "https://www.fancode.com/skillup-uploads/cms-media/4_web.png",
-            "team_1": "ATL vs BOS",
-            "team_2": "Palm Beach Gardens, FL",
-            "status": "UPCOMING",
-            "startTime": "06:30:00 AM 25-11-2026"
         },
         {
             "event_category": "Cricket",
@@ -470,6 +422,30 @@
             "team_2": "Yalla Shabab Giants",
             "status": "UPCOMING",
             "startTime": "08:30:00 PM 26-11-2026"
+        },
+        {
+            "event_category": "Football",
+            "match_id": 4251203,
+            "title": "Doncaster Rovers F.C. vs Huddersfield Town A.F.C. (League One 2026-27)",
+            "match_name": "Doncaster Rovers F.C. vs Huddersfield Town A.F.C.",
+            "event_name": "League One 2026-27",
+            "src": "https://images.fancode.com/aig/match/v1795506739477/4251203_CASACARDS_APP.png",
+            "team_1": "Doncaster Rovers F.C.",
+            "team_2": "Huddersfield Town A.F.C.",
+            "status": "UPCOMING",
+            "startTime": "01:30:00 AM 27-11-2026"
+        },
+        {
+            "event_category": "Cricket",
+            "match_id": 4250910,
+            "title": "Sohar Smashers Women vs OCA Invincibles Women (Oman Women's D20, 2026)",
+            "match_name": "Sohar Smashers Women vs OCA Invincibles Women",
+            "event_name": "Oman Women's D20, 2026",
+            "src": "https://www.fancode.com/skillup-uploads/cms-media/IMG_7278.jpeg",
+            "team_1": "Sohar Smashers Women",
+            "team_2": "OCA Invincibles Women",
+            "status": "UPCOMING",
+            "startTime": "11:30:00 AM 27-11-2026"
         }
     ]
 }
