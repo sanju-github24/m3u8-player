@@ -1,48 +1,13 @@
 {
     "name": "Sonyliv Live Matches Data in Json",
     "telegram": "https://t.me/+rQTz5VL8CRpjNTZl",
-    "last update time": "20:04:30 25-11-2026",
+    "last update time": "04:41:05 26-11-2026",
     "matches": [
-        {
-            "event_category": "Football",
-            "isLive": true,
-            "contentId": "1090556269_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029562/1795243533319330_UYL26_MD5_PSG_vs_roma_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "UEFA Youth League 2026-27",
-            "match_name": "Paris Saint-German vs AS Roma - 25 Nov 2026 [ENG]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120304/footlive2511/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795660470~acl=/*~id=16801528631564342383431569250628~hmac=3fd342c5079339ec2eadf44d57a63d9830ea33313765e862e448ee121cab7801",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120304/footlive2511/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795660470~acl=/*~id=16801528631564342383431569250628~hmac=3fd342c5079339ec2eadf44d57a63d9830ea33313765e862e448ee121cab7801",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120304/footlive2511/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795660470~acl=/*~id=16801528631564342383431569250628~hmac=3fd342c5079339ec2eadf44d57a63d9830ea33313765e862e448ee121cab7801"
-        },
-        {
-            "event_category": "Football",
-            "isLive": true,
-            "contentId": "1090556268_ENG",
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029562/1795243348812330_UYL26_MD5_Sporting_CP_vs_ManUnited_landscape_thumb.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "UEFA Youth League 2026-27",
-            "match_name": "Sporting CP vs Manchester United - 25 Nov 2026 [ENG]",
-            "dai_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120303/footlive2511/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795660470~acl=/*~id=16801528631564342383431569250628~hmac=3fd342c5079339ec2eadf44d57a63d9830ea33313765e862e448ee121cab7801",
-            "pub_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120303/footlive2511/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795660470~acl=/*~id=16801528631564342383431569250628~hmac=3fd342c5079339ec2eadf44d57a63d9830ea33313765e862e448ee121cab7801",
-            "video_url": "https://sonyeventsglobal.akamaized.net/hls/live/2120303/footlive2511/ENG/std_lrh-800300010.m3u8?hdnea=exp=1795660470~acl=/*~id=16801528631564342383431569250628~hmac=3fd342c5079339ec2eadf44d57a63d9830ea33313765e862e448ee121cab7801"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555667,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029579/1795250909596716_FCB_ManUtd_PSG_LFC_landscape_thumbnail.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - UEFA Champions League 2026-27"
-        },
         {
             "event_category": "Cricket",
             "isLive": false,
             "contentId": 1090556407,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029923/179559235760653_ACRS26_SF_SL_A_vs_IND_A_dated_landscape_thumb.jpg",
+            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029923/179559236559053_ACRS26_SF_SL_A_vs_IND_A_today_landscape_thumb.jpg",
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - Sri Lanka A vs India A - DP World Asia Cup Rising Stars Men's 2026"
@@ -55,51 +20,6 @@
             "broadcast_channel": "Sony Sports Ten 5",
             "audioLanguageName": "HIN",
             "event_name": "Upcoming - 2nd Test - India Tour Of New Zealand 2026"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555091,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795125569875174_UCL26_MD5_Sporting_CP_vs_ManUnited_Promo_landscape_thumb_tonight.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Sporting vs Manchester United - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555087,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795121897122174_UCL26_MD5_Club_Brugge_vs_Liverpool_Promo_landscape_thumb_tonight.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Club Brugge vs Liverpool - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555090,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795124826868174_UCL26_MD5_PSG_vs_AS_Roma_Promo_landscape_thumb_tonight.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - PSG vs Roma - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555085,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029390/1795080314217240_champion_league_match_day_5_landscape_thumbnail.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Matchday 5 - UEFA Champions League 2026-27"
-        },
-        {
-            "event_category": "Football",
-            "isLive": false,
-            "contentId": 1090555088,
-            "src": "https://origin-staticv2.sonyliv.com/videoasset_images/manage_file/1000029422/1795122942762174_UCL26_MD5_Lille_vs_Bayern_Munich_Promo_landscape_thumb_tonight.jpg",
-            "broadcast_channel": "Sony Sports Ten 2",
-            "audioLanguageName": "ENG",
-            "event_name": "Upcoming - Lille vs Bayern Munich - UEFA Champions League 2026-27"
         },
         {
             "event_category": "Football",
